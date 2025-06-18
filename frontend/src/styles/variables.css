@@ -1,0 +1,57 @@
+:root {
+    --transition-duration: 0.3s;
+  
+    /* 主色调 */
+    --color-primary: #3498db;
+    --color-primary-hover: #2980b9;
+  
+    /* 基础背景、文字颜色等 */
+    --color-bg: #f5f7fa;
+    --color-text: #333;
+    --color-card-bg: #ffffff;
+    --color-header-bg: #383c44;
+    --color-header-text: #ffffff;
+    --color-border: #e0e0e0;
+  
+    /* 遮罩层等 */
+    --color-overlay: rgba(0, 0, 0, 0.5);
+  
+    /* 提示用色（改为统一的绿色系） */
+    --color-correct: #4caf50;
+    /* “close” 比 correct 浅一点, 用 a5d6a7 (Material Light Green 200) */
+    --color-close: #a5d6a7;
+    /* “far” 比 close 略深一点, 用 81c784 (Material Light Green 400) */
+    --color-far: #81c784;
+  
+    --color-lose-bg: rgba(244, 67, 54, 0.2);
+    --color-lose-text: #c62828;
+    --color-win-bg: rgba(76, 175, 80, 0.2);
+    --color-win-text: #2e7d32;
+  }
+  
+  [data-theme="dark"] {
+    --color-primary: #64b5f6;
+    --color-primary-hover: #42a5f5;
+  
+    --color-bg: #0d1117;
+    --color-text: #e6edf3;
+    --color-card-bg: #21262d;
+    --color-header-bg: #010409;
+    --color-header-text: #f0f6fc;
+    --color-border: #30363d;
+    --color-overlay: rgba(0, 0, 0, 0.6);
+  
+    /* 深色模式下的文字颜色层次 */
+    --color-text-secondary: #7d8590;
+  
+    /* 暗色模式下更明显的游戏提示颜色 */
+    --color-correct: #7c3aed;
+    --color-close: #f59e0b;
+    --color-far: #ef4444;
+  
+    --color-lose-bg: rgba(239, 68, 68, 0.15);
+    --color-lose-text: #fca5a5;
+    --color-win-bg: rgba(34, 197, 94, 0.15);
+    --color-win-text: #86efac;
+  }
+  
