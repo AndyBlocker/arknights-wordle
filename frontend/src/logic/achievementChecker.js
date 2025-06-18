@@ -85,9 +85,6 @@ export class AchievementChecker {
 
     // 检查速度猜测成就
     this.checkSpeedGuessing();
-
-    // 返回新获得的成就
-    return this.checkNewAchievements();
   }
 
   // 完成题目
@@ -131,7 +128,43 @@ export class AchievementChecker {
     }
   }
 
-  // 检查新获得的成就
+  // 检查实时成就（每次猜测后检查）
+  checkRealTimeAchievements() {
+    const earnedAchievements = [];
+    
+    // 只检查实时成就
+    const realTimeAchievements = ALL_ACHIEVEMENTS.filter(achievement => 
+      achievement.trigger === 'realtime'
+    );
+    
+    for (const achievement of realTimeAchievements) {
+      if (this.evaluateCondition(achievement.condition)) {
+        earnedAchievements.push(achievement);
+      }
+    }
+    
+    return earnedAchievements;
+  }
+
+  // 检查最终成就（挑战结束时检查）
+  checkFinalAchievements() {
+    const earnedAchievements = [];
+    
+    // 只检查最终成就
+    const finalAchievements = ALL_ACHIEVEMENTS.filter(achievement => 
+      achievement.trigger === 'final'
+    );
+    
+    for (const achievement of finalAchievements) {
+      if (this.evaluateCondition(achievement.condition)) {
+        earnedAchievements.push(achievement);
+      }
+    }
+    
+    return earnedAchievements;
+  }
+
+  // 检查新获得的成就（兼容性方法，用于结果页面）
   checkNewAchievements() {
     const earnedAchievements = [];
     

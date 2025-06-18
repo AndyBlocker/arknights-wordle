@@ -58,24 +58,30 @@
           </div>
           
           <div class="question-info">
-            <div class="target-operator">
-              <img 
-                :src="getOperatorAvatar(result.targetOperator)" 
-                :alt="result.targetOperator.干员"
-                class="operator-avatar"
-              />
-              <div class="operator-details">
-                <span class="operator-name">{{ result.targetOperator.干员 }}</span>
-                <span class="operator-rarity">{{ result.targetOperator.星级 }}★ {{ result.targetOperator.职业 }}</span>
+            <div class="question-main">
+              <div class="target-section">
+                <img 
+                  :src="getOperatorAvatar(result.targetOperator)" 
+                  :alt="result.targetOperator.干员"
+                  class="operator-avatar"
+                />
+                <div class="operator-details">
+                  <span class="operator-name">{{ result.targetOperator.干员 }}</span>
+                  <span class="operator-rarity">{{ result.targetOperator.星级 }}★ {{ result.targetOperator.职业 }}</span>
+                </div>
+              </div>
+              
+              <div class="question-stats">
+                <span class="stat-badge time-badge">{{ formatTime(result.timeUsed) }}</span>
+                <span class="stat-badge guess-badge">{{ result.guesses.length }} 次</span>
               </div>
             </div>
             
             <!-- 猜测过程展示 -->
-            <div v-if="result.guesses.length > 0" class="guess-process">
-              <div class="process-title">猜测过程</div>
+            <div v-if="result.guesses.length > 1" class="guess-process">
               <div class="guess-timeline">
                 <div 
-                  v-for="(guess, gIndex) in result.guesses.slice(0, 3)" 
+                  v-for="(guess, gIndex) in result.guesses.slice(0, 4)" 
                   :key="gIndex"
                   class="guess-step"
                   :class="{ 
@@ -89,18 +95,10 @@
                     class="guess-avatar"
                   />
                   <span class="guess-name">{{ guess.干员 }}</span>
-                  <span class="step-number">{{ gIndex + 1 }}</span>
                 </div>
-                <div v-if="result.guesses.length > 3" class="more-guesses">
-                  +{{ result.guesses.length - 3 }} 次
+                <div v-if="result.guesses.length > 4" class="more-guesses">
+                  +{{ result.guesses.length - 4 }}
                 </div>
-              </div>
-            </div>
-            
-            <div class="question-stats">
-              <div class="stat-simple">
-                <span>用时: {{ formatTime(result.timeUsed) }}</span>
-                <span>猜测: {{ result.guesses.length }} 次</span>
               </div>
             </div>
           </div>
@@ -108,70 +106,6 @@
       </div>
     </div>
 
-    <!-- 分享功能 -->
-    <div class="share-section">
-      <h3 class="share-title">分享挑战</h3>
-      <p class="share-desc">让朋友们也来挑战相同的设置吧！复制分享码给朋友，或扫描二维码即可开始挑战。</p>
-      
-      <div class="share-options">
-        <div class="share-option">
-          <label class="share-label">
-            <input 
-              type="checkbox" 
-              v-model="shareWithQuestions"
-              class="share-checkbox"
-            />
-            包含相同题目
-          </label>
-          <span class="share-help">勾选后朋友将挑战完全相同的干员</span>
-        </div>
-      </div>
-
-      <div class="share-actions">
-        <button class="share-btn generate-btn" @click="generateShareCode">
-          <span class="btn-icon">🔗</span>
-          生成分享码
-        </button>
-        
-        <button 
-          v-if="shareCode" 
-          class="share-btn copy-btn" 
-          @click="copyShareCode"
-          :disabled="copyButtonText !== '复制分享码'"
-        >
-          <span class="btn-icon">📋</span>
-          {{ copyButtonText }}
-        </button>
-        
-        <button 
-          v-if="shareCode" 
-          class="share-btn qr-btn" 
-          @click="showQRCode = !showQRCode"
-        >
-          <span class="btn-icon">📱</span>
-          {{ showQRCode ? '隐藏' : '显示' }}二维码
-        </button>
-      </div>
-
-      <!-- 分享码显示 -->
-      <div v-if="shareCode" class="share-code-display">
-        <div class="code-container">
-          <code class="share-code">{{ shareCode }}</code>
-        </div>
-        <p class="code-help">
-          <strong>使用方法：</strong><br>
-          1. 复制上方分享码发给朋友<br>
-          2. 朋友在挑战模式中输入分享码即可开始相同设置的挑战<br>
-          3. 或直接扫描下方二维码
-        </p>
-      </div>
-
-      <!-- 二维码显示 -->
-      <div v-if="showQRCode && qrCodeUrl" class="qr-code-container">
-        <div class="qr-code" ref="qrCodeRef"></div>
-        <p class="qr-help">扫描二维码直接开始挑战</p>
-      </div>
-    </div>
 
     <!-- 操作按钮 -->
     <div class="result-actions">
@@ -186,8 +120,8 @@
 </template>
 
 <script>
-import { ref, computed, watch, nextTick } from 'vue';
-import { calculateFinalStats, generateShareCode as createShareCode, generateQRCodeData } from '../logic/challengeService';
+import { ref, computed } from 'vue';
+import { calculateFinalStats } from '../logic/challengeService';
 import { achievementChecker } from '../logic/achievementChecker';
 import { getOperatorAvatarFile, getImagePath } from '../utils/imageUtils';
 
@@ -203,14 +137,8 @@ export default {
       required: true
     }
   },
-  emits: ['restart', 'share', 'back'],
+  emits: ['restart', 'back'],
   setup(props, { emit }) {
-    const shareWithQuestions = ref(false);
-    const shareCode = ref('');
-    const showQRCode = ref(false);
-    const qrCodeUrl = ref('');
-    const copyButtonText = ref('复制分享码');
-    const qrCodeRef = ref(null);
     const achievements = ref([]);
 
     // 计算最终统计
@@ -226,97 +154,6 @@ export default {
     // 初始化时获取成就
     getSessionAchievements();
 
-    // 生成分享码
-    const generateShareCode = () => {
-      const challengeData = {
-        settings: props.settings,
-        results: shareWithQuestions.value ? props.results : [],
-        includeTargets: shareWithQuestions.value
-      };
-      
-      shareCode.value = createShareCode(challengeData);
-      
-      // 生成二维码URL
-      qrCodeUrl.value = generateQRCodeData(shareCode.value);
-      
-      // 生成二维码图片
-      nextTick(() => {
-        if (showQRCode.value) {
-          generateQRCodeImage();
-        }
-      });
-    };
-
-    // 复制分享码
-    const copyShareCode = async () => {
-      try {
-        await navigator.clipboard.writeText(shareCode.value);
-        copyButtonText.value = '已复制！';
-        setTimeout(() => {
-          copyButtonText.value = '复制分享码';
-        }, 2000);
-      } catch (error) {
-        console.error('复制失败:', error);
-        // 降级到选择文本的方式
-        fallbackCopyToClipboard(shareCode.value);
-      }
-    };
-
-    // 降级复制方法
-    const fallbackCopyToClipboard = (text) => {
-      const textArea = document.createElement('textarea');
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      try {
-        document.execCommand('copy');
-        copyButtonText.value = '已复制！';
-        setTimeout(() => {
-          copyButtonText.value = '复制分享码';
-        }, 2000);
-      } catch (error) {
-        copyButtonText.value = '复制失败';
-        setTimeout(() => {
-          copyButtonText.value = '复制分享码';
-        }, 2000);
-      }
-      document.body.removeChild(textArea);
-    };
-
-    // 生成二维码图片 (简单实现，实际项目中可以使用qrcode.js库)
-    const generateQRCodeImage = async () => {
-      if (!qrCodeRef.value || !qrCodeUrl.value) return;
-      
-      // 这里应该使用专门的二维码库，比如qrcode.js
-      // 为了简化，我们用一个简单的在线API
-      try {
-        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrCodeUrl.value)}`;
-        
-        const img = document.createElement('img');
-        img.src = qrApiUrl;
-        img.alt = '挑战二维码';
-        img.style.width = '200px';
-        img.style.height = '200px';
-        img.style.border = '1px solid var(--color-border)';
-        img.style.borderRadius = '8px';
-        
-        qrCodeRef.value.innerHTML = '';
-        qrCodeRef.value.appendChild(img);
-      } catch (error) {
-        console.error('生成二维码失败:', error);
-        qrCodeRef.value.innerHTML = '<p>二维码生成失败</p>';
-      }
-    };
-
-    // 监听二维码显示状态
-    const handleQRToggle = () => {
-      if (showQRCode.value && qrCodeUrl.value) {
-        nextTick(() => {
-          generateQRCodeImage();
-        });
-      }
-    };
 
     // 获取干员头像
     const getOperatorAvatar = (operator) => {
@@ -337,20 +174,9 @@ export default {
       return `${secs}秒`;
     };
 
-    // 监听showQRCode变化
-    watch(() => showQRCode.value, handleQRToggle);
-
     return {
       finalStats,
-      shareWithQuestions,
-      shareCode,
-      showQRCode,
-      qrCodeUrl,
-      copyButtonText,
-      qrCodeRef,
       achievements,
-      generateShareCode,
-      copyShareCode,
       getOperatorAvatar,
       formatTime
     };
@@ -495,18 +321,18 @@ export default {
 
 .questions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
 }
 
 .question-card {
   background: linear-gradient(135deg, 
-    rgba(255,255,255,0.08), 
-    rgba(255,255,255,0.03)
+    rgba(255,255,255,0.06), 
+    rgba(255,255,255,0.02)
   );
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  padding: 1rem;
+  padding: 0.75rem;
   transition: all 0.3s ease;
 }
 
@@ -530,7 +356,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .question-number {
@@ -551,20 +377,22 @@ export default {
   color: #dc3545;
 }
 
-.target-operator {
+.question-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.target-section {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .operator-avatar {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid rgba(255, 255, 255, 0.2);
@@ -579,32 +407,53 @@ export default {
 .operator-name {
   font-weight: 600;
   color: var(--color-text);
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 .operator-rarity {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--color-text-secondary);
   opacity: 0.8;
 }
 
-/* 猜测过程展示 */
-.guess-process {
-  margin-bottom: 1rem;
+.question-stats {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
-.process-title {
-  font-size: 0.8rem;
-  font-weight: 600;
+.stat-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: var(--color-text-secondary);
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+}
+
+.time-badge {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #22c55e;
+}
+
+.guess-badge {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #3b82f6;
+}
+
+/* 猜测过程展示 */
+.guess-process {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 0.5rem;
 }
 
 .guess-timeline {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
 }
@@ -614,12 +463,12 @@ export default {
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.5rem;
-  background: rgba(255, 255, 255, 0.03);
+  padding: 0.25rem;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
   transition: all 0.3s ease;
+  min-width: 50px;
 }
 
 .guess-step.correct {
@@ -627,215 +476,39 @@ export default {
   border-color: #28a745;
 }
 
-.guess-step.final {
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
 .guess-avatar {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .guess-name {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 500;
   color: var(--color-text);
   text-align: center;
-  max-width: 60px;
+  max-width: 48px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.step-number {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  width: 16px;
-  height: 16px;
-  background: var(--color-primary);
-  color: white;
-  border-radius: 50%;
-  font-size: 0.6rem;
-  font-weight: bold;
+.more-guesses {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.more-guesses {
   padding: 0.25rem 0.5rem;
   background: rgba(255, 255, 255, 0.05);
   border: 1px dashed rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-  font-size: 0.7rem;
+  border-radius: 6px;
+  font-size: 0.65rem;
   color: var(--color-text-secondary);
   font-weight: 500;
+  min-width: 40px;
 }
 
-.question-stats {
-  margin-top: 0.5rem;
-}
-
-.stat-simple {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
-}
-
-/* 分享功能 */
-.share-section {
-  background: linear-gradient(135deg, 
-    var(--color-card-bg), 
-    rgba(245, 158, 11, 0.05)
-  );
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  position: relative;
-}
-
-.share-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, 
-    rgba(245, 158, 11, 0.02), 
-    rgba(249, 115, 22, 0.01)
-  );
-  border-radius: 12px;
-  pointer-events: none;
-}
-
-.share-title {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-.share-desc {
-  margin: 0 0 1rem 0;
-  color: var(--color-text-secondary);
-}
-
-.share-options {
-  margin-bottom: 1rem;
-}
-
-.share-option {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.share-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.share-checkbox {
-  width: 16px;
-  height: 16px;
-}
-
-.share-help {
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
-  margin-left: 1.5rem;
-}
-
-.share-actions {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 1rem;
-}
-
-.share-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.generate-btn {
-  background: var(--color-primary);
-  color: white;
-}
-
-.generate-btn:hover {
-  background: var(--color-primary-hover);
-}
-
-.copy-btn, .qr-btn {
-  background: transparent;
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-}
-
-.copy-btn:hover, .qr-btn:hover {
-  border-color: var(--color-primary);
-}
-
-.copy-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.share-code-display {
-  margin-bottom: 1rem;
-}
-
-.code-container {
-  background: rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  padding: 0.75rem;
-  margin-bottom: 0.5rem;
-}
-
-.share-code {
-  font-family: monospace;
-  font-size: 0.9rem;
-  word-break: break-all;
-  color: var(--color-text);
-}
-
-.code-help, .qr-help {
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
-  margin: 0;
-  text-align: center;
-}
-
-.qr-code-container {
-  text-align: center;
-  padding: 1rem;
-}
-
-.qr-code {
-  margin-bottom: 0.5rem;
-}
 
 /* 操作按钮 */
 .result-actions {
@@ -909,58 +582,71 @@ export default {
   }
   
   .questions-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 0.5rem;
   }
   
   .question-card {
-    padding: 0.75rem;
+    padding: 0.5rem;
   }
   
-  .target-operator {
-    padding: 0.5rem;
-    margin-bottom: 0.75rem;
+  .question-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .target-section {
+    gap: 0.5rem;
   }
   
   .operator-avatar {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
+  }
+  
+  .operator-name {
+    font-size: 0.85rem;
+  }
+  
+  .operator-rarity {
+    font-size: 0.7rem;
+  }
+  
+  .question-stats {
+    gap: 0.25rem;
+  }
+  
+  .stat-badge {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
   }
   
   .guess-timeline {
     gap: 0.25rem;
+    flex-wrap: wrap;
   }
   
   .guess-step {
-    padding: 0.25rem;
+    padding: 0.2rem;
+    min-width: 40px;
   }
   
   .guess-avatar {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
   }
   
   .guess-name {
     font-size: 0.6rem;
-    max-width: 50px;
+    max-width: 38px;
   }
   
-  .step-number {
-    width: 14px;
-    height: 14px;
-    font-size: 0.55rem;
-    top: -5px;
-    right: -5px;
+  .more-guesses {
+    padding: 0.2rem 0.3rem;
+    font-size: 0.6rem;
+    min-width: 32px;
   }
   
-  .stat-simple {
-    gap: 0.5rem;
-    font-size: 0.7rem;
-  }
-  
-  .share-actions {
-    flex-direction: column;
-  }
   
   .result-actions {
     flex-direction: column;

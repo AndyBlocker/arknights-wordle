@@ -2,15 +2,18 @@
 export class AchievementEmitter {
   constructor() {
     this.earnedAchievements = new Set(); // 记录已获得的成就，避免重复通知
+    this.sessionAchievements = new Set(); // 记录本局游戏已通知的成就
   }
 
   // 发射成就获得事件
   emitAchievement(achievement) {
-    // 检查是否已经获得过这个成就
-    if (this.earnedAchievements.has(achievement.id)) {
+    // 检查是否在本局游戏中已经通知过这个成就
+    if (this.sessionAchievements.has(achievement.id)) {
       return false;
     }
 
+    // 标记为本局已通知
+    this.sessionAchievements.add(achievement.id);
     // 标记为已获得
     this.earnedAchievements.add(achievement.id);
 
@@ -37,7 +40,7 @@ export class AchievementEmitter {
 
   // 重置已获得的成就（新游戏开始时）
   reset() {
-    this.earnedAchievements.clear();
+    this.sessionAchievements.clear(); // 只重置本局通知，保留历史记录
   }
 
   // 检查是否已获得某个成就

@@ -232,7 +232,6 @@
         :results="challengeResults"
         :settings="challengeSettings"
         @restart="restartChallenge"
-        @share="handleShare"
         @back="$emit('back')"
       />
     </div>
@@ -401,13 +400,14 @@ export default {
       const isCorrect = guessedOp.干员 === currentQuestion.value.targetOperator.干员;
       
       // 通知成就系统处理猜测
-      const newAchievements = achievementChecker.processGuess(
+      achievementChecker.processGuess(
         guessedOp, 
         isCorrect, 
         currentQuestion.value.targetOperator
       );
       
-      // 发射新获得的成就
+      // 检查实时成就
+      const newAchievements = achievementChecker.checkRealTimeAchievements();
       achievementEmitter.emitAchievements(newAchievements);
       
       // 如果不是小头模式，需要生成对比结果
@@ -495,6 +495,10 @@ export default {
       // 完成挑战，通知成就系统
       achievementChecker.completeChallenge(challengeResults.value);
       
+      // 检查最终成就
+      const finalAchievements = achievementChecker.checkFinalAchievements();
+      achievementEmitter.emitAchievements(finalAchievements);
+      
       challengePhase.value = 'result';
     };
 
@@ -507,11 +511,6 @@ export default {
       challengeResults.value = [];
     };
 
-    // 分享挑战
-    const handleShare = (shareData) => {
-      // TODO: 实现分享功能
-      console.log('分享挑战:', shareData);
-    };
 
 
     // 获取模式标签
@@ -579,7 +578,6 @@ export default {
       handleGuess,
       nextQuestion,
       restartChallenge,
-      handleShare,
       getModeDisplayName,
       formatTime,
       formatTotalTime,
