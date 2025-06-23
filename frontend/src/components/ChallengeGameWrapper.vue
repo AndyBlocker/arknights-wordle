@@ -62,7 +62,7 @@
 
 <script>
 import { computed } from 'vue';
-import { filterByOnlySixStar, compareOperators } from '../logic/gameLogic';
+import { filterByOnlySixStar } from '../logic/gameLogic';
 import GuessInput from './GuessInput.vue';
 import GameBoard from './GameBoard.vue';
 import PuzzleBoard from './PuzzleBoard.vue';

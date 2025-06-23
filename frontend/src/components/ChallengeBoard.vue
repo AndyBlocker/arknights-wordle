@@ -239,8 +239,9 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onBeforeUnmount } from 'vue';
 import { generateChallengeQuestions, calculateChallengeScore } from '../logic/challengeService';
+import { compareOperators } from '../logic/gameLogic';
 import { achievementChecker } from '../logic/achievementChecker';
 import { achievementEmitter } from '../utils/achievementEmitter';
 import ChallengeResult from './ChallengeResult.vue';
@@ -387,8 +388,19 @@ export default {
     const handleGuess = (operatorName) => {
       if (gameOver.value || gameWon.value) return;
       
-      // 找到猜测的干员
-      const guessedOp = props.operators.find(op => op.干员 === operatorName);
+      // 找到猜测的干员 - 增强查找逻辑
+      const guessedOp = props.operators.find(op => {
+        // 1. 精确匹配
+        if (op.干员 === operatorName) return true;
+        
+        // 2. 清理特殊字符后匹配
+        const cleanOpName = op.干员.replace(/[·\u00B7\u2022\u2027]/g, '');
+        const cleanInputName = operatorName.replace(/[·\u00B7\u2022\u2027]/g, '');
+        if (cleanOpName === cleanInputName) return true;
+        
+        return false;
+      });
+      
       if (!guessedOp) {
         console.warn('未找到干员:', operatorName);
         return;
@@ -412,9 +424,16 @@ export default {
       
       // 如果不是小头模式，需要生成对比结果
       if (challengeSettings.value.gameMode !== 'puzzle') {
-        // 这里需要导入compareOperators函数，暂时跳过比较逻辑
-        // 在实际游戏中，这个逻辑会由GameBoard组件处理
-        // currentComparisons.value.push(comparison);
+        // 获取选中的标签组
+        const tagGroup = getSelectedTagGroup();
+        const comparison = compareOperators(
+          guessedOp,
+          currentQuestion.value.targetOperator,
+          tagGroup.tags,
+          challengeSettings.value.potentialMode || '满潜',
+          challengeSettings.value.trustMode || '满信赖'
+        );
+        currentComparisons.value.push(comparison);
       }
       
       if (isCorrect) {
@@ -530,6 +549,21 @@ export default {
         puzzle: '小头'
       };
       return nameMap[mode] || mode;
+    };
+
+    // 获取选中的标签组
+    const getSelectedTagGroup = () => {
+      const tagMap = {
+        easy: {
+          id: 'easy',
+          tags: ['性别', '星级', '职业', '国家', '种族', '源石技艺适应性', '身高', '感染状态', '出生日期', '标签']
+        },
+        hard: {
+          id: 'hard',
+          tags: ['星级', '满级攻击', '满级生命', '满级防御', '满级法术抗性', '攻击间隔', '上线年份', '标签']
+        }
+      };
+      return tagMap[challengeSettings.value.gameMode] || tagMap.easy;
     };
 
     // 格式化时间

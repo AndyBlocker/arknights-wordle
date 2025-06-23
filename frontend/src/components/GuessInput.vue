@@ -153,19 +153,21 @@ export default {
         let matchScore = 0; // 匹配得分，用于排序
         
         const nameLower = op.干员.toLowerCase();
+        // 创建不含特殊字符的版本用于匹配
+        const nameClean = op.干员.replace(/[·\u00B7\u2022\u2027]/g, '').toLowerCase();
         
         // 1. 精确匹配优先级最高
-        if (nameLower === searchLower) {
+        if (nameLower === searchLower || nameClean === searchLower) {
           matched = true;
           matchScore = 1000;
         }
         // 2. 名称开头匹配
-        else if (nameLower.startsWith(searchLower)) {
+        else if (nameLower.startsWith(searchLower) || nameClean.startsWith(searchLower)) {
           matched = true;
           matchScore = 900;
         }
         // 3. 名称包含匹配
-        else if (nameLower.includes(searchLower)) {
+        else if (nameLower.includes(searchLower) || nameClean.includes(searchLower)) {
           matched = true;
           matchScore = 800;
         }

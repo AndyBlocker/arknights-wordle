@@ -610,7 +610,20 @@ export default {
       }
 
       const sanitizedName = validation.sanitized;
-      const guessedOp = filteredOperators.value.find((op) => op.干员 === sanitizedName);
+      
+      // 增强的干员查找逻辑：支持带/不带特殊字符的匹配
+      const guessedOp = filteredOperators.value.find((op) => {
+        // 1. 精确匹配
+        if (op.干员 === sanitizedName) return true;
+        
+        // 2. 清理特殊字符后匹配
+        const cleanOpName = op.干员.replace(/[·\u00B7\u2022\u2027]/g, '');
+        const cleanInputName = sanitizedName.replace(/[·\u00B7\u2022\u2027]/g, '');
+        if (cleanOpName === cleanInputName) return true;
+        
+        return false;
+      });
+      
       if (!guessedOp) {
         showToast(`未找到干员: ${sanitizedName}`);
         return;

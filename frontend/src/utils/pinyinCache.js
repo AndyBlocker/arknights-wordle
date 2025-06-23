@@ -9,6 +9,18 @@ class PinyinCache {
     this.initMultiPronunciationMap();
   }
 
+  // 预处理文本，处理特殊字符
+  preprocessText(text) {
+    // 处理常见的特殊字符
+    return text
+      .replace(/·/g, '') // 移除中点符号
+      .replace(/\u00B7/g, '') // 移除Unicode中点符号
+      .replace(/\u2022/g, '') // 移除项目符号
+      .replace(/\u2027/g, '') // 移除连字符点
+      .replace(/\s+/g, '') // 移除多余空格
+      .trim();
+  }
+
   // 初始化常见多音字映射（明日方舟干员相关）
   initMultiPronunciationMap() {
     const commonMultiChar = {
@@ -37,22 +49,25 @@ class PinyinCache {
     }
 
     try {
+      // 预处理文本：处理特殊字符（如·）
+      const cleanText = this.preprocessText(text);
+      
       // 生成标准拼音
-      const fullPinyin = pinyin(text, { 
+      const fullPinyin = pinyin(cleanText, { 
         toneType: 'none', 
         type: 'string',
         nonZh: 'consecutive' // 非中文字符保持连续
       }).toLowerCase().trim();
       
-      const firstPinyin = pinyin(text, { 
+      const firstPinyin = pinyin(cleanText, { 
         pattern: 'first', 
         toneType: 'none', 
         type: 'string',
         nonZh: 'consecutive'
       }).toLowerCase().trim();
 
-      // 生成多音字变体
-      const variants = this.generatePronunciationVariants(text);
+      // 生成多音字变体（使用清理后的文本）
+      const variants = this.generatePronunciationVariants(cleanText);
       
       // 生成部分匹配模式
       const partialMatches = this.generatePartialMatches(fullPinyin, firstPinyin);

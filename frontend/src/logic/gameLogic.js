@@ -1,5 +1,5 @@
 // src/logic/gameLogic.js
-import { parseBirthday as parseBirthdayRaw } from './parseUtils.js'; 
+import { parseBirthdayRaw } from './parseUtils.js'; 
 
 export function parseBirthday(birthdayStr) {
   return parseBirthdayRaw(birthdayStr);
