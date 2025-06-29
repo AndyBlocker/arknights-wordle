@@ -422,6 +422,14 @@ export default {
       }
     });
 
+    // 监听operators变化，重新生成拼音映射
+    watch(() => props.operators, (newOperators) => {
+      if (newOperators && newOperators.length > 0) {
+        console.log('GuessInput: 重新生成拼音映射，干员数量:', newOperators.length);
+        generatePinyinMap();
+      }
+    }, { immediate: true });
+
     onMounted(() => {
       generatePinyinMap();
       searchInput.value?.focus();

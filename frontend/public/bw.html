@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+    <title>泰拉鉴定大师课毕业考试</title>
+    <style>
+      /* 移动端专用基础样式 */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #1a4a3a 0%, #0f2a1f 100%);
+        color: white;
+        min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      
+      /* 防止iOS Safari的缩放和滚动 */
+      html, body {
+        touch-action: manipulation;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      /* 隐藏加载时的闪烁 */
+      #app {
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+      }
+      
+      #app.loaded {
+        opacity: 1;
+      }
+      
+      /* 加载动画 */
+      .loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1a4a3a 0%, #0f2a1f 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        color: white;
+      }
+      
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top: 3px solid #dc3545;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      .loading-text {
+        font-size: 16px;
+        color: #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      <strong>此应用需要JavaScript支持，请启用JavaScript后重试。</strong>
+    </noscript>
+    
+    <!-- 加载屏幕 -->
+    <div class="loading-screen" id="loading-screen">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">正在加载泰拉鉴定系统...</div>
+    </div>
+    
+    <!-- Vue应用容器 -->
+    <div id="app"></div>
+    
+    <!-- 构建后的文件会自动注入到这里 -->
+  </body>
+</html>
