@@ -22,11 +22,12 @@ html {
 }
 
 body {
-  /* 防止页面滚动 */
-  position: fixed;
+  /* 允许页面正常滚动，但防止横向滚动 */
+  position: relative;
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
   
   /* 移动端字体优化 */
   -webkit-font-smoothing: antialiased;
@@ -42,8 +43,7 @@ body {
 #app {
   position: relative;
   width: 100%;
-  height: 100vh;
-  overflow-y: auto;
+  min-height: 100vh;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }

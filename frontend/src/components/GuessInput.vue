@@ -470,9 +470,9 @@ export default {
 <style>
 .guess-input-container {
   position: relative;
-  width: 90%;
+  width: 75%;
   z-index: 99999;
-  margin: auto;
+  margin: 0 auto;
 }
 
 /* 可访问性：屏幕阅读器专用内容 */
@@ -491,40 +491,45 @@ export default {
 .input-wrapper {
   display: flex;
   position: relative;
-  align-items: center;
+  align-items: stretch;
   border-radius: 8px;
   background-color: var(--color-card-bg);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
 .search-icon {
   position: absolute;
-  left: 16px;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   color: #8c9db5;
   display: flex;
   align-items: center;
+  z-index: 1;
 }
 
 .operator-search-input {
   flex: 1;
-  padding: 16px 16px 16px 48px;
+  padding: 12px 12px 12px 40px;
   font-size: 16px;
-  border: 2px solid var(--color-border);
-  border-radius: 8px 0 0 8px;
+  border: 1px solid var(--color-border);
+  border-right: none;
+  border-radius: 0;
   transition: all var(--transition-duration);
   background-color: transparent;
   color: var(--color-text);
+  height: 44px;
+  box-sizing: border-box;
 }
 
 .operator-search-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
 .operator-search-input:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: none;
 }
 
 .operator-search-input:disabled {
@@ -534,30 +539,31 @@ export default {
 }
 
 .submit-button {
-  padding: 0 28px;
-  height: 52px;
+  padding: 0 20px;
+  height: 44px;
   background-color: var(--color-primary);
   color: white;
-  border: none;
-  border-radius: 0 8px 8px 0;
+  border: 1px solid var(--color-primary);
+  border-radius: 0;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color var(--transition-duration);
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 60px;
+  box-sizing: border-box;
 }
 .submit-button:hover:not(:disabled) {
   background-color: var(--color-primary-hover);
 }
 
 .submit-button:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: none;
 }
 
 .submit-button:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: -2px;
-  box-shadow: 0 0 0 4px var(--color-primary);
+  outline: none;
 }
 
 .submit-button:disabled {
@@ -694,13 +700,16 @@ export default {
 @media (max-width: 768px) {
   .operator-search-input {
     font-size: 14px;
-    padding: 12px 12px 12px 40px;
-    height: 44px;
+    padding: 10px 10px 10px 36px;
+    height: 40px;
   }
   .submit-button {
     font-size: 14px;
     padding: 0 16px;
-    height: 44px;
+    height: 40px;
+  }
+  .search-icon {
+    left: 10px;
   }
   .operator-avatar-container {
     width: 36px;

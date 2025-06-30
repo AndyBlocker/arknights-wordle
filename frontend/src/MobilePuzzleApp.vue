@@ -4,24 +4,46 @@
     <div class="bg-pattern"></div>
     
     <div class="mobile-container">
+      <!-- 全局背景图片 -->
+      <div class="background-image">
+        <!-- 背景图层 -->
+        <img :src="bgImagePath" alt="背景" class="bg-image" />
+        <!-- 遮罩层（可选，用于调整对比度） -->
+        <div class="image-overlay"></div>
+      </div>
+      
       <!-- 头部区域 -->
       <div class="header-section">
         <!-- 角色图片区域 -->
         <div class="character-portrait">
-          <div class="character-image">
-            <div class="placeholder-image">
-              <span class="authority-text">权威</span>
-            </div>
-          </div>
-          
-          <!-- 右上角标题 -->
-          <div class="title-overlay">
-            <div class="main-title">泰拉鉴定大师</div>
-            <div class="subtitle">坎诺特</div>
-          </div>
         </div>
       </div>
       
+      <!-- 游戏状态显示 -->
+      <div v-if="gameWon || gameOver" class="game-result-banner" :class="guessRating">
+        <div class="result-content">
+          <div v-if="gameWon" class="success-message">
+            <div class="rating-header">
+              <span v-if="guessRating === 'perfect'">🏆 完美！</span>
+              <span v-else-if="guessRating === 'excellent'">⭐ 优秀！</span>
+              <span v-else-if="guessRating === 'good'">👍 良好！</span>
+            </div>
+            正确答案是: {{ targetOperator?.干员 }}
+            <div class="attempts-info">猜测次数: {{ guesses.length }}/{{ maxGuesses }}</div>
+          </div>
+          <div v-else class="failure-message">
+            <div class="rating-header">❌ 挑战失败</div>
+            正确答案是: {{ targetOperator?.干员 }}
+            <div class="attempts-info">已用完 {{ maxGuesses }} 次机会</div>
+          </div>
+          <div class="game-actions">
+            <button @click="showResetConfirm = true" class="restart-btn">
+              重新开始
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- 输入区域 -->
       <div class="input-section">
         <div class="mobile-guess-input">
@@ -33,7 +55,7 @@
             class="mobile-search"
           />
         </div>
-        <div class="game-info">请通过像素化立绘，逐步鉴定出干员身份</div>
+        <div v-if="!gameWon && !gameOver" class="game-info">请通过像素化立绘，逐步鉴定出干员身份</div>
       </div>
       
       
@@ -55,6 +77,28 @@
         />
       </div>
       
+      <!-- 已猜过的干员区域 -->
+      <div v-if="guesses.length > 0" class="guesses-display-section">
+        <div class="guesses-title">已猜过的干员</div>
+        <div class="guesses-grid">
+          <div
+            v-for="(guess, index) in guesses"
+            :key="index"
+            class="guess-item"
+            :class="{ 'correct': guess.干员 === targetOperator?.干员 }"
+          >
+            <div class="guess-avatar-container">
+              <img 
+                :src="getOperatorAvatar(guess)" 
+                :alt="guess.干员" 
+                class="guess-avatar"
+              />
+            </div>
+            <div class="guess-name">{{ guess.干员 }}</div>
+          </div>
+        </div>
+      </div>
+      
       <!-- 底部区域 -->
       <div class="footer-section">
         <div class="footer-title">泰拉鉴定大师课毕业考试</div>
@@ -64,20 +108,26 @@
       </div>
     </div>
     
-    <!-- 结果弹窗 -->
-    <div v-if="showResult" class="result-modal" @click="hideResult">
-      <div class="result-content" @click.stop>
-        <div class="result-text">{{ resultMessage }}</div>
-        <div v-if="gameOver || gameWon" class="result-actions">
-          <button @click="resetGame" class="reset-btn">
-            重新开始
+    <!-- 重置确认弹窗 -->
+    <div v-if="showResetConfirm" class="confirm-modal" @click="showResetConfirm = false">
+      <div class="confirm-content" @click.stop>
+        <div class="confirm-text">确定要重新开始游戏吗？</div>
+        <div class="confirm-subtitle">当前进度将会丢失</div>
+        <div class="confirm-actions">
+          <button @click="showResetConfirm = false" class="cancel-btn">
+            取消
+          </button>
+          <button @click="confirmReset" class="confirm-btn">
+            确定重新开始
           </button>
         </div>
-        <div v-else class="result-actions">
-          <button @click="hideResult" class="continue-btn">
-            继续游戏
-          </button>
-        </div>
+      </div>
+    </div>
+
+    <!-- 临时消息弹窗 -->
+    <div v-if="showTempMessage" class="temp-message-modal" @click="hideTempMessage">
+      <div class="temp-message-content">
+        <div class="temp-message-text">{{ tempMessage }}</div>
       </div>
     </div>
   </div>
@@ -87,6 +137,7 @@
 import { ref, onMounted, nextTick, computed } from 'vue';
 import { loadOperatorsData } from './utils/dataLoader';
 import { selectRandomOperator, preprocessOperators } from './logic/gameLogic';
+import { getOperatorAvatarFile, getImagePath } from './utils/imageUtils';
 import GuessInput from './components/GuessInput.vue';
 import PuzzleBoard from './components/PuzzleBoard.vue';
 
@@ -103,8 +154,9 @@ export default {
     const guesses = ref([]);
     const gameOver = ref(false);
     const gameWon = ref(false);
-    const showResult = ref(false);
-    const resultMessage = ref('');
+    const showResetConfirm = ref(false);
+    const showTempMessage = ref(false);
+    const tempMessage = ref('');
     const showHint = ref(false);
     const currentHint = ref('');
     
@@ -121,6 +173,36 @@ export default {
       // 移动端不限制只有6星，使用4星以上的干员
       return operators.value.filter(op => (op.星级 || 0) >= 4);
     });
+
+    // 计算猜测评级
+    const guessRating = computed(() => {
+      if (!gameWon.value && !gameOver.value) {
+        return null; // 游戏还在进行中
+      }
+      
+      if (gameWon.value) {
+        const guessCount = guesses.value.length;
+        if (guessCount === 1) {
+          return 'perfect'; // 1次猜中 - 完美
+        } else if (guessCount <= 3) {
+          return 'excellent'; // 2-3次 - 优秀
+        } else if (guessCount <= 6) {
+          return 'good'; // 4-6次 - 良好
+        }
+      }
+      
+      return 'failed'; // 猜测失败
+    });
+
+    // 背景图片路径 - 根据当前页面调整路径
+    const bgImagePath = computed(() => {
+      // 检查当前路径是否在bw子目录下
+      const currentPath = window.location.pathname;
+      if (currentPath.includes('/bw/')) {
+        return '../bg.jpg';
+      }
+      return './bg.jpg';
+    });
     
     
     
@@ -128,7 +210,7 @@ export default {
     const initGame = async () => {
       try {
         // 加载干员数据
-        const data = await loadOperatorsData('./data/operators.json');
+        const data = await loadOperatorsData('../data/operators.json');
         
         // 预处理干员数据（重要！转换星级等字段）
         preprocessOperators(data);
@@ -152,7 +234,7 @@ export default {
         
       } catch (error) {
         console.error('初始化失败:', error);
-        showResultMessage('数据加载失败，请刷新页面重试');
+        showTempMessageFunc('数据加载失败，请刷新页面重试');
       }
     };
     
@@ -163,7 +245,8 @@ export default {
       gameOver.value = false;
       gameWon.value = false;
       showHint.value = false;
-      hideResult();
+      showResetConfirm.value = false;
+      hideTempMessage();
       
       // 生成新的游戏会话ID
       gameSessionId.value = Date.now().toString();
@@ -171,7 +254,7 @@ export default {
       // 随机选择目标干员
       const availableOperators = filteredOperators.value;
       if (availableOperators.length === 0) {
-        showResultMessage('没有可用的干员数据');
+        showTempMessageFunc('没有可用的干员数据');
         return;
       }
       
@@ -191,7 +274,7 @@ export default {
       );
       
       if (!guessedOperator) {
-        showResultMessage(`未找到干员: ${operatorName}`, 2000);
+        showTempMessageFunc(`未找到干员: ${operatorName}`);
         return;
       }
       
@@ -202,7 +285,6 @@ export default {
       if (guessedOperator.干员 === targetOperator.value.干员) {
         gameWon.value = true;
         gameOver.value = true;
-        showResultMessage(`🎉 恭喜！正确答案是: ${targetOperator.value.干员}`);
       } else {
         // 显示提示
         if (guesses.value.length % 2 === 0) {
@@ -212,7 +294,6 @@ export default {
         // 检查是否用完次数
         if (guesses.value.length >= maxGuesses.value) {
           gameOver.value = true;
-          showResultMessage(`😢 游戏结束！正确答案是: ${targetOperator.value.干员}`);
         }
       }
     };
@@ -237,22 +318,25 @@ export default {
       }, 3000);
     };
     
-    // 显示结果消息
-    const showResultMessage = (message, timeout = 0) => {
-      resultMessage.value = message;
-      showResult.value = true;
+    // 显示临时消息
+    const showTempMessageFunc = (message, timeout = 2000) => {
+      tempMessage.value = message;
+      showTempMessage.value = true;
       
-      // 只有在游戏未结束时才自动隐藏
-      if (timeout > 0 && !gameOver.value && !gameWon.value) {
-        setTimeout(() => {
-          showResult.value = false;
-        }, timeout);
-      }
+      setTimeout(() => {
+        showTempMessage.value = false;
+      }, timeout);
     };
     
-    // 隐藏结果
-    const hideResult = () => {
-      showResult.value = false;
+    // 隐藏临时消息
+    const hideTempMessage = () => {
+      showTempMessage.value = false;
+    };
+    
+    // 确认重置游戏
+    const confirmReset = () => {
+      showResetConfirm.value = false;
+      startNewGame();
     };
     
     // 处理GuessInput组件的提交
@@ -260,11 +344,13 @@ export default {
       submitGuess(operatorName);
     };
     
-    // 重置游戏
-    const resetGame = () => {
-      hideResult();
-      startNewGame();
+    // 获取干员头像
+    const getOperatorAvatar = (operator) => {
+      const file = getOperatorAvatarFile(operator.干员, operator.稀有度);
+      return getImagePath(file);
     };
+    
+    // 重置游戏（已移除，使用confirmReset代替）
     
     
     
@@ -280,17 +366,21 @@ export default {
       guesses,
       gameOver,
       gameWon,
-      showResult,
-      resultMessage,
+      showResetConfirm,
+      showTempMessage,
+      tempMessage,
       showHint,
       currentHint,
       maxGuesses,
       gameSessionId,
+      guessRating,
+      bgImagePath,
       
       // 方法
       onGuessSubmit,
-      resetGame,
-      hideResult
+      confirmReset,
+      hideTempMessage,
+      getOperatorAvatar
     };
   }
 };
@@ -302,6 +392,7 @@ export default {
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  /* 确保可以正常垂直滚动 */
 }
 
 .bg-pattern {
@@ -328,81 +419,153 @@ export default {
   flex-direction: column;
   position: relative;
   z-index: 1;
+  /* 确保内容在背景图片之上 */
+}
+
+.mobile-container > *:not(.background-image) {
+  position: relative;
+  z-index: 2;
+}
+
+.mobile-container .input-section {
+  z-index: 999999 !important;
+}
+
+.mobile-container .puzzle-section {
+  z-index: 1 !important;
+}
+
+/* 桌面端布局优化 */
+@media screen and (min-width: 769px) {
+  .mobile-container {
+    max-width: 800px;
+    padding: 20px;
+  }
+}
+
+/* 超宽屏布局优化 */
+@media screen and (min-width: 1200px) {
+  .mobile-container {
+    max-width: 900px;
+    padding: 20px;
+  }
 }
 
 .header-section {
-  padding: 20px;
+  padding: 0;
   position: relative;
-  z-index: 10;
-  height: 280px; /* 匹配示例图片比例 */
+  z-index: 2;
+  height: 160px;
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* 桌面端头部区域优化 */
+@media screen and (min-width: 769px) {
+  .header-section {
+    height: 200px;
+    padding: 0;
+    margin-bottom: 20px;
+  }
+}
+
+/* 超宽屏头部区域优化 */
+@media screen and (min-width: 1200px) {
+  .header-section {
+    height: 240px;
+    padding: 0;
+    margin-bottom: 20px;
+  }
 }
 
 .character-portrait {
   position: relative;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.8) 100%);
-  border-radius: 12px;
-  overflow: hidden;
+  /* 移除背景，让全局背景图片透过 */
+  border-radius: 0;
+  overflow: visible;
 }
 
-.character-image {
+
+.background-image {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  z-index: 0;
+  overflow: hidden;
+  /* 背景图片基于mobile-container的尺寸进行缩放 */
 }
 
-
-.placeholder-image {
+.bg-image {
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #1a4a3a 0%, #0f2a1f 100%);
+  object-fit: cover;
+  /* 显示图片顶部区域，确保帽子和头部完整显示 */
+  object-position: center 0%;
+  
+  /* 确保图片质量 */
+  image-rendering: high-quality;
+  image-rendering: -webkit-optimize-contrast;
 }
 
-.authority-text {
-  font-size: 72px;
-  font-weight: 900;
-  color: #dc3545;
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
-  transform: rotate(-15deg);
-  font-family: 'SimHei', 'Microsoft YaHei', sans-serif;
-}
-
-.title-overlay {
+.image-overlay {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  text-align: right;
-  z-index: 20;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  /* 增加遮罩以确保内容可读性 */
+  pointer-events: none;
 }
 
-.main-title {
-  font-size: 20px;
-  font-weight: bold;
-  color: #ffffff;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-  margin-bottom: 4px;
-  line-height: 1.2;
-}
-
-.subtitle {
-  font-size: 14px;
-  color: #e0e0e0;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-  font-weight: 500;
-}
 
 .input-section {
-  padding: 0 20px 20px;
-  z-index: 5;
+  padding: 0 20px 10px;
+  z-index: 99999;
+  width: 75%;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* 手机端输入区域优化 */
+@media (max-width: 768px) {
+  .input-section {
+    width: 100%;
+    padding: 0 10px 10px;
+    z-index: 999999 !important;
+    position: relative !important;
+  }
+}
+
+/* 桌面端输入区域优化 */
+@media screen and (min-width: 769px) {
+  .input-section {
+    padding: 0 20px 15px;
+    width: 75%;
+  }
+  
+  .game-info {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+}
+
+/* 超宽屏输入区域优化 */
+@media screen and (min-width: 1200px) {
+  .input-section {
+    padding: 0 20px 20px;
+    width: 75%;
+  }
+  
+  .game-info {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
 }
 
 .mobile-guess-input {
@@ -413,25 +576,87 @@ export default {
 .mobile-search ::v-deep(.guess-input-container) {
   width: 100%;
   font-size: 16px;
+  z-index: 99999 !important;
+  position: relative !important;
+}
+
+/* 手机端特殊处理 */
+@media (max-width: 768px) {
+  .mobile-search ::v-deep(.guess-input-container) {
+    width: 100%;
+    max-width: 100%;
+    z-index: 999999 !important;
+    position: relative !important;
+  }
+  
+  .mobile-search ::v-deep(.operator-search-input) {
+    font-size: 14px !important;
+    padding: 0 10px 0 36px !important;
+    height: 48px !important;
+  }
+  
+  .mobile-search ::v-deep(.submit-button) {
+    font-size: 14px !important;
+    padding: 0 20px !important;
+    height: 48px !important;
+    min-width: 70px !important;
+  }
+  
+  .mobile-search ::v-deep(.search-icon) {
+    left: 10px !important;
+  }
+  
+  .mobile-search ::v-deep(.suggestions-dropdown) {
+    z-index: 9999999 !important;
+    position: absolute !important;
+  }
+  
+  .mobile-search ::v-deep(.no-results) {
+    z-index: 9999999 !important;
+    position: absolute !important;
+  }
 }
 
 .mobile-search ::v-deep(.input-wrapper) {
   background-color: var(--color-card-bg);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  align-items: stretch;
+  display: flex;
 }
 
 .mobile-search ::v-deep(.operator-search-input) {
   font-size: 16px;
-  padding: 16px 16px 16px 48px;
-  border: 2px solid var(--color-border);
+  padding: 0 12px 0 40px;
+  border: 1px solid var(--color-border);
+  border-right: none;
   transition: all var(--transition-duration);
   background-color: transparent;
   color: var(--color-text);
+  height: 48px;
+  box-sizing: border-box;
+  line-height: 1.2;
+}
+
+/* 桌面端搜索输入框优化 */
+@media screen and (min-width: 769px) {
+  .mobile-search ::v-deep(.operator-search-input) {
+    font-size: 18px;
+    padding: 0 16px 0 48px;
+    height: 48px;
+    line-height: 1.2;
+  }
+  
+  .mobile-search ::v-deep(.submit-button) {
+    font-size: 18px;
+    padding: 0 36px;
+    height: 48px;
+    min-width: 100px;
+  }
 }
 
 .mobile-search ::v-deep(.operator-search-input:focus) {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
 .mobile-search ::v-deep(.operator-search-input::placeholder) {
@@ -440,13 +665,17 @@ export default {
 
 .mobile-search ::v-deep(.submit-button) {
   padding: 0 28px;
-  height: 52px;
+  height: 48px;
   background-color: var(--color-primary);
   color: white;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color var(--transition-duration);
+  border: 1px solid var(--color-primary);
+  border-radius: 0;
+  box-sizing: border-box;
+  min-width: 80px;
 }
 
 .mobile-search ::v-deep(.submit-button:hover:not(:disabled)) {
@@ -464,6 +693,8 @@ export default {
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(20px);
   border: 2px solid var(--color-primary);
+  z-index: 999999 !important;
+  position: absolute !important;
 }
 
 .mobile-search ::v-deep(.suggestion-item) {
@@ -517,6 +748,8 @@ export default {
   color: #888;
   backdrop-filter: blur(20px);
   border: 2px solid var(--color-primary);
+  z-index: 999999 !important;
+  position: absolute !important;
 }
 
 .mobile-search ::v-deep(.already-guessed) {
@@ -603,18 +836,65 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 300px;
+  min-height: 250px;
+  z-index: 1;
+  position: relative;
+}
+
+/* 桌面端拼图区域优化 */
+@media screen and (min-width: 769px) {
+  .puzzle-section {
+    padding: 0 40px;
+    min-height: 400px;
+  }
+}
+
+/* 超宽屏拼图区域优化 */
+@media screen and (min-width: 1200px) {
+  .puzzle-section {
+    padding: 0 60px;
+    min-height: 500px;
+  }
 }
 
 /* 移动端PuzzleBoard适配 */
 .mobile-puzzle-board {
   width: 100%;
   max-width: 100%;
+  z-index: 1 !important;
+  position: relative !important;
 }
 
 .mobile-puzzle-board ::v-deep(.puzzle-board) {
   margin-top: 0;
   padding: 0;
+  z-index: 1 !important;
+  position: relative !important;
+}
+
+.mobile-puzzle-board ::v-deep(.mosaic-container) {
+  z-index: 1 !important;
+  position: relative !important;
+}
+
+.mobile-puzzle-board ::v-deep(.mosaic-container canvas) {
+  z-index: 1 !important;
+  position: relative !important;
+}
+
+.mobile-puzzle-board ::v-deep(.final-overlay-container) {
+  z-index: 1 !important;
+  position: relative !important;
+}
+
+.mobile-puzzle-board ::v-deep(.overlay-mosaic),
+.mobile-puzzle-board ::v-deep(.overlay-original) {
+  z-index: 1 !important;
+}
+
+.mobile-puzzle-board ::v-deep(.mosaic-layer),
+.mobile-puzzle-board ::v-deep(.original-layer) {
+  z-index: 1 !important;
 }
 
 .mobile-puzzle-board ::v-deep(.game-status) {
@@ -846,7 +1126,160 @@ export default {
   line-height: 1.4;
 }
 
-.result-modal {
+/* 桌面端页脚优化 */
+@media screen and (min-width: 769px) {
+  .footer-title {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+  
+  .footer-credits {
+    font-size: 14px;
+  }
+}
+
+/* 游戏结果横幅 */
+.game-result-banner {
+  margin: 0 20px 20px;
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+/* 评级样式 */
+.game-result-banner.perfect {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+}
+
+.game-result-banner.excellent {
+  background: linear-gradient(135deg, #32CD32 0%, #228B22 100%);
+  box-shadow: 0 4px 20px rgba(50, 205, 50, 0.4);
+}
+
+.game-result-banner.good {
+  background: linear-gradient(135deg, #4169E1 0%, #1E90FF 100%);
+  box-shadow: 0 4px 20px rgba(65, 105, 225, 0.4);
+}
+
+.game-result-banner.failed {
+  background: linear-gradient(135deg, #DC143C 0%, #B22222 100%);
+  box-shadow: 0 4px 20px rgba(220, 20, 60, 0.4);
+}
+
+.game-result-banner .result-content {
+  text-align: center;
+  color: white;
+}
+
+.success-message {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.failure-message {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  padding: 20px;
+  border-radius: 12px;
+  margin: -20px -20px 10px -20px;
+}
+
+.attempts-info {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 5px;
+}
+
+.rating-header {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.game-actions {
+  margin-top: 15px;
+}
+
+.restart-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.restart-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.attempts-counter {
+  text-align: center;
+  color: #cccccc;
+  font-size: 14px;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+/* 桌面端游戏结果横幅优化 */
+@media screen and (min-width: 769px) {
+  .game-result-banner {
+    margin: 0 40px 30px;
+    padding: 30px;
+  }
+  
+  .success-message, .failure-message {
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+  
+  .attempts-info {
+    font-size: 16px;
+    margin-top: 8px;
+  }
+  
+  .restart-btn {
+    font-size: 18px;
+    padding: 15px 30px;
+  }
+}
+
+/* 超宽屏游戏结果横幅优化 */
+@media screen and (min-width: 1200px) {
+  .game-result-banner {
+    margin: 0 60px 40px;
+    padding: 40px;
+  }
+  
+  .success-message, .failure-message {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .attempts-info {
+    font-size: 18px;
+    margin-top: 10px;
+  }
+  
+  .restart-btn {
+    font-size: 20px;
+    padding: 18px 36px;
+  }
+}
+
+/* 确认弹窗 */
+.confirm-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -859,29 +1292,36 @@ export default {
   z-index: 1000;
 }
 
-.result-content {
+.confirm-content {
   background: rgba(0, 0, 0, 0.9);
   color: white;
   padding: 30px;
   border-radius: 12px;
   text-align: center;
-  min-width: 250px;
+  min-width: 300px;
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
-.result-text {
-  font-size: 16px;
-  margin-bottom: 20px;
+.confirm-text {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
   line-height: 1.5;
 }
 
-.result-actions {
+.confirm-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 20px;
+}
+
+.confirm-actions {
   display: flex;
   gap: 12px;
   justify-content: center;
 }
 
-.reset-btn, .continue-btn {
+.cancel-btn, .confirm-btn {
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
@@ -891,22 +1331,46 @@ export default {
   transition: background 0.2s;
 }
 
-.reset-btn {
+.cancel-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background: #5a6268;
+}
+
+.confirm-btn {
   background: #dc3545;
   color: white;
 }
 
-.reset-btn:hover {
+.confirm-btn:hover {
   background: #c82333;
 }
 
-.continue-btn {
-  background: #28a745;
-  color: white;
+/* 临时消息弹窗 */
+.temp-message-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  pointer-events: none;
 }
 
-.continue-btn:hover {
-  background: #218838;
+.temp-message-content {
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.temp-message-text {
+  font-size: 16px;
+  text-align: center;
 }
 
 @keyframes spin {
@@ -946,8 +1410,10 @@ export default {
 .puzzle-section ::v-deep(.puzzle-container),
 .mobile-puzzle-board ::v-deep(.mosaic-container),
 .mobile-puzzle-board ::v-deep(.final-image-container),
-.mobile-puzzle-board ::v-deep(.final-compare-container) {
-  width: min(calc(100vw - 40px), 280px);
+.mobile-puzzle-board ::v-deep(.final-compare-container),
+.mobile-puzzle-board ::v-deep(.final-overlay-container) {
+  width: min(calc(100vw - 40px), calc(100% - 40px));
+  max-width: 400px;
   position: relative;
   margin: 0 auto;
   border: none !important;
@@ -956,44 +1422,71 @@ export default {
   background: transparent !important;
 }
 
-/* aspect-ratio备份方案 */
-.puzzle-section ::v-deep(.puzzle-container)::before,
-.mobile-puzzle-board ::v-deep(.mosaic-container)::before {
-  content: '';
-  display: block;
-  padding-top: 100%;
+/* 桌面端拼图容器优化 */
+@media screen and (min-width: 769px) {
+  .puzzle-section ::v-deep(.puzzle-container),
+  .mobile-puzzle-board ::v-deep(.mosaic-container),
+  .mobile-puzzle-board ::v-deep(.final-image-container),
+  .mobile-puzzle-board ::v-deep(.final-compare-container),
+  .mobile-puzzle-board ::v-deep(.final-overlay-container) {
+    width: min(calc(100vw - 60px), calc(100% - 20px));
+    max-width: 600px;
+  }
 }
 
-.puzzle-section ::v-deep(.puzzle-container) > *,
-.mobile-puzzle-board ::v-deep(.mosaic-container) > * {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: none !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
+/* 超宽屏优化 */
+@media screen and (min-width: 1200px) {
+  .puzzle-section ::v-deep(.puzzle-container),
+  .mobile-puzzle-board ::v-deep(.mosaic-container),
+  .mobile-puzzle-board ::v-deep(.final-image-container),
+  .mobile-puzzle-board ::v-deep(.final-compare-container),
+  .mobile-puzzle-board ::v-deep(.final-overlay-container) {
+    width: min(calc(100vw - 80px), calc(100% - 40px));
+    max-width: 700px;
+  }
 }
 
-/* 现代浏览器使用aspect-ratio */
+/* 现代浏览器使用aspect-ratio保持1:1比例 */
 @supports(aspect-ratio: 1/1) {
   .puzzle-section ::v-deep(.puzzle-container),
-  .mobile-puzzle-board ::v-deep(.mosaic-container) {
-    padding-top: 0;
+  .mobile-puzzle-board ::v-deep(.mosaic-container),
+  .mobile-puzzle-board ::v-deep(.final-overlay-container),
+  .mobile-puzzle-board ::v-deep(.final-image-container) {
     aspect-ratio: 1/1;
-  }
-  
-  .puzzle-section ::v-deep(.puzzle-container)::before,
-  .mobile-puzzle-board ::v-deep(.mosaic-container)::before {
-    display: none;
+    height: auto;
   }
   
   .puzzle-section ::v-deep(.puzzle-container) > *,
-  .mobile-puzzle-board ::v-deep(.mosaic-container) > * {
-    position: static;
-    inset: auto;
+  .mobile-puzzle-board ::v-deep(.mosaic-container) > *,
+  .mobile-puzzle-board ::v-deep(.final-overlay-container) > *,
+  .mobile-puzzle-board ::v-deep(.final-image-container) > * {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+/* 备用方案：如果不支持aspect-ratio */
+@supports not (aspect-ratio: 1/1) {
+  .puzzle-section ::v-deep(.puzzle-container),
+  .mobile-puzzle-board ::v-deep(.mosaic-container),
+  .mobile-puzzle-board ::v-deep(.final-overlay-container),
+  .mobile-puzzle-board ::v-deep(.final-image-container) {
+    position: relative;
+    height: 0;
+    padding-bottom: 100%; /* 1:1 aspect ratio */
+  }
+  
+  .puzzle-section ::v-deep(.puzzle-container) > *,
+  .mobile-puzzle-board ::v-deep(.mosaic-container) > *,
+  .mobile-puzzle-board ::v-deep(.final-overlay-container) > *,
+  .mobile-puzzle-board ::v-deep(.final-image-container) > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 }
 
@@ -1055,21 +1548,19 @@ export default {
 .puzzle-section,
 .mobile-puzzle-board ::v-deep(.mosaic-container),
 .mobile-puzzle-board ::v-deep(.final-image-container) {
-  width: min(calc(100vw - 40px), 280px) !important;
-  max-width: min(calc(100vw - 40px), 280px) !important;
+  width: 100% !important;
+  max-width: 100% !important;
   margin: 0 auto !important;
   overflow: hidden !important;
 }
 
-/* Canvas强制匹配容器尺寸 */
+/* Canvas自适应容器尺寸 */
 .mobile-puzzle-board ::v-deep(canvas),
 .mobile-puzzle-board ::v-deep(.final-image) {
   width: 100% !important;
-  height: 100% !important;
+  height: auto !important;
   max-width: 100% !important;
-  max-height: 100% !important;
-  min-width: 100% !important;
-  min-height: 100% !important;
+  display: block !important;
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
@@ -1077,7 +1568,7 @@ export default {
   margin: 0 !important;
   padding: 0 !important;
   background: transparent !important;
-  object-fit: cover !important;
+  object-fit: contain !important;
   image-rendering: pixelated !important;
   image-rendering: -moz-crisp-edges !important;
   image-rendering: crisp-edges !important;
@@ -1154,6 +1645,155 @@ export default {
   .title-overlay {
     top: 15px;
     right: 15px;
+  }
+}
+
+/* 已猜过的干员显示区域 */
+.guesses-display-section {
+  padding: 15px 20px;
+  margin: 10px 0;
+  z-index: 2;
+  position: relative;
+}
+
+.guesses-title {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 12px;
+  opacity: 0.9;
+}
+
+.guesses-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 100%;
+}
+
+.guess-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  min-width: 70px;
+  max-width: 80px;
+}
+
+.guess-item.correct {
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.4);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.guess-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.guess-avatar-container {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #eee;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  margin-bottom: 6px;
+}
+
+.guess-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.guess-name {
+  font-size: 11px;
+  color: var(--color-text);
+  text-align: center;
+  font-weight: 500;
+  line-height: 1.2;
+  word-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 桌面端已猜干员优化 */
+@media screen and (min-width: 769px) {
+  .guesses-display-section {
+    padding: 20px 40px;
+    margin: 15px 0;
+  }
+  
+  .guesses-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+  
+  .guesses-grid {
+    gap: 16px;
+  }
+  
+  .guess-item {
+    padding: 10px;
+    min-width: 80px;
+    max-width: 90px;
+  }
+  
+  .guess-avatar-container {
+    width: 56px;
+    height: 56px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    margin-bottom: 8px;
+  }
+  
+  .guess-name {
+    font-size: 12px;
+  }
+}
+
+/* 超宽屏已猜干员优化 */
+@media screen and (min-width: 1200px) {
+  .guesses-display-section {
+    padding: 25px 60px;
+    margin: 20px 0;
+  }
+  
+  .guesses-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .guesses-grid {
+    gap: 20px;
+  }
+  
+  .guess-item {
+    padding: 12px;
+    min-width: 90px;
+    max-width: 100px;
+  }
+  
+  .guess-avatar-container {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 10px;
+  }
+  
+  .guess-name {
+    font-size: 13px;
   }
 }
 </style>

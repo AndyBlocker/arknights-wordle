@@ -53,23 +53,25 @@
       />
     </div>
 
-    <!-- 如果猜对，则左侧显示马赛克，右侧显示原图 -->
-    <div v-else-if="gameWon && !loadingImage" class="final-compare-container">
-      <div class="final-compare-left">
-        <!-- 让用户看到最后的马赛克图，渲染到同一个 canvas -->
+    <!-- 如果猜对，显示重叠的马赛克和原图 -->
+    <div v-else-if="gameWon && !loadingImage" class="final-overlay-container">
+      <div class="overlay-mosaic">
+        <!-- 马赛克图层，渲染到canvas -->
         <canvas
           ref="mosaicCanvas"
           :width="scaledWidth"
           :height="scaledHeight"
+          class="mosaic-layer"
         ></canvas>
       </div>
-      <div class="final-compare-right">
+      <div class="overlay-original">
+        <!-- 原图图层，透明度适中 -->
         <img
           v-if="puzzleImageUrl"
           :src="puzzleImageUrl"
           :alt="targetOperator.干员"
-          class="final-image"
-          :style="{ maxWidth: '100%', width: scaledWidth + 'px', maxHeight: scaledHeight + 'px' }"
+          class="original-layer"
+          :style="{ width: scaledWidth + 'px', height: scaledHeight + 'px' }"
           loading="eager"
           :key="`final-won-${gameSessionId}`"
         />
@@ -140,7 +142,7 @@
 </template>
 
 <script>
-import { ref, watch, onMounted, nextTick, computed } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount, nextTick, computed } from 'vue';
 import { getOperatorAvatarFile, getImagePath } from '../utils/imageUtils';
 import {
   loadPuzzleImage,
@@ -226,6 +228,7 @@ export default {
     // 加载状态
     const loadingStatus = ref('初始化中...');
     const loadingProgress = ref(0);
+    
 
     // 生成随机化且智能的提示列表
     const generatePuzzleHints = () => {
@@ -349,6 +352,7 @@ export default {
         }
       }
     );
+
 
     // 如果在猜的过程中直接 gameOver 或 guessCorrect，需要触发一次渲染
     watch(
@@ -581,8 +585,41 @@ export default {
       initPuzzle();
     }
 
+    // 处理窗口大小变化以响应式调整Canvas尺寸
+    let resizeTimeout = null;
+    const handleResize = () => {
+      // 防抖：避免频繁触发
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
+      
+      resizeTimeout = setTimeout(() => {
+        // 更新初始视口宽度
+        initialViewportWidth.value = window.innerWidth;
+        
+        // 如果游戏正在进行且有Canvas，重新渲染
+        if (!loadingImage.value && integralData.value && mosaicCanvas.value) {
+          nextTick(() => {
+            renderMosaicIfNeeded();
+          });
+        }
+      }, 150);
+    };
+
     onMounted(() => {
-      // no-op
+      // 添加窗口大小变化监听
+      window.addEventListener('resize', handleResize, { passive: true });
+    });
+
+    onBeforeUnmount(() => {
+      // 清理监听器和超时
+      window.removeEventListener('resize', handleResize);
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
+      if (initTimeout) {
+        clearTimeout(initTimeout);
+      }
     });
 
     return {
@@ -754,9 +791,94 @@ export default {
   border-radius: 4px;
   background-color: #f5f5f5;
   overflow: hidden;
+  width: 100%;
+  aspect-ratio: 1/1;
 }
 
-/* 猜对后，左右对比容器 */
+.mosaic-container canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+/* 猜对后，重叠显示容器 */
+.final-overlay-container {
+  position: relative;
+  margin: 20px auto;
+  width: 100%;
+  aspect-ratio: 1/1;
+  border-radius: 6px;
+  overflow: visible;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.overlay-mosaic {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.overlay-original {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.mosaic-layer {
+  display: block;
+  border: none;
+  border-radius: 6px;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.original-layer {
+  opacity: 0.85;
+  border: none;
+  border-radius: 6px;
+  transition: opacity 0.3s ease;
+  object-fit: fill;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.final-overlay-container:hover .original-layer {
+  opacity: 1.0;
+}
+
+
+/* 备用方案：对于不支持aspect-ratio的浏览器 */
+@supports not (aspect-ratio: 1/1) {
+  .mosaic-container,
+  .final-overlay-container {
+    position: relative;
+    height: 0;
+    padding-bottom: 100%; /* 1:1 aspect ratio */
+  }
+  
+  .mosaic-container canvas,
+  .mosaic-layer,
+  .original-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* 保留旧的对比容器样式以防需要 */
 .final-compare-container {
   display: flex;
   flex-wrap: wrap;
