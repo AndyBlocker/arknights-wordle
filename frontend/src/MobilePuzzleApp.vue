@@ -389,15 +389,13 @@ export default {
 <style scoped>
 .mobile-puzzle-app {
   width: 100%;
-  min-height: 100vh;
+  /* 移除限制高度的样式，使用flex布局 */
+  flex: 1 0 auto;
   position: relative;
   overflow-x: hidden;
-  overflow-y: auto;
-  /* 确保可以正常垂直滚动 */
-  /* 三星浏览器特殊支持 */
-  touch-action: pan-y pinch-zoom;
+  /* 移除有问题的touch-action，使用默认auto */
+  touch-action: auto;
   -webkit-overflow-scrolling: touch;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
 .bg-pattern {
@@ -419,12 +417,13 @@ export default {
   width: 100%;
   max-width: 450px;
   margin: 0 auto;
-  min-height: 100vh;
+  /* 移除min-height限制，让内容自然撑开 */
   display: flex;
   flex-direction: column;
   position: relative;
   z-index: 1;
   /* 确保内容在背景图片之上 */
+  flex: 1 0 auto;
 }
 
 .mobile-container > *:not(.background-image) {
@@ -503,6 +502,14 @@ export default {
   z-index: 0;
   overflow: hidden;
   /* 背景图片基于mobile-container的尺寸进行缩放 */
+  /* 彻底禁用背景装饰的pointer-events，避免截获触点 */
+  pointer-events: none !important;
+}
+
+/* 背景装饰彻底不给事件，避免截获触点 */
+.background-image,
+.background-image * {
+  pointer-events: none !important;
 }
 
 .bg-image {
@@ -525,7 +532,6 @@ export default {
   height: 100%;
   background: rgba(0, 0, 0, 0.4);
   /* 增加遮罩以确保内容可读性 */
-  pointer-events: none;
 }
 
 
@@ -1123,6 +1129,8 @@ export default {
   padding: 20px;
   text-align: center;
   background: rgba(0, 0, 0, 0.3);
+  /* 页脚始终贴底；内容超过一屏时就随页面滚动 */
+  flex-shrink: 0;
   margin-top: auto;
 }
 

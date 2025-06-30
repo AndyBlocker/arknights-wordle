@@ -38,21 +38,4 @@ if ('serviceWorker' in navigator) {
   // 可以在这里注册service worker
 }
 
-// 防止移动端的双击缩放
-let lastTouchEnd = 0;
-document.addEventListener('touchend', function (event) {
-  const now = (new Date()).getTime();
-  if (now - lastTouchEnd <= 300) {
-    event.preventDefault();
-  }
-  lastTouchEnd = now;
-}, false);
-
-// 防止iOS Safari的橡皮筋效果
-document.addEventListener('touchmove', function (event) {
-  if (event.scale !== 1) { 
-    event.preventDefault(); 
-  }
-}, { passive: false });
-
 console.log('泰拉鉴定大师课毕业考试 - 移动端版本已启动');

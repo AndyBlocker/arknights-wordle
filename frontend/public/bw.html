@@ -12,32 +12,25 @@
         box-sizing: border-box;
       }
       
+      /* 全局 reset，视口占满，交给 body 滚动 */
       html, body {
+        height: 100%;
+        margin: 0;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         background: linear-gradient(135deg, #1a4a3a 0%, #0f2a1f 100%);
         color: white;
-        min-height: 100vh;
         overflow-x: hidden;
-        overflow-y: auto;
-        -webkit-user-select: none;
-        user-select: none;
-        /* 三星浏览器兼容性 */
-        touch-action: pan-y pinch-zoom;
+        /* 使用默认的触摸行为，让浏览器自行处理 */
+        touch-action: auto;
         -webkit-overflow-scrolling: touch;
-        -ms-overflow-style: -ms-autohiding-scrollbar;
       }
       
-      html {
-        /* 确保HTML元素可以滚动 */
-        height: auto;
-        min-height: 100%;
-      }
-      
+      /* 把 body 变成 Flex 容器，纵向排列 */
       body {
-        /* 确保body可以正常滚动 */
-        position: relative;
-        height: auto;
-        min-height: 100vh;
+        /* 允许正常滚动 */
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
       }
       
       /* 隐藏加载时的闪烁 */
@@ -86,6 +79,14 @@
         color: #ccc;
       }
     </style>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YN5G6F2EB3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-YN5G6F2EB3');
+  </script>
   </head>
   <body>
     <noscript>

@@ -4,8 +4,6 @@
 * {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
 }
 
 /* 允许输入框选择文本 */
@@ -21,30 +19,35 @@ html {
   text-size-adjust: 100%;
 }
 
+/* 全局 reset，视口占满，交给 body 滚动 */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* 把 body 变成 Flex 容器，纵向排列 */
 body {
-  /* 允许页面正常滚动，但防止横向滚动 */
-  position: relative;
-  width: 100%;
-  min-height: 100%;
+  /* 允许正常滚动 */
   overflow-x: hidden;
   overflow-y: auto;
+  
+  display: flex;
+  flex-direction: column;
   
   /* 移动端字体优化 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   
-  /* 三星浏览器特殊处理 - 允许缩放和垂直滚动 */
-  touch-action: pan-y pinch-zoom;
+  /* 使用默认的触摸行为，让浏览器自行处理 */
+  touch-action: auto;
   -webkit-overflow-scrolling: touch;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
-/* 移动端专用的应用容器 */
+/* 移动端专用的应用容器 - 参与flex布局 */
 #app {
-  position: relative;
+  flex: 1 0 auto;
   width: 100%;
-  min-height: 100vh;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
@@ -56,9 +59,6 @@ button {
   border: none;
   outline: none;
   cursor: pointer;
-  
-  /* 防止双击缩放 */
-  touch-action: manipulation;
   
   /* 按钮点击效果 */
   transition: transform 0.1s ease, background-color 0.2s ease;
@@ -124,6 +124,17 @@ img {
   
   /* 防止图片拖拽保存 */
   pointer-events: none;
+}
+
+/* 只在特定装饰性元素上禁用选择 */
+.noselect,
+.bg-pattern,
+.background-image,
+.image-overlay,
+.mobile-puzzle-board canvas,
+button {
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* 移动端文本选择 */
@@ -241,10 +252,7 @@ img {
   }
 }
 
-/* 消除移动端点击延迟 */
-a, button, input, select, textarea {
-  touch-action: manipulation;
-}
+/* 消除移动端点击延迟 - 移除可能干扰滚动的touch-action设置 */
 
 /* PWA相关样式 */
 @media (display-mode: standalone) {
@@ -274,4 +282,14 @@ input:focus {
 .loading-spinner {
   animation: mobile-spin 1s linear infinite;
   transform: translateZ(0); /* GPU加速 */
+}
+
+/* ✅ 让 Canvas 只屏蔽点击/长按，但允许纵向滚动手势 */
+canvas {
+  touch-action: pan-y !important;
+}
+
+/* ✅ 保险起见，把根元素也设成 pan-y */
+html, body, .mobile-puzzle-app {
+  touch-action: pan-y !important;
 }
