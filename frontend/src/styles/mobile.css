@@ -34,9 +34,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   
-  /* 防止iOS Safari的缩放 */
-  touch-action: manipulation;
+  /* 三星浏览器特殊处理 - 允许缩放和垂直滚动 */
+  touch-action: pan-y pinch-zoom;
   -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
 /* 移动端专用的应用容器 */
@@ -61,6 +62,13 @@ button {
   
   /* 按钮点击效果 */
   transition: transform 0.1s ease, background-color 0.2s ease;
+  
+  /* 确保文字居中 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
 }
 
 button:active {

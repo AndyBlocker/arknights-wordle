@@ -392,7 +392,12 @@ export default {
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  overflow-y: auto;
   /* 确保可以正常垂直滚动 */
+  /* 三星浏览器特殊支持 */
+  touch-action: pan-y pinch-zoom;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
 .bg-pattern {
@@ -600,6 +605,11 @@ export default {
     padding: 0 20px !important;
     height: 48px !important;
     min-width: 70px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    line-height: 1 !important;
   }
   
   .mobile-search ::v-deep(.search-icon) {
@@ -676,6 +686,11 @@ export default {
   border-radius: 0;
   box-sizing: border-box;
   min-width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
 }
 
 .mobile-search ::v-deep(.submit-button:hover:not(:disabled)) {

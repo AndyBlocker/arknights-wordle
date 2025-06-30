@@ -553,6 +553,11 @@ export default {
   flex-shrink: 0;
   min-width: 60px;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
 }
 .submit-button:hover:not(:disabled) {
   background-color: var(--color-primary-hover);
@@ -707,6 +712,11 @@ export default {
     font-size: 14px;
     padding: 0 16px;
     height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1;
   }
   .search-icon {
     left: 10px;
