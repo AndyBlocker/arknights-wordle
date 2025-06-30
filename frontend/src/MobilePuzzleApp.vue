@@ -426,6 +426,13 @@ export default {
   flex: 1 0 auto;
 }
 
+/* 中等屏幕下增加容器宽度 */
+@media screen and (min-width: 500px) and (max-width: 768px) {
+  .mobile-container {
+    max-width: min(90vw, 600px);
+  }
+}
+
 .mobile-container > *:not(.background-image) {
   position: relative;
   z-index: 2;
@@ -546,7 +553,7 @@ export default {
 /* 手机端输入区域优化 */
 @media (max-width: 768px) {
   .input-section {
-    width: 100%;
+    width: 90%;
     padding: 0 10px 10px;
     z-index: 999999 !important;
     position: relative !important;
@@ -680,7 +687,7 @@ export default {
 }
 
 .mobile-search ::v-deep(.submit-button) {
-  padding: 0 28px;
+  padding: 0 32px;
   height: 48px;
   background-color: var(--color-primary);
   color: white;
@@ -691,7 +698,7 @@ export default {
   border: 1px solid var(--color-primary);
   border-radius: 0;
   box-sizing: border-box;
-  min-width: 80px;
+  min-width: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -860,6 +867,13 @@ export default {
   min-height: 250px;
   z-index: 1;
   position: relative;
+}
+
+/* 中等屏幕下减少puzzle-section的padding */
+@media screen and (min-width: 500px) and (max-width: 768px) {
+  .puzzle-section {
+    padding: 0 30px;
+  }
 }
 
 /* 桌面端拼图区域优化 */
@@ -1435,8 +1449,8 @@ export default {
 .mobile-puzzle-board ::v-deep(.final-image-container),
 .mobile-puzzle-board ::v-deep(.final-compare-container),
 .mobile-puzzle-board ::v-deep(.final-overlay-container) {
-  width: min(calc(100vw - 40px), calc(100% - 40px));
-  max-width: 400px;
+  width: min(calc(100vw - 40px), 85%);
+  max-width: 380px;
   position: relative;
   margin: 0 auto;
   border: none !important;
@@ -1445,14 +1459,38 @@ export default {
   background: transparent !important;
 }
 
-/* 桌面端拼图容器优化 */
-@media screen and (min-width: 769px) {
+/* 中等屏幕优化 */
+@media screen and (min-width: 500px) and (max-width: 768px) {
   .puzzle-section ::v-deep(.puzzle-container),
   .mobile-puzzle-board ::v-deep(.mosaic-container),
   .mobile-puzzle-board ::v-deep(.final-image-container),
   .mobile-puzzle-board ::v-deep(.final-compare-container),
   .mobile-puzzle-board ::v-deep(.final-overlay-container) {
-    width: min(calc(100vw - 60px), calc(100% - 20px));
+    width: min(calc(100vw - 60px), 80%);
+    max-width: 450px;
+  }
+}
+
+/* 平板端拼图容器优化 */
+@media screen and (min-width: 769px) and (max-width: 1023px) {
+  .puzzle-section ::v-deep(.puzzle-container),
+  .mobile-puzzle-board ::v-deep(.mosaic-container),
+  .mobile-puzzle-board ::v-deep(.final-image-container),
+  .mobile-puzzle-board ::v-deep(.final-compare-container),
+  .mobile-puzzle-board ::v-deep(.final-overlay-container) {
+    width: min(calc(100vw - 50px), 85%);
+    max-width: 500px;
+  }
+}
+
+/* 桌面端拼图容器优化 */
+@media screen and (min-width: 1024px) and (max-width: 1199px) {
+  .puzzle-section ::v-deep(.puzzle-container),
+  .mobile-puzzle-board ::v-deep(.mosaic-container),
+  .mobile-puzzle-board ::v-deep(.final-image-container),
+  .mobile-puzzle-board ::v-deep(.final-compare-container),
+  .mobile-puzzle-board ::v-deep(.final-overlay-container) {
+    width: min(calc(100vw - 60px), 80%);
     max-width: 600px;
   }
 }
@@ -1464,7 +1502,7 @@ export default {
   .mobile-puzzle-board ::v-deep(.final-image-container),
   .mobile-puzzle-board ::v-deep(.final-compare-container),
   .mobile-puzzle-board ::v-deep(.final-overlay-container) {
-    width: min(calc(100vw - 80px), calc(100% - 40px));
+    width: min(calc(100vw - 80px), 75%);
     max-width: 700px;
   }
 }

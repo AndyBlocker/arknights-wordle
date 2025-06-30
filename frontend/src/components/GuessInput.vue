@@ -470,7 +470,7 @@ export default {
 <style>
 .guess-input-container {
   position: relative;
-  width: 75%;
+  width: 90%;
   z-index: 99999;
   margin: 0 auto;
 }
@@ -539,7 +539,7 @@ export default {
 }
 
 .submit-button {
-  padding: 0 20px;
+  padding: 0 24px;
   height: 44px;
   background-color: var(--color-primary);
   color: white;
@@ -551,7 +551,7 @@ export default {
   transition: background-color var(--transition-duration);
   white-space: nowrap;
   flex-shrink: 0;
-  min-width: 60px;
+  min-width: 80px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -710,8 +710,9 @@ export default {
   }
   .submit-button {
     font-size: 14px;
-    padding: 0 16px;
+    padding: 0 20px;
     height: 40px;
+    min-width: 90px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -731,6 +732,54 @@ export default {
   }
   .operator-name {
     font-size: 14px;
+  }
+}
+
+/* 极窄屏幕优化 */
+@media (max-width: 360px) {
+  .guess-input-container {
+    width: 95%;
+  }
+  .input-wrapper {
+    flex-wrap: nowrap;
+  }
+  .operator-search-input {
+    font-size: 14px;
+    padding: 8px 8px 8px 32px;
+    min-width: 0;
+    flex: 1;
+  }
+  .submit-button {
+    font-size: 12px;
+    padding: 0 12px;
+    min-width: 60px;
+    flex-shrink: 0;
+  }
+  .search-icon {
+    left: 8px;
+  }
+}
+
+/* 超窄屏幕优化 */
+@media (max-width: 320px) {
+  .guess-input-container {
+    width: 98%;
+  }
+  .operator-search-input {
+    font-size: 13px;
+    padding: 6px 6px 6px 28px;
+  }
+  .submit-button {
+    font-size: 11px;
+    padding: 0 8px;
+    min-width: 50px;
+  }
+  .search-icon {
+    left: 6px;
+  }
+  .search-icon svg {
+    width: 16px;
+    height: 16px;
   }
 }
 </style>
