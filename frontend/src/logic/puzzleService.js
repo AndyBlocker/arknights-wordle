@@ -104,8 +104,8 @@ export function clearAllCache() {
 /**
  * 加载图片并生成积分图 (integral image) 数据，以便高效计算区域平均颜色。
  */
-export async function loadPuzzleImage(operator, maxWidth = 600, maxHeight = 600, initialViewportWidth = 800, gameSessionId = null) {
-    const fileName = selectRandomArt(operator, gameSessionId);
+export async function loadPuzzleImage(operator, maxWidth = 600, maxHeight = 600, initialViewportWidth = 800, gameSessionId = null, customArtSelector = null) {
+    const fileName = customArtSelector ? customArtSelector(operator, gameSessionId) : selectRandomArt(operator, gameSessionId);
     const puzzleImageUrl = getImagePath(fileName);
     const cacheKey = `${fileName}_${maxWidth}_${maxHeight}`;
 

@@ -201,6 +201,10 @@ export default {
     puzzleHintInterval: {
       type: Number,
       default: 3
+    },
+    customArtSelector: {
+      type: Function,
+      default: null
     }
   },
   emits: ['reset'],
@@ -407,7 +411,8 @@ export default {
           600,
           600,
           initialViewportWidth.value,
-          props.gameSessionId
+          props.gameSessionId,
+          props.customArtSelector
         );
         
         loadingStatus.value = '图片加载完成';

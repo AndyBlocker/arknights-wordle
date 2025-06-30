@@ -24,21 +24,21 @@
         <div class="result-content">
           <div v-if="gameWon" class="success-message">
             <div class="rating-header">
-              <span v-if="guessRating === 'perfect'">🏆 完美！</span>
-              <span v-else-if="guessRating === 'excellent'">⭐ 优秀！</span>
-              <span v-else-if="guessRating === 'good'">👍 良好！</span>
+              <span v-if="guessRating === 'perfect'">🏆 超大杯学员！</span>
+              <span v-else-if="guessRating === 'excellent'">⭐ 大杯学员！</span>
+              <span v-else-if="guessRating === 'good'">👍 中杯学员！</span>
             </div>
             正确答案是: {{ targetOperator?.干员 }}
-            <div class="attempts-info">猜测次数: {{ guesses.length }}/{{ maxGuesses }}</div>
+            <div class="attempts-info">鉴定次数: {{ guesses.length }}/{{ maxGuesses }}</div>
           </div>
           <div v-else class="failure-message">
-            <div class="rating-header">❌ 挑战失败</div>
+            <div class="rating-header">❌ 小杯学员！</div>
             正确答案是: {{ targetOperator?.干员 }}
             <div class="attempts-info">已用完 {{ maxGuesses }} 次机会</div>
           </div>
           <div class="game-actions">
             <button @click="showResetConfirm = true" class="restart-btn">
-              重新开始
+              再来一次
             </button>
           </div>
         </div>
@@ -71,7 +71,8 @@
           :userGaveUp="false"
           :guesses="guesses"
           :gameSessionId="gameSessionId"
-          :puzzleHintInterval="2"
+          :puzzleHintInterval="1"
+          :customArtSelector="selectPuzzleArt"
           @reset="resetGame"
           class="mobile-puzzle-board"
         />
@@ -79,7 +80,7 @@
       
       <!-- 已猜过的干员区域 -->
       <div v-if="guesses.length > 0" class="guesses-display-section">
-        <div class="guesses-title">已猜过的干员</div>
+        <div class="guesses-title">已提交过的干员</div>
         <div class="guesses-grid">
           <div
             v-for="(guess, index) in guesses"
@@ -111,7 +112,7 @@
     <!-- 重置确认弹窗 -->
     <div v-if="showResetConfirm" class="confirm-modal" @click="showResetConfirm = false">
       <div class="confirm-content" @click.stop>
-        <div class="confirm-text">确定要重新开始游戏吗？</div>
+        <div class="confirm-text">确定要重新开始考试吗？</div>
         <div class="confirm-subtitle">当前进度将会丢失</div>
         <div class="confirm-actions">
           <button @click="showResetConfirm = false" class="cancel-btn">
@@ -138,6 +139,7 @@ import { ref, onMounted, nextTick, computed } from 'vue';
 import { loadOperatorsData } from './utils/dataLoader';
 import { selectRandomOperator, preprocessOperators } from './logic/gameLogic';
 import { getOperatorAvatarFile, getImagePath } from './utils/imageUtils';
+import { getAvailableArts } from './logic/puzzleService';
 import GuessInput from './components/GuessInput.vue';
 import PuzzleBoard from './components/PuzzleBoard.vue';
 
@@ -157,21 +159,100 @@ export default {
     const showResetConfirm = ref(false);
     const showTempMessage = ref(false);
     const tempMessage = ref('');
-    const showHint = ref(false);
-    const currentHint = ref('');
     
     // 游戏配置
     const maxGuesses = ref(6);
     const gameSessionId = ref(Date.now().toString());
     
+    // 判断是否为皮肤干员的函数
+    const isSkinOperator = (operator) => {
+      // 常见的皮肤标识方式：
+      // 1. 干员名包含特殊后缀或标识
+      // 2. 获得方式包含皮肤相关信息
+      // 3. 有特殊的皮肤标记字段
+      
+      if (!operator || !operator.干员) return false;
+      
+      const operatorName = operator.干员;
+      const obtainMethod = operator.获得方式 || '';
+      
+      // 检查干员名是否包含皮肤相关标识
+      const skinNamePatterns = [
+        /skin/i,
+        /皮肤/,
+        /时装/,
+        /服装/,
+        /夏日版/,
+        /冬日版/,
+        /圣诞版/,
+        /新年版/,
+        /泳装版/,
+        /\[.*\]$/, // 名称末尾的方括号标识
+        /_skin\d*$/i // 末尾_skin数字
+      ];
+      
+      for (const pattern of skinNamePatterns) {
+        if (pattern.test(operatorName)) {
+          return true;
+        }
+      }
+      
+      // 检查获得方式是否包含皮肤相关信息
+      const skinObtainPatterns = [
+        /皮肤/,
+        /时装/,
+        /服装/,
+        /skin/i,
+        /外观/
+      ];
+      
+      for (const pattern of skinObtainPatterns) {
+        if (pattern.test(obtainMethod)) {
+          return true;
+        }
+      }
+      
+      return false;
+    };
+
+    // 专门为移动端拼图模式设计的立绘选择函数
+    const selectPuzzleArt = (operator, gameSessionId) => {
+      const list = getAvailableArts(operator);
+      if (!list || list.length === 0) {
+        return '';
+      }
+      
+      // 排除皮肤立绘
+      const basicArts = list.filter(art => !art.includes('skin'));
+      
+      if (basicArts.length === 0) {
+        // 如果没有基础立绘，使用第一个可用的立绘
+        return list[0];
+      }
+      
+      // 优先选择精二立绘（_2.png）
+      const elite2Art = basicArts.find(art => art.includes('_2.png'));
+      if (elite2Art) {
+        return elite2Art;
+      }
+      
+      // 如果没有精二立绘，选择精一立绘（_1.png）
+      const elite1Art = basicArts.find(art => art.includes('_1.png'));
+      return elite1Art || basicArts[0];
+    };
+
     // 计算属性
     const filteredOperators = computed(() => {
       // 如果没有干员数据，返回空数组
       if (!operators.value || operators.value.length === 0) {
         return [];
       }
-      // 移动端不限制只有6星，使用4星以上的干员
-      return operators.value.filter(op => (op.星级 || 0) >= 4);
+      // 移动端不限制只有6星，使用4星以上的干员，并排除皮肤干员
+      return operators.value.filter(op => {
+        const hasMinStars = (op.星级 || 0) >= 4;
+        const notSkin = !isSkinOperator(op);
+        return hasMinStars && notSkin;
+      });
     });
 
     // 计算猜测评级
@@ -244,7 +325,6 @@ export default {
       guesses.value = [];
       gameOver.value = false;
       gameWon.value = false;
-      showHint.value = false;
       showResetConfirm.value = false;
       hideTempMessage();
       
@@ -286,36 +366,13 @@ export default {
         gameWon.value = true;
         gameOver.value = true;
       } else {
-        // 显示提示
-        if (guesses.value.length % 2 === 0) {
-          displayHint();
-        }
+        // 不需要在这里显示提示，由PuzzleBoard组件自动处理
         
         // 检查是否用完次数
         if (guesses.value.length >= maxGuesses.value) {
           gameOver.value = true;
         }
       }
-    };
-    
-    // 显示提示
-    const displayHint = () => {
-      if (!targetOperator.value) return;
-      
-      const hints = [
-        `职业: ${targetOperator.value.职业}`,
-        `星级: ${targetOperator.value.星级}星`,
-        `国家: ${targetOperator.value.国家}`,
-        `种族: ${targetOperator.value.种族}`
-      ];
-      
-      const randomHint = hints[Math.floor(Math.random() * hints.length)];
-      currentHint.value = randomHint;
-      showHint.value = true;
-      
-      setTimeout(() => {
-        showHint.value = false;
-      }, 3000);
     };
     
     // 显示临时消息
@@ -369,8 +426,6 @@ export default {
       showResetConfirm,
       showTempMessage,
       tempMessage,
-      showHint,
-      currentHint,
       maxGuesses,
       gameSessionId,
       guessRating,
@@ -1241,6 +1296,7 @@ export default {
 
 .game-actions {
   margin-top: 15px;
+  text-align: center;
 }
 
 .restart-btn {
