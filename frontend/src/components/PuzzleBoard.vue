@@ -4,17 +4,17 @@
     <div class="game-status">
       <template v-if="gameWon">
         <div class="status-message win">
-          <span>恭喜你猜对了！答案是 {{ targetOperator.干员 }}</span>
+          <span>{{ customTexts.winMessage }}答案是 {{ targetOperator.干员 }}</span>
         </div>
       </template>
       <template v-else-if="userGaveUp">
         <div class="status-message lose">
-          <span>你已放弃游戏！正确答案是 {{ targetOperator.干员 }}</span>
+          <span>{{ customTexts.giveUpMessage }}正确答案是 {{ targetOperator.干员 }}</span>
         </div>
       </template>
       <template v-else-if="gameOver">
         <div class="status-message lose">
-          <span>游戏结束！正确答案是 {{ targetOperator.干员 }}</span>
+          <span>{{ customTexts.gameOverMessage }}正确答案是 {{ targetOperator.干员 }}</span>
         </div>
       </template>
       <template v-else>
@@ -205,6 +205,18 @@ export default {
     customArtSelector: {
       type: Function,
       default: null
+    },
+    customTexts: {
+      type: Object,
+      default: () => ({
+        winMessage: '恭喜你猜对了！',
+        gameOverMessage: '游戏结束！',
+        giveUpMessage: '你已放弃游戏！'
+      })
+    },
+    customHints: {
+      type: Function,
+      default: null
     }
   },
   emits: ['reset'],
@@ -236,6 +248,11 @@ export default {
 
     // 生成随机化且智能的提示列表
     const generatePuzzleHints = () => {
+      // 如果有自定义提示函数，使用它
+      if (props.customHints && typeof props.customHints === 'function') {
+        return props.customHints(props.targetOperator);
+      }
+
       const allHints = [
         {
           label: '星级',

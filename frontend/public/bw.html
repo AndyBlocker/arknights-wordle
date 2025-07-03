@@ -2,7 +2,7 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0,user-scalable=yes" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=0.5,maximum-scale=10.0,user-scalable=yes" />
     <title>泰拉鉴定大师课毕业考试</title>
     <style>
       /* 移动端专用基础样式 */
@@ -19,8 +19,9 @@
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         background: linear-gradient(135deg, #1a4a3a 0%, #0f2a1f 100%);
         color: white;
-        overflow-x: hidden;
-        /* 使用默认的触摸行为，让浏览器自行处理 */
+        /* 允许水平滚动以支持缩放和平移 */
+        overflow-x: auto;
+        /* 允许所有触摸手势，包括缩放和平移 */
         touch-action: auto;
         -webkit-overflow-scrolling: touch;
       }

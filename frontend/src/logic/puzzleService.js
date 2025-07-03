@@ -106,6 +106,12 @@ export function clearAllCache() {
  */
 export async function loadPuzzleImage(operator, maxWidth = 600, maxHeight = 600, initialViewportWidth = 800, gameSessionId = null, customArtSelector = null) {
     const fileName = customArtSelector ? customArtSelector(operator, gameSessionId) : selectRandomArt(operator, gameSessionId);
+    
+    // 如果customArtSelector返回空字符串，表示跳过该干员
+    if (!fileName) {
+        throw new Error(`没有可用的立绘文件用于干员: ${operator.干员}`);
+    }
+    
     const puzzleImageUrl = getImagePath(fileName);
     const cacheKey = `${fileName}_${maxWidth}_${maxHeight}`;
 

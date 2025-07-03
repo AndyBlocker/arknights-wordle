@@ -42,8 +42,8 @@
               <div class="rules-content">
                 <div class="rule-item">
                   <div class="rule-category">
-                    <strong>数据来源：</strong>
-                    <span>prts.wiki，感谢prts.wiki</span>
+                    <strong>感谢：</strong>
+                    <span>数据、图像来源：<a href="https://prts.wiki">prts.wiki</a>，感谢<a href="https://space.bilibili.com/1546023">特鲁玛鲁@Bilibili</a>对本项目的赞助支持</span>
                   </div>
                 </div>
                 <div class="rule-item">

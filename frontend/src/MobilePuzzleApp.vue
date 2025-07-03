@@ -55,7 +55,7 @@
             class="mobile-search"
           />
         </div>
-        <div v-if="!gameWon && !gameOver" class="game-info">请通过像素化立绘，逐步鉴定出干员身份</div>
+        <div v-if="!gameWon && !gameOver" class="game-info">提示：星级、性别、阵营、种族、职业</div>
       </div>
       
       
@@ -73,6 +73,12 @@
           :gameSessionId="gameSessionId"
           :puzzleHintInterval="1"
           :customArtSelector="selectPuzzleArt"
+          :customHints="generateCustomHints"
+          :customTexts="{
+            winMessage: '恭喜你答对了！',
+            gameOverMessage: '考试结束！',
+            giveUpMessage: '你已放弃考试！'
+          }"
           @reset="resetGame"
           class="mobile-puzzle-board"
         />
@@ -215,30 +221,77 @@ export default {
       return false;
     };
 
+    // 为移动端定制的提示函数
+    const generateCustomHints = (targetOperator) => {
+      // 按照指定顺序：星级、性别、职业、阵营、种族
+      const orderedHints = [
+        {
+          label: '星级',
+          value: () => targetOperator?.星级 || '?',
+          shouldShow: () => true
+        },
+        {
+          label: '性别',
+          value: () => targetOperator?.性别 || '?',
+          shouldShow: () => true
+        },
+        {
+          label: '职业',
+          value: () => targetOperator?.职业 || '?',
+          shouldShow: () => true
+        },
+        {
+          label: '阵营',
+          value: () => targetOperator?.国家 || '?',
+          shouldShow: () => true
+        },
+        {
+          label: '种族',
+          value: () => targetOperator?.种族 || '?',
+          shouldShow: () => true
+        }
+      ];
+
+      // 过滤掉不应该显示的提示
+      return orderedHints.filter(hint => hint.shouldShow());
+    };
+
     // 专门为移动端拼图模式设计的立绘选择函数
     const selectPuzzleArt = (operator, gameSessionId) => {
       const list = getAvailableArts(operator);
+      console.log(`[BW] ${operator.干员} 所有可用立绘:`, list);
+      
       if (!list || list.length === 0) {
+        console.log(`[BW] ${operator.干员} 没有可用立绘`);
         return '';
       }
       
-      // 排除皮肤立绘
+      // 排除皮肤立绘 (包含skin的文件名)
       const basicArts = list.filter(art => !art.includes('skin'));
+      console.log(`[BW] ${operator.干员} 排除皮肤后:`, basicArts);
       
       if (basicArts.length === 0) {
-        // 如果没有基础立绘，使用第一个可用的立绘
-        return list[0];
+        console.log(`[BW] ${operator.干员} 没有基础立绘，跳过`);
+        return '';
       }
       
-      // 优先选择精二立绘（_2.png）
-      const elite2Art = basicArts.find(art => art.includes('_2.png'));
+      // 优先选择精二立绘（格式为：立绘_干员名_2.png）
+      const elite2Art = basicArts.find(art => art.endsWith('_2.png'));
       if (elite2Art) {
+        console.log(`[BW] ${operator.干员} 选择精二立绘:`, elite2Art);
         return elite2Art;
       }
       
-      // 如果没有精二立绘，选择精一立绘（_1.png）
-      const elite1Art = basicArts.find(art => art.includes('_1.png'));
-      return elite1Art || basicArts[0];
+      // 如果没有精二立绘，选择精一立绘（格式为：立绘_干员名_1.png）
+      const elite1Art = basicArts.find(art => art.endsWith('_1.png'));
+      if (elite1Art) {
+        console.log(`[BW] ${operator.干员} 选择精一立绘:`, elite1Art);
+        return elite1Art;
+      }
+      
+      // 如果既没有精二也没有精一立绘，返回空字符串跳过该干员
+      console.log(`[BW] ${operator.干员} 没有精一或精二立绘，跳过`);
+      return '';
     };
 
     // 计算属性
@@ -247,12 +300,17 @@ export default {
       if (!operators.value || operators.value.length === 0) {
         return [];
       }
-      // 移动端不限制只有6星，使用4星以上的干员，并排除皮肤干员
-      return operators.value.filter(op => {
-        const hasMinStars = (op.星级 || 0) >= 4;
+      // 移动端包含所有星级的干员，只排除皮肤干员
+      const filtered = operators.value.filter(op => {
         const notSkin = !isSkinOperator(op);
-        return hasMinStars && notSkin;
+        if (!notSkin) {
+          console.log(`[BW过滤] 排除皮肤干员: ${op.干员}`);
+        }
+        return notSkin;
       });
+      
+      console.log(`[BW过滤] 加载了 ${operators.value.length} 个干员，过滤后有 ${filtered.length} 个可用干员`);
+      return filtered;
     });
 
     // 计算猜测评级
@@ -331,14 +389,25 @@ export default {
       // 生成新的游戏会话ID
       gameSessionId.value = Date.now().toString();
       
-      // 随机选择目标干员
+      // 选择有精二立绘的目标干员
       const availableOperators = filteredOperators.value;
       if (availableOperators.length === 0) {
         showTempMessageFunc('没有可用的干员数据');
         return;
       }
       
-      targetOperator.value = selectRandomOperator(availableOperators);
+      // 筛选出有精一或精二立绘的干员（排除皮肤）
+      const operatorsWithValidArt = availableOperators.filter(op => {
+        const selectedArt = selectPuzzleArt(op, gameSessionId.value);
+        return selectedArt !== ''; // 只保留有精一或精二立绘的干员
+      });
+      
+      if (operatorsWithValidArt.length === 0) {
+        showTempMessageFunc('没有可用的立绘干员');
+        return;
+      }
+      
+      targetOperator.value = selectRandomOperator(operatorsWithValidArt);
       console.log('目标干员:', targetOperator.value?.干员);
     };
     
@@ -435,20 +504,28 @@ export default {
       onGuessSubmit,
       confirmReset,
       hideTempMessage,
-      getOperatorAvatar
+      getOperatorAvatar,
+      selectPuzzleArt,
+      generateCustomHints
     };
   }
 };
 </script>
 
 <style scoped>
+/* 全局确保所有元素允许触摸手势 */
+* {
+  touch-action: auto !important;
+}
+
 .mobile-puzzle-app {
   width: 100%;
   /* 移除限制高度的样式，使用flex布局 */
   flex: 1 0 auto;
   position: relative;
-  overflow-x: hidden;
-  /* 移除有问题的touch-action，使用默认auto */
+  /* 允许水平滚动和缩放 */
+  overflow-x: auto;
+  /* 确保触摸操作完全不受限制 */
   touch-action: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -556,14 +633,14 @@ export default {
 
 
 .background-image {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   z-index: 0;
   overflow: hidden;
-  /* 背景图片基于mobile-container的尺寸进行缩放 */
+  /* 背景图片基于viewport的尺寸进行缩放，防止DOM变化影响 */
   /* 彻底禁用背景装饰的pointer-events，避免截获触点 */
   pointer-events: none !important;
 }
@@ -584,6 +661,11 @@ export default {
   /* 确保图片质量 */
   image-rendering: high-quality;
   image-rendering: -webkit-optimize-contrast;
+  
+  /* 防止图片在DOM变化时重新缩放 */
+  transform: scale(1);
+  transform-origin: center center;
+  will-change: auto;
 }
 
 .image-overlay {
@@ -1297,6 +1379,9 @@ export default {
 .game-actions {
   margin-top: 15px;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .restart-btn {
@@ -1309,6 +1394,8 @@ export default {
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: inline-block;
+  margin: 0 auto;
 }
 
 .restart-btn:hover {
@@ -1636,6 +1723,9 @@ export default {
   border-radius: 0 !important;
   background: transparent !important;
   display: block !important;
+  /* 确保canvas不阻止触摸手势 */
+  touch-action: auto !important;
+  pointer-events: auto !important;
 }
 
 /* 修复搜索图标在flex布局中的对齐 */
