@@ -1,0 +1,21 @@
+普通模式与JSON恢复集成浏览器验收
+被测版本：本机生产构建 http://127.0.0.1:8817/arknights-wordle/，不是旧线上版本。
+数据来源：真实440名单，按场景route为单名或小组以固定目标；仅503场景注入错误状态。
+
+1. canonical GALLUS² — PASS
+2. canonical 阿米娅(近卫) — PASS
+3. canonical 阿米娅(医疗) — PASS
+4. empty Enter cannot resubmit previous guess — PASS
+5. 12F potential and trust effective attack is 506 — PASS
+6. same birthday is correct and unknown height is incomparable — PASS
+7. local table scrolling 320 — PASS
+8. local table scrolling 390 — PASS
+9. JSON503 retry main — PASS
+10. JSON503 retry bw/ — PASS
+11. max guesses changing from ended 3 to 6 reopens consistently — PASS
+
+全部11组通过，pageerror=0。14张截图全部view_image检查；BW503淡入半帧已拒绝重拍。
+320px：整页320，结果区域270/内容936，首列x=32.98横滑后不变；390px：整页390，结果区域332/内容936，首列x=37横滑后不变。
+主入口与/bw：JSON503能看见重新加载按钮，恢复响应后原地进入正常游戏；/bw等到可用canvas且输入启用后验收。
+最大次数：已猜3次且上限3会结束，调至6恢复可猜，调回3重新结束，未重抽目标或丢失猜测。
+覆盖边界：Chromium模拟视口，不是真机软键盘/读屏验收。外部图片按正常网络读取，全部游戏操作通过当前DOM定位。

@@ -1,0 +1,11 @@
+{
+  "buildEntry": "/arknights-wordle/js/index.580cbd78.js",
+  "persistentError": "立绘加载失败，请检查网络后重试\n\n重新加载重新开始",
+  "restartButtonWorks": true,
+  "sameTargetFixture": "芬",
+  "imageRequestCount": 2,
+  "afterRestartCanvas": {
+    "width": 600,
+    "height": 600
+  }
+}

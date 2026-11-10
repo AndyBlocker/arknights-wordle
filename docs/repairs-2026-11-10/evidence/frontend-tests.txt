@@ -1,0 +1,278 @@
+
+> arknights-wordle@0.1.0 test
+> node --test tests/*.test.cjs
+
+TAP version 13
+# Subtest: zero and subsecond correct answers retain the fastest existing reward tier
+ok 1 - zero and subsecond correct answers retain the fastest existing reward tier
+  ---
+  duration_ms: 1.146168
+  type: 'test'
+  ...
+# Subtest: elapsed time displays zero and five-plus minutes as durations
+ok 2 - elapsed time displays zero and five-plus minutes as durations
+  ---
+  duration_ms: 0.206629
+  type: 'test'
+  ...
+# Subtest: throttled timer callbacks still observe the real question deadline
+ok 3 - throttled timer callbacks still observe the real question deadline
+  ---
+  duration_ms: 0.160418
+  type: 'test'
+  ...
+# Subtest: zero guesses and failed questions cannot dilute the efficiency achievement
+ok 4 - zero guesses and failed questions cannot dilute the efficiency achievement
+  ---
+  duration_ms: 1.142327
+  type: 'test'
+  ...
+# Subtest: challenge prepares only the first puzzle using the same unique question session
+ok 5 - challenge prepares only the first puzzle using the same unique question session
+  ---
+  duration_ms: 0.746566
+  type: 'test'
+  ...
+# Subtest: an expired correct submission settles timeout only once, even before the next timer callback
+ok 6 - an expired correct submission settles timeout only once, even before the next timer callback
+  ---
+  duration_ms: 2.405168
+  type: 'test'
+  ...
+# Subtest: duplicate guesses do not consume attempts, exhaustion has its own reason, restart cleans timers
+ok 7 - duplicate guesses do not consume attempts, exhaustion has its own reason, restart cleans timers
+  ---
+  duration_ms: 3.006709
+  type: 'test'
+  ...
+# Subtest: late preparation after unmount cannot start a new challenge or timers
+ok 8 - late preparation after unmount cannot start a new challenge or timers
+  ---
+  duration_ms: 1.050972
+  type: 'test'
+  ...
+# Subtest: puzzle attempts and the configured timer wait for a usable image and pause during retry
+ok 9 - puzzle attempts and the configured timer wait for a usable image and pause during retry
+  ---
+  duration_ms: 1.416889
+  type: 'test'
+  ...
+# Subtest: repeated potential attributes accumulate for all four affected operators
+ok 10 - repeated potential attributes accumulate for all four affected operators
+  ---
+  duration_ms: 32.033932
+  type: 'test'
+  ...
+# Subtest: unknown height is not zero, while a real zero resistance remains comparable
+ok 11 - unknown height is not zero, while a real zero resistance remains comparable
+  ---
+  duration_ms: 1.608628
+  type: 'test'
+  ...
+# Subtest: birthdays distinguish complete, partial and absent matches; tag overlap retains its rules
+ok 12 - birthdays distinguish complete, partial and absent matches; tag overlap retains its rules
+  ---
+  duration_ms: 2.89967
+  type: 'test'
+  ...
+# Subtest: submitting clears cached results and an empty second Enter cannot emit again
+ok 13 - submitting clears cached results and an empty second Enter cannot emit again
+  ---
+  duration_ms: 2.788728
+  type: 'test'
+  ...
+# Subtest: clearing a query cancels delayed results and disabled/guessed inputs never submit
+ok 14 - clearing a query cancels delayed results and disabled/guessed inputs never submit
+  ---
+  duration_ms: 1.489255
+  type: 'test'
+  ...
+# Subtest: Enter resolves a current long query before its debounce and preserves canonical names
+ok 15 - Enter resolves a current long query before its debounce and preserves canonical names
+  ---
+  duration_ms: 2.409052
+  type: 'test'
+  ...
+# Subtest: the data deadline remains active after headers and aborts a stalled body
+ok 16 - the data deadline remains active after headers and aborts a stalled body
+  ---
+  duration_ms: 2.720226
+  type: 'test'
+  ...
+# Subtest: HTTP failures are visible, and every operator is validated before use
+ok 17 - HTTP failures are visible, and every operator is validated before use
+  ---
+  duration_ms: 3.421953
+  type: 'test'
+  ...
+# Subtest: the parent rejects duplicates, ended games, and guesses made before puzzle readiness
+ok 18 - the parent rejects duplicates, ended games, and guesses made before puzzle readiness
+  ---
+  duration_ms: 1.206663
+  type: 'test'
+  ...
+# Subtest: attempt limit changes recalculate the terminal state in both modes without undoing give-up
+ok 19 - attempt limit changes recalculate the terminal state in both modes without undoing give-up
+  ---
+  duration_ms: 1.03827
+  type: 'test'
+  ...
+# Subtest: the mobile boot overlay is removed even after data failure and a retry can succeed
+ok 20 - the mobile boot overlay is removed even after data failure and a retry can succeed
+  ---
+  duration_ms: 1.457968
+  type: 'test'
+  ...
+# Subtest: canonical GALLUS² can be submitted and win in normal mode
+ok 21 - canonical GALLUS² can be submitted and win in normal mode
+  ---
+  duration_ms: 2.371974
+  type: 'test'
+  ...
+# Subtest: canonical GALLUS² can be submitted and win in puzzle mode
+ok 22 - canonical GALLUS² can be submitted and win in puzzle mode
+  ---
+  duration_ms: 2.581989
+  type: 'test'
+  ...
+# Subtest: existing names with and without a middle dot still resolve
+ok 23 - existing names with and without a middle dot still resolve
+  ---
+  duration_ms: 2.743764
+  type: 'test'
+  ...
+# Subtest: canonical Amiya class names preserve parentheses
+ok 24 - canonical Amiya class names preserve parentheses
+  ---
+  duration_ms: 1.81204
+  type: 'test'
+  ...
+# Subtest: unknown and malformed input cannot create a guess
+ok 25 - unknown and malformed input cannot create a guess
+  ---
+  duration_ms: 4.867407
+  type: 'test'
+  ...
+# Subtest: exact matching respects the active candidate filter
+ok 26 - exact matching respects the active candidate filter
+  ---
+  duration_ms: 0.984729
+  type: 'test'
+  ...
+# Subtest: three-star arts never advertise an elite-2 file
+ok 27 - three-star arts never advertise an elite-2 file
+  ---
+  duration_ms: 16.095293
+  type: 'test'
+  ...
+# Subtest: missing selected art falls back to the same operator base and remains stable for that session
+ok 28 - missing selected art falls back to the same operator base and remains stable for that session
+  ---
+  duration_ms: 3.157031
+  type: 'test'
+  ...
+# Subtest: all failed candidates reject without silently picking a different operator
+ok 29 - all failed candidates reject without silently picking a different operator
+  ---
+  duration_ms: 1.811498
+  type: 'test'
+  ...
+# Subtest: integral cache obeys a byte budget rather than keeping fifteen large images
+ok 30 - integral cache obeys a byte budget rather than keeping fifteen large images
+  ---
+  duration_ms: 2.007113
+  type: 'test'
+  ...
+# Subtest: board error remains visible and the actual retry transitions to ready
+ok 31 - board error remains visible and the actual retry transitions to ready
+  ---
+  duration_ms: 5.611125
+  type: 'test'
+  ...
+# Subtest: prepared assets are used once and a new session with the same target resets blocks
+ok 32 - prepared assets are used once and a new session with the same target resets blocks
+  ---
+  duration_ms: 3.766749
+  type: 'test'
+  ...
+# Subtest: resize preserves revealed partition levels and corrects display aspect ratio
+ok 33 - resize preserves revealed partition levels and corrects display aspect ratio
+  ---
+  duration_ms: 132.872948
+  type: 'test'
+  ...
+# Subtest: aborting an obsolete image load skips both fallback and integral work
+ok 34 - aborting an obsolete image load skips both fallback and integral work
+  ---
+  duration_ms: 2.473732
+  type: 'test'
+  ...
+# Subtest: starting a new session aborts the old request and ignores its late result
+ok 35 - starting a new session aborts the old request and ignores its late result
+  ---
+  duration_ms: 3.871276
+  type: 'test'
+  ...
+# Subtest: only boards with a reset listener expose restart controls
+ok 36 - only boards with a reset listener expose restart controls
+  ---
+  duration_ms: 7.654939
+  type: 'test'
+  ...
+# Subtest: cancelling active worker task settles it and starts the queued task on a new worker
+ok 37 - cancelling active worker task settles it and starts the queued task on a new worker
+  ---
+  duration_ms: 3.216275
+  type: 'test'
+  ...
+# Subtest: worker message errors reject current work and recover pending work
+ok 38 - worker message errors reject current work and recover pending work
+  ---
+  duration_ms: 2.051148
+  type: 'test'
+  ...
+# Subtest: queued cancellation never starts cancelled work and cleanup settles remaining tasks
+ok 39 - queued cancellation never starts cancelled work and cleanup settles remaining tasks
+  ---
+  duration_ms: 1.126019
+  type: 'test'
+  ...
+# Subtest: unknown worker types and postMessage errors do not orphan promises or busy queues
+ok 40 - unknown worker types and postMessage errors do not orphan promises or busy queues
+  ---
+  duration_ms: 1.087097
+  type: 'test'
+  ...
+# Subtest: worker task deadline rejects hanging work and permits later tasks
+ok 41 - worker task deadline rejects hanging work and permits later tasks
+  ---
+  duration_ms: 11.075419
+  type: 'test'
+  ...
+# Subtest: image cache replaces duplicate entries, evicts equal-time oldest entries and skips oversized images
+ok 42 - image cache replaces duplicate entries, evicts equal-time oldest entries and skips oversized images
+  ---
+  duration_ms: 1.275475
+  type: 'test'
+  ...
+# Subtest: cleared image cache is not repopulated by an obsolete in-flight load
+ok 43 - cleared image cache is not repopulated by an obsolete in-flight load
+  ---
+  duration_ms: 0.974847
+  type: 'test'
+  ...
+# Subtest: AbortSignal cancels queued and running tasks without leaving a busy queue
+ok 44 - AbortSignal cancels queued and running tasks without leaving a busy queue
+  ---
+  duration_ms: 1.934306
+  type: 'test'
+  ...
+1..44
+# tests 44
+# suites 0
+# pass 44
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 278.515154

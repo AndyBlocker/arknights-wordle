@@ -1,0 +1,20 @@
+{
+  "status": "已上线并通过公网资源/数据哈希核验",
+  "checked_at": "2026-11-10T10:05:18.690317+00:00",
+  "url": "https://mer.dev/arknights-wordle/",
+  "release": "release_20261110_180312",
+  "previous_release": "release_20261110_171432",
+  "source_commit": "44fbf968ee5466100b07ad580fb95fb551bc93a2",
+  "source_branch": "fix/audit-corrections-20261110",
+  "operator_count": 440,
+  "operator_sha256": "a4bcdf8635c7509423e444f59b8192a875299369a619ac0c52955d9fdca48682",
+  "verified_assets": [
+    "css/bw.ce364f35.css",
+    "css/index.a665d78f.css",
+    "js/bw.6c969e5e.js",
+    "js/chunk-common.bf1aaef6.js",
+    "js/chunk-vendors.2d663c63.js",
+    "js/index.f984da9e.js"
+  ],
+  "backup": "/home/andyblocker/blog_deploy/backups/arknights-wordle-repairs-20261110-180238"
+}

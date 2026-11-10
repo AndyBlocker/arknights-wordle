@@ -1,0 +1,926 @@
+{
+  "origin": "http://127.0.0.1:8817/arknights-wordle/",
+  "conditions": "Local production build; Chromium 1440x1000 / 390x844 / 844x390; external media uses local proxy. Explicit JSON and media failure fixtures are labeled.",
+  "cases": [
+    {
+      "name": "before-select-puzzle",
+      "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n🎮\n兔头模式设置\n➕\n已猜次数: 0 / 6\n干员\t星级\t满级攻击\t满级生命\t满级防御\t满级法术抗性\t攻击间隔\t上线年份\t标签\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "text": "🌙\n深色模式",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "小头...?\n\n通过像素化立绘逐步细化来猜干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "⚡\n挑战模式\n限时连续猜测，挑战你的极限！",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": "➕",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "×",
+          "disabled": false
+        }
+      ],
+      "canvases": []
+    },
+    {
+      "name": "fang-real-media-ready",
+      "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n✓\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n⚙️\n小头模式设置\n➕\n已猜次数: 0 / 6\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "text": "🌙\n深色模式",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "兔头\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "小头...?\n✓\n\n通过像素化立绘逐步细化来猜干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "⚡\n挑战模式\n限时连续猜测，挑战你的极限！",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": "➕",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "×",
+          "disabled": false
+        }
+      ],
+      "canvases": [
+        {
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            598,
+            598
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fang-real-media-requests",
+      "fixture": "only JSON is restricted; PNG is real public network",
+      "requests": [
+        "https://media.prts.wiki/a/af/立绘_芬_1.png"
+      ]
+    },
+    {
+      "name": "before-select-puzzle",
+      "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n🎮\n兔头模式设置\n➕\n已猜次数: 0 / 6\n干员\t星级\t满级攻击\t满级生命\t满级防御\t满级法术抗性\t攻击间隔\t上线年份\t标签\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "text": "🌙\n深色模式",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "小头...?\n\n通过像素化立绘逐步细化来猜干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "⚡\n挑战模式\n限时连续猜测，挑战你的极限！",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": "➕",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "×",
+          "disabled": false
+        }
+      ],
+      "canvases": []
+    },
+    {
+      "name": "missing-selected-art-falls-back",
+      "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n✓\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n⚙️\n小头模式设置\n➕\n已猜次数: 0 / 6\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "text": "🌙\n深色模式",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "兔头\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "小头...?\n✓\n\n通过像素化立绘逐步细化来猜干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "⚡\n挑战模式\n限时连续猜测，挑战你的极限！",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": "➕",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "×",
+          "disabled": false
+        }
+      ],
+      "canvases": [
+        {
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            598,
+            598
+          ]
+        }
+      ]
+    },
+    {
+      "name": "selected-art-fallback-requests",
+      "fixture": "selected art 404, unchanged real base PNG fulfilled",
+      "media": [
+        "https://media.prts.wiki/7/78/立绘_能天使_skin3.png",
+        "https://media.prts.wiki/b/bd/立绘_能天使_1.png"
+      ]
+    },
+    {
+      "name": "before-select-puzzle",
+      "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n🎮\n兔头模式设置\n➕\n已猜次数: 0 / 6\n干员\t星级\t满级攻击\t满级生命\t满级防御\t满级法术抗性\t攻击间隔\t上线年份\t标签\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "text": "🌙\n深色模式",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "小头...?\n\n通过像素化立绘逐步细化来猜干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "⚡\n挑战模式\n限时连续猜测，挑战你的极限！",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": "➕",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "×",
+          "disabled": false
+        }
+      ],
+      "canvases": []
+    },
+    {
+      "name": "all-art-failure-persistent",
+      "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n✓\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n⚙️\n小头模式设置\n➕\n已猜次数: 0 / 6\n\n立绘加载失败，请检查网络后重试\n\n重新加载\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "text": "🌙\n深色模式",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "兔头\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "小头...?\n✓\n\n通过像素化立绘逐步细化来猜干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "⚡\n挑战模式\n限时连续猜测，挑战你的极限！",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": "➕",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "重新加载",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "×",
+          "disabled": false
+        }
+      ],
+      "canvases": []
+    },
+    {
+      "name": "before-retry",
+      "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n✓\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n⚙️\n小头模式设置\n➕\n已猜次数: 0 / 6\n\n立绘加载失败，请检查网络后重试\n\n重新加载\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "text": "🌙\n深色模式",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "兔头\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "小头...?\n✓\n\n通过像素化立绘逐步细化来猜干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "⚡\n挑战模式\n限时连续猜测，挑战你的极限！",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": "➕",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "重新加载",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "×",
+          "disabled": false
+        }
+      ],
+      "canvases": []
+    },
+    {
+      "name": "same-target-retry-recovered",
+      "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n✓\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n⚙️\n小头模式设置\n➕\n已猜次数: 0 / 6\n\nAndyBlocker © 2025",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "text": "🌙\n深色模式",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "兔头\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "小头...?\n✓\n\n通过像素化立绘逐步细化来猜干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "⚡\n挑战模式\n限时连续猜测，挑战你的极限！",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": "➕",
+          "disabled": false
+        }
+      ],
+      "canvases": [
+        {
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            598,
+            598
+          ]
+        }
+      ]
+    },
+    {
+      "name": "before-search-香草",
+      "text": "提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n提示：星级、性别、阵营、种族、职业\n已猜次数: 0 / 6\n泰拉鉴定大师课毕业考试\n游戏内素材来源：prts.wiki   AndyBlocker © 2025",
+      "controls": [
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": true
+        }
+      ],
+      "canvases": [
+        {
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            898,
+            898
+          ]
+        }
+      ]
+    },
+    {
+      "name": "before-select-香草",
+      "text": "提交\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n3★\n香草\nxiang cao\n先锋\n提示：星级、性别、阵营、种族、职业\n已猜次数: 0 / 6\n泰拉鉴定大师课毕业考试\n游戏内素材来源：prts.wiki   AndyBlocker © 2025",
+      "controls": [
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": false
+        }
+      ],
+      "canvases": [
+        {
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            898,
+            898
+          ]
+        }
+      ]
+    },
+    {
+      "name": "before-submit-香草",
+      "text": "提交\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n提示：星级、性别、阵营、种族、职业\n已猜次数: 0 / 6\n泰拉鉴定大师课毕业考试\n游戏内素材来源：prts.wiki   AndyBlocker © 2025",
+      "controls": [
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": false
+        }
+      ],
+      "canvases": [
+        {
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            898,
+            898
+          ]
+        }
+      ]
+    },
+    {
+      "name": "before-search-芬",
+      "text": "提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n提示：星级、性别、阵营、种族、职业\n已猜次数: 1 / 6\n💡\n提示信息\n1/5\n星级\n3\n已提交过的干员\n香草\n泰拉鉴定大师课毕业考试\n游戏内素材来源：prts.wiki   AndyBlocker © 2025",
+      "controls": [
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": true
+        }
+      ],
+      "canvases": [
+        {
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            898,
+            898
+          ]
+        }
+      ]
+    },
+    {
+      "name": "before-select-芬",
+      "text": "提交\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n3★\n芬\nfen\n先锋\n提示：星级、性别、阵营、种族、职业\n已猜次数: 1 / 6\n💡\n提示信息\n1/5\n星级\n3\n已提交过的干员\n香草\n泰拉鉴定大师课毕业考试\n游戏内素材来源：prts.wiki   AndyBlocker © 2025",
+      "controls": [
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": false
+        }
+      ],
+      "canvases": [
+        {
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            898,
+            898
+          ]
+        }
+      ]
+    },
+    {
+      "name": "before-submit-芬",
+      "text": "提交\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n提示：星级、性别、阵营、种族、职业\n已猜次数: 1 / 6\n💡\n提示信息\n1/5\n星级\n3\n已提交过的干员\n香草\n泰拉鉴定大师课毕业考试\n游戏内素材来源：prts.wiki   AndyBlocker © 2025",
+      "controls": [
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": false
+        }
+      ],
+      "canvases": [
+        {
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            898,
+            898
+          ]
+        }
+      ]
+    },
+    {
+      "name": "before-bw-same-target-reset",
+      "text": "⭐ 大杯学员！\n正确答案是: 芬\n鉴定次数: 2/6\n再来一次\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n恭喜你答对了！答案是 芬\n已提交过的干员\n香草\n芬\n泰拉鉴定大师课毕业考试\n游戏内素材来源：prts.wiki   AndyBlocker © 2025",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "text": "再来一次",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": " 重新开始 ",
+          "disabled": false
+        }
+      ],
+      "canvases": [
+        {
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            600,
+            600
+          ]
+        }
+      ]
+    },
+    {
+      "name": "before-confirm-reset",
+      "text": "⭐ 大杯学员！\n正确答案是: 芬\n鉴定次数: 2/6\n再来一次\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n恭喜你答对了！答案是 芬\n已提交过的干员\n香草\n芬\n泰拉鉴定大师课毕业考试\n游戏内素材来源：prts.wiki   AndyBlocker © 2025\n确定要重新开始考试吗？\n当前进度将会丢失\n取消\n确定重新开始",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "text": "再来一次",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": " 重新开始 ",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "取消",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "确定重新开始",
+          "disabled": false
+        }
+      ],
+      "canvases": [
+        {
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            600,
+            600
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bw-resize-and-reset",
+      "fixture": "fixed target order and unchanged real PNG; no mosaic algorithm changes",
+      "shapes": [
+        {
+          "viewport": [
+            390,
+            844
+          ],
+          "bitmap": [
+            350,
+            350
+          ],
+          "box": [
+            348,
+            348
+          ]
+        },
+        {
+          "viewport": [
+            844,
+            390
+          ],
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            798,
+            798
+          ]
+        },
+        {
+          "viewport": [
+            1440,
+            1000
+          ],
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            898,
+            898
+          ]
+        }
+      ],
+      "retainedRefinementAfterResize": true,
+      "resetRestoredPristine": true
+    },
+    {
+      "name": "before-select-puzzle",
+      "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n🎮\n兔头模式设置\n➕\n已猜次数: 0 / 6\n干员\t星级\t满级攻击\t满级生命\t满级防御\t满级法术抗性\t攻击间隔\t上线年份\t标签\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+      "controls": [
+        {
+          "tag": "BUTTON",
+          "text": "🌙\n深色模式",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "小头...?\n\n通过像素化立绘逐步细化来猜干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "⚡\n挑战模式\n限时连续猜测，挑战你的极限！",
+          "disabled": false
+        },
+        {
+          "tag": "INPUT",
+          "text": "搜索干员",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "提交",
+          "disabled": true
+        },
+        {
+          "tag": "BUTTON",
+          "text": "➕",
+          "disabled": false
+        },
+        {
+          "tag": "BUTTON",
+          "text": "×",
+          "disabled": false
+        }
+      ],
+      "canvases": []
+    },
+    {
+      "name": "real-full-catalogue-puzzle-network",
+      "fixture": "none; real random target/PNG, local build; CDP disabled cache",
+      "readyMs": 1328,
+      "observationAfterReadyMs": 5000,
+      "encodedNetworkBytes": 3031582,
+      "mediaRequests": 1,
+      "requestCount": 2,
+      "media": [
+        "https://media.prts.wiki/b/b3/立绘_诗怀雅_skin1.png"
+      ],
+      "shapes": [
+        {
+          "viewport": [
+            1440,
+            1000
+          ],
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            598,
+            598
+          ]
+        },
+        {
+          "viewport": [
+            390,
+            844
+          ],
+          "bitmap": [
+            315,
+            315
+          ],
+          "box": [
+            313,
+            313
+          ]
+        },
+        {
+          "viewport": [
+            844,
+            390
+          ],
+          "bitmap": [
+            600,
+            600
+          ],
+          "box": [
+            598,
+            598
+          ]
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    "screenshots/puzzle/01-fang-real-media.png",
+    "screenshots/puzzle/02-selected-art-base-fallback.png",
+    "screenshots/puzzle/03-persistent-image-error.png",
+    "screenshots/puzzle/04-image-retry-recovered.png",
+    "screenshots/puzzle/05-bw-390x844.png",
+    "screenshots/puzzle/05-bw-844x390.png",
+    "screenshots/puzzle/06-bw-same-target-new-session.png",
+    "screenshots/puzzle/07-real-main-1440x1000.png",
+    "screenshots/puzzle/07-real-main-390x844.png",
+    "screenshots/puzzle/07-real-main-844x390.png"
+  ],
+  "success": true,
+  "screenshot_review": {
+    "accepted": [
+      "screenshots/puzzle/01-fang-real-media.png",
+      "screenshots/puzzle/02-selected-art-base-fallback.png",
+      "screenshots/puzzle/03-persistent-image-error.png",
+      "screenshots/puzzle/04-image-retry-recovered.png",
+      "screenshots/puzzle/05-bw-390x844.png",
+      "screenshots/puzzle/05-bw-844x390.png",
+      "screenshots/puzzle/06-bw-same-target-new-session.png",
+      "screenshots/puzzle/07-real-main-1440x1000.png",
+      "screenshots/puzzle/07-real-main-390x844.png",
+      "screenshots/puzzle/07-real-main-844x390.png"
+    ],
+    "replaced": [
+      "02 had been captured before full layout settled; waited and reshot",
+      "05 landscape and 06 originally exposed BW legacy container clipping; fixed inline geometry, retested parent+canvas, replaced with actual viewport/full canvas images",
+      "03 updated after explicit user-controlled restart was added"
+    ],
+    "all_opened_with_view_image": true
+  },
+  "final_build": {
+    "main": "index.f984da9e.js",
+    "common": "chunk-common.bf1aaef6.js",
+    "geometry_result": "puzzle-bw-geometry-results.json",
+    "error_restart_result": "puzzle-error-restart-results.json"
+  }
+}

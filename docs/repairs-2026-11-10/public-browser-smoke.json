@@ -1,0 +1,51 @@
+{
+  "checkedAt": "2026-11-10T10:06:29.810Z",
+  "release": "release_20261110_180312",
+  "expectedBundle": "index.f984da9e.js",
+  "cases": [
+    {
+      "name": "natural public main",
+      "status": "PASS",
+      "dataCount": 440,
+      "lang": "zh-CN",
+      "bundle": "https://mer.dev/arknights-wordle/js/index.f984da9e.js",
+      "submitted": "芬",
+      "beforeEmptyEnter": 1,
+      "afterEmptyEnter": 1,
+      "pageErrors": []
+    },
+    {
+      "name": "public BW controlled Fang data, actual production JS and real PRTS media",
+      "status": "PASS",
+      "controlled": "Only JSON is restricted to the real Fang row. Image requests are not mocked.",
+      "media": [
+        "https://media.prts.wiki/a/af/立绘_芬_1.png"
+      ],
+      "geometry": {
+        "bitmap": {
+          "width": 350,
+          "height": 350
+        },
+        "canvas": {
+          "width": 348,
+          "height": 348,
+          "x": 21,
+          "y": 283
+        },
+        "parent": {
+          "width": 350,
+          "height": 350,
+          "x": 20,
+          "y": 282
+        },
+        "pageWidth": 390,
+        "viewport": 390
+      }
+    }
+  ],
+  "acceptedScreenshots": [
+    "public-main-smoke.png",
+    "public-bw-fang-smoke.png"
+  ],
+  "screenshotReview": "Both screenshots opened with view_image and accepted: stable real public main result and ready BW Fang canvas."
+}

@@ -1,0 +1,14 @@
+挑战修复浏览器验收 · 2026-11-10
+本地生产包：http://127.0.0.1:8817/arknights-wordle/。
+4项浏览器场景全部通过，0个页面JavaScript异常。5张截图全部用view_image逐张检查并接受。
+
+1. challenge-all-timeout-no-false-achievement.png：受控时钟推进3道30秒题，最终0/3、0%准确、0猜测。没有“一击制胜”或“闪电快手”成就，重开返回设置。通过。
+2. challenge-exhaustion-correct-answer-settings.png：受控12F为首题，0潜0信赖，3次错误猜测后显示“次数已用尽”而非时间到；答案行满级攻击432，未错误加成至506/494。通过。
+3. challenge-expired-correct-answer-is-timeout.png：选择正确能天使后将系统时间前移31秒、尝试过期点击；只显示“时间到”，没有成功状态且猜测仍0。程序会正确禁用按钮，不能等待它重新可用。真实handler过期提交防护另有Node回归。通过。
+4. challenge-image-loading-pauses-attempts-and-clock.png：首题预加载与显示只发生1次立绘请求；首题答对后拦截第二题立绘，推进5秒，仍是0猜/0:30、输入禁用。此加载画面是明确故障/延迟注入证据，不当正常加载完成截图。通过。
+5. challenge-next-image-ready.png：解除第二题网络门闩后画布可见、输入启用，配置时限从30秒开始。通过。
+
+条件和边界：真实440条JSON的受控子集、确定性首题；以仓库既有bg.jpg替代所有外部媒体响应，包括头像与立绘，仅隔离外网不确定性，不用于判断美术内容或生产性能。fake clock用于计时/超时/等待图片验证。截图使用Playwright animations=disabled快进有限CSS动画，以保存1.5秒自动切题前的稳定结果状态。
+初次工具失败是错误的提交按钮accessible-name选择器、以及等待已正确禁用按钮重启，已修正；没有据此报业务缺陷。
+
+最终17:57:49生产build补验：仅重跑attempt exhaustion case，新增断言.challenge-game-board .reset-button数量0。通过；次数已用尽/12F攻击432仍正确，刷新后的对应截图已重新view_image接受，无失效的嵌套重新开始按钮。其他已通过场景未重复执行。

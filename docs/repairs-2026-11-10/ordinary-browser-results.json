@@ -1,0 +1,179 @@
+{
+  "started": "2026-11-10T09:52:46.839Z",
+  "origin": "http://127.0.0.1:8817/arknights-wordle/",
+  "conditions": "Controlled JSON subsets drawn from the real 440-row snapshot; Chromium desktop and viewport simulation. Only route fault cases replace an HTTP status.",
+  "cases": [
+    {
+      "name": "canonical GALLUS²",
+      "status": "PASS",
+      "controlled": true,
+      "state": {
+        "url": "http://127.0.0.1:8817/arknights-wordle/",
+        "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n🎮\n兔头模式设置\n➕\n恭喜你猜对了！答案是 GALLUS²\n干员\t星级\t满级攻击\t满级生命\t满级防御\t满级法术抗性\t攻击间隔\t上线年份\t标签\n\nGALLUS²\n\t1\n✓\n\t296\n✓\n\t625\n✓\n\t52\n✓\n\t10\n✓\n\t1.6\n✓\n\t2026\n✓\n\t✓\n支援机械\n削弱\n重新开始\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+        "rows": 1,
+        "inputDisabled": true,
+        "bodyWidth": 1440,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "canonical 阿米娅(近卫)",
+      "status": "PASS",
+      "controlled": true,
+      "state": {
+        "url": "http://127.0.0.1:8817/arknights-wordle/",
+        "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n🎮\n兔头模式设置\n➕\n恭喜你猜对了！答案是 阿米娅(近卫)\n干员\t星级\t满级攻击\t满级生命\t满级防御\t满级法术抗性\t攻击间隔\t上线年份\t标签\n\n阿米娅(近卫)\n\t5\n✓\n\t730\n✓\n\t2829\n✓\n\t443\n✓\n\t20\n✓\n\t1.25\n✓\n\t2020\n✓\n\t✓\n输出\n支援\n重新开始\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+        "rows": 1,
+        "inputDisabled": true,
+        "bodyWidth": 1440,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "canonical 阿米娅(医疗)",
+      "status": "PASS",
+      "controlled": true,
+      "state": {
+        "url": "http://127.0.0.1:8817/arknights-wordle/",
+        "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n🎮\n兔头模式设置\n➕\n恭喜你猜对了！答案是 阿米娅(医疗)\n干员\t星级\t满级攻击\t满级生命\t满级防御\t满级法术抗性\t攻击间隔\t上线年份\t标签\n\n阿米娅(医疗)\n\t5\n✓\n\t599\n✓\n\t1736\n✓\n\t106\n✓\n\t28\n✓\n\t1.6\n✓\n\t2024\n✓\n\t✓\n治疗\n输出\n重新开始\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+        "rows": 1,
+        "inputDisabled": true,
+        "bodyWidth": 1440,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "empty Enter cannot resubmit previous guess",
+      "status": "PASS",
+      "controlled": true,
+      "state": {
+        "url": "http://127.0.0.1:8817/arknights-wordle/",
+        "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n🎮\n兔头模式设置\n➕\n已猜次数: 1 / 6\n干员\t星级\t满级攻击\t满级生命\t满级防御\t满级法术抗性\t攻击间隔\t上线年份\t标签\n\n芬\n\t3\n↑\n\t325\n↑\n\t1325\n↑\n\t330\n↓\n\t0\n✓\n\t1.05\n↓\n\t2019\n✓\n\t×\n费用回复\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+        "rows": 1,
+        "inputDisabled": false,
+        "bodyWidth": 1440,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "12F potential and trust effective attack is 506",
+      "status": "PASS",
+      "controlled": true,
+      "label": "满级攻击：506，答案更大，相差较远"
+    },
+    {
+      "name": "same birthday is correct and unknown height is incomparable",
+      "status": "PASS",
+      "controlled": true,
+      "birthday": [
+        "12F",
+        "令"
+      ],
+      "unknownHeight": "Lancet-2 / Castle-3"
+    },
+    {
+      "name": "local table scrolling 320",
+      "status": "PASS",
+      "controlled": true,
+      "geometry": {
+        "pageWidth": 320,
+        "viewport": 320,
+        "container": 270,
+        "tableWidth": 936,
+        "firstBefore": 32.984375,
+        "firstAfter": 32.984375,
+        "position": "sticky",
+        "headerWhiteSpace": "nowrap"
+      }
+    },
+    {
+      "name": "local table scrolling 390",
+      "status": "PASS",
+      "controlled": true,
+      "geometry": {
+        "pageWidth": 390,
+        "viewport": 390,
+        "container": 332,
+        "tableWidth": 936,
+        "firstBefore": 37,
+        "firstAfter": 37,
+        "position": "sticky",
+        "headerWhiteSpace": "nowrap"
+      }
+    },
+    {
+      "name": "JSON503 retry main",
+      "status": "PASS",
+      "controlled": true,
+      "state": {
+        "url": "http://127.0.0.1:8817/arknights-wordle/",
+        "text": "🎯\n猜！干！员！\n🌙\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n大头\n小头...?\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n🎮\n兔头模式设置\n➕\n已猜次数: 0 / 6\n干员\t星级\t满级攻击\t满级生命\t满级防御\t满级法术抗性\t攻击间隔\t上线年份\t标签\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+        "rows": 0,
+        "inputDisabled": false,
+        "bodyWidth": 390,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "JSON503 retry bw/",
+      "status": "PASS",
+      "controlled": true,
+      "state": {
+        "url": "http://127.0.0.1:8817/arknights-wordle/bw/",
+        "text": "提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n提示：星级、性别、阵营、种族、职业\n已猜次数: 0 / 6\n泰拉鉴定大师课毕业考试\n游戏内素材来源：prts.wiki   AndyBlocker © 2025",
+        "rows": 0,
+        "inputDisabled": false,
+        "bodyWidth": 390,
+        "viewport": 390
+      }
+    },
+    {
+      "name": "max guesses changing from ended 3 to 6 reopens consistently",
+      "status": "PASS",
+      "controlled": true,
+      "state": {
+        "url": "http://127.0.0.1:8817/arknights-wordle/",
+        "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n🎮\n兔头模式设置\n➖\n只猜六星干员\n限制猜测范围为6星干员\n潜能设置\n选择干员潜能等级\n0潜\n满潜\n信赖设置\n选择干员信赖等级\n0信赖\n满信赖\n最大猜测次数\n当前设置: 3 次\n3\n12\n🏳️\n放弃当前游戏\n游戏结束！正确答案是 能天使\n干员\t星级\t满级攻击\t满级生命\t满级防御\t满级法术抗性\t攻击间隔\t上线年份\t标签\n\n芬\n\t3\n↑\n\t325\n↑\n\t1325\n↑\n\t330\n↓\n\t0\n✓\n\t1.05\n↓\n\t2019\n✓\n\t×\n费用回复\n\n\n夜刀\n\t2\n↑\n\t280\n↑\n\t1030\n↑\n\t192\n↓\n\t0\n✓\n\t1.05\n↓\n\t2019\n✓\n\t×\n新手\n\n\n12F\n\t2\n↑\n\t506\n↑\n\t1461\n↑\n\t50\n↑\n\t10\n↓\n\t2.9\n↓\n\t2019\n✓\n\t×\n新手\n\n\n能天使\n\t6\n✓\n\t657\n✓\n\t1673\n✓\n\t161\n✓\n\t0\n✓\n\t1\n✓\n\t2019\n✓\n\t✓\n输出\n重新开始\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+        "rows": 3,
+        "inputDisabled": true,
+        "bodyWidth": 1440,
+        "viewport": 1440
+      }
+    }
+  ],
+  "screenshots": [
+    "ordinary-canonical-gallus.png",
+    "ordinary-canonical-amiya-guard.png",
+    "ordinary-canonical-amiya-medic.png",
+    "ordinary-duplicate-prevented.png",
+    "ordinary-12f-506.png",
+    "ordinary-birthday-correct.png",
+    "ordinary-height-unknown.png",
+    "ordinary-mobile-320.png",
+    "ordinary-mobile-390.png",
+    "ordinary-json503-main.png",
+    "ordinary-json-recovered-main.png",
+    "ordinary-json503-bw.png",
+    "ordinary-json-recovered-bw.png",
+    "ordinary-max-guesses-consistent.png"
+  ],
+  "errors": [],
+  "finished": "2026-11-10T09:53:10.186Z",
+  "accepted_screenshots": [
+    "ordinary-canonical-gallus.png",
+    "ordinary-canonical-amiya-guard.png",
+    "ordinary-canonical-amiya-medic.png",
+    "ordinary-duplicate-prevented.png",
+    "ordinary-12f-506.png",
+    "ordinary-birthday-correct.png",
+    "ordinary-height-unknown.png",
+    "ordinary-mobile-320.png",
+    "ordinary-mobile-390.png",
+    "ordinary-json503-main.png",
+    "ordinary-json-recovered-main.png",
+    "ordinary-json503-bw.png",
+    "ordinary-json-recovered-bw.png",
+    "ordinary-max-guesses-consistent.png"
+  ],
+  "screenshot_review": "All 14 images opened with view_image; BW503 first opacity-transition frame rejected and replaced after 1100ms at app opacity 1."
+}

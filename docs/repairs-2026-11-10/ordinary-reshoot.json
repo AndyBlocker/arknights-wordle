@@ -1,0 +1,7 @@
+{
+  "screenshot": "ordinary-json503-bw.png",
+  "rejected": "first capture occurred during #app opacity transition",
+  "acceptedWaitMs": 1100,
+  "appOpacity": "1",
+  "state": "controlled JSON503; retry button visible"
+}

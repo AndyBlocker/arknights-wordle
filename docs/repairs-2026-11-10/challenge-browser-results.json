@@ -1,0 +1,122 @@
+{
+  "origin": "http://127.0.0.1:8817/arknights-wordle/",
+  "started": "2026-11-10T09:58:30.105Z",
+  "conditions": "Local production build. Controlled real-data subsets and deterministic selection; existing bg.jpg substitutes all external media responses (avatars and art) to remove external image-network variability. Fake clock is explicitly used for timeout/deadline/loading tests; this is not a production latency or image-content audit.",
+  "cases": [
+    {
+      "name": "three timed-out questions do not grant efficiency or speed achievements",
+      "status": "PASS",
+      "controlled": true,
+      "state": {
+        "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n🎉 挑战完成！\n\n成功完成 0/3 题\n\n准确率\n0%\n总用时\n1:30\n平均用时\n30秒\n题目详情\n第 1 题\n✗\n能天使\n6★ 狙击\n30秒\n0 次\n第 2 题\n✗\n银灰\n6★ 近卫\n30秒\n0 次\n第 3 题\n✗\n艾雅法拉\n6★ 术师\n30秒\n0 次\n返回主页\n再来一次\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+        "guesses": 0,
+        "counters": [],
+        "canvases": []
+      }
+    },
+    {
+      "name": "puzzle reuses first prepared art and waits for the next image before attempts or clock",
+      "status": "PASS",
+      "controlled": true,
+      "prepared": "立绘_能天使_2.png",
+      "artRequests": [
+        "立绘_能天使_2.png",
+        "立绘_能天使_2.png",
+        "立绘_艾雅法拉_skin1.png"
+      ],
+      "blocked": [
+        "立绘_能天使_2.png",
+        "立绘_艾雅法拉_skin1.png"
+      ],
+      "loading": {
+        "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n题目 2 / 3\n得分: 2200\n🕐\n总用时: 0:02\n⏱️\n0:30\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n已猜次数: 0 / 3\n\n正在加载图片...\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+        "guesses": 0,
+        "timer": "总用时: 0:02",
+        "counters": [
+          "总用时: 0:02",
+          "0:30"
+        ],
+        "inputDisabled": true,
+        "canvases": []
+      },
+      "waiting": {
+        "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n题目 2 / 3\n得分: 2200\n🕐\n总用时: 0:07\n⏱️\n0:30\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n已猜次数: 0 / 3\n\n正在加载图片...\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+        "guesses": 0,
+        "timer": "总用时: 0:07",
+        "counters": [
+          "总用时: 0:07",
+          "0:30"
+        ],
+        "inputDisabled": true,
+        "canvases": []
+      },
+      "ready": {
+        "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n题目 2 / 3\n得分: 2200\n🕐\n总用时: 0:09\n⏱️\n0:29\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n已猜次数: 0 / 3\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+        "guesses": 0,
+        "timer": "总用时: 0:09",
+        "counters": [
+          "总用时: 0:09",
+          "0:29"
+        ],
+        "inputDisabled": false,
+        "canvases": [
+          {
+            "width": 596,
+            "height": 600
+          }
+        ]
+      }
+    },
+    {
+      "name": "correct answer submitted after the deadline cannot win",
+      "status": "PASS",
+      "controlled": true,
+      "state": {
+        "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n题目 1 / 3\n得分: 0\n🕐\n总用时: 0:32\n⏱️\n0:00\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n😞\n时间到！答案是 能天使\n游戏结束！正确答案是 能天使\n干员\t性别\t星级\t职业\t国家\t种族\t源石技艺适应性\t身高\t感染状态\t出生日期\t标签\n\n能天使\n\t✓女\t6\n✓\n\t✓狙击\t✓炎-龙门\t✓萨科塔\t✓标准\t159\n✓\n\t✓非感染者\t✓\n12月\n24日\n\t✓\n输出\n重新开始\n\nAndyBlocker © 2025\n\n干员数据加载成功！\n×",
+        "guesses": 0,
+        "timer": "总用时: 0:32",
+        "counters": [
+          "总用时: 0:32",
+          "0:00"
+        ],
+        "inputDisabled": true,
+        "canvases": []
+      }
+    },
+    {
+      "name": "attempt exhaustion has correct wording and zero-potential zero-trust answer values",
+      "status": "PASS",
+      "controlled": true,
+      "failure": "😞\n次数已用尽！答案是 12F",
+      "answerAttack": "432\n✓",
+      "state": {
+        "text": "🎯\n猜！干！员！\n🌙\n深色模式\n当前主题: 浅色模式\n📋\n游戏规则\n感谢：\n数据、图像来源：prts.wiki，感谢特鲁玛鲁@Bilibili对本项目的赞助支持\n数值提示：\n↑表示答案数值更大，↓表示答案数值更小\n颜色含义：\n橙色表示接近正确答案，红色表示距离较远\n搜索方式：\n支持干员中文名称或完整拼音搜索\n兔头\n✓\n\n星级\n满级攻击\n满级生命\n满级防御\n满级法术抗性\n攻击间隔\n上线年份\n标签\n大头\n\n性别\n星级\n职业\n国家\n种族\n源石技艺适应性\n身高\n感染状态\n出生日期\n标签\n小头...?\n\n通过像素化立绘逐步细化来猜干员\n\n⚡\n挑战模式\n限时连续猜测，挑战你的极限！\n题目 1 / 3\n得分: 0\n🕐\n总用时: 0:01\n⏱️\n0:30\n提交\n请先选择一个干员\n使用方向键导航选项，回车键选择，ESC键关闭下拉菜单\n😞\n次数已用尽！答案是 12F\n游戏结束！正确答案是 12F\n干员\t星级\t满级攻击\t满级生命\t满级防御\t满级法术抗性\t攻击间隔\t上线年份\t标签\n\n夜刀\n\t2\n✓\n\t232\n↑\n\t1030\n↑\n\t192\n↓\n\t0\n↑\n\t1.05\n↑\n\t2019\n✓\n\t✓\n新手\n\n\n杜林\n\t2\n✓\n\t340\n↑\n\t952\n↑\n\t62\n↓\n\t10\n✓\n\t1.6\n↑\n\t2019\n✓\n\t✓\n新手\n\n\n黑角\n\t2\n✓\n\t240\n↑\n\t1670\n↓\n\t315\n↓\n\t0\n↑\n\t1.2\n↑\n\t2019\n✓\n\t✓\n新手\n\n\n12F\n\t2\n✓\n\t432\n✓\n\t1461\n✓\n\t50\n✓\n\t10\n✓\n\t2.9\n✓\n\t2019\n✓\n\t✓\n新手\n\nAndyBlocker © 2025\n\n⚡\n🏆 成就达成！\n极速之手\n在30秒内猜测3次\n×\n干员数据加载成功！\n×",
+        "guesses": 3,
+        "timer": "总用时: 0:01",
+        "counters": [
+          "总用时: 0:01",
+          "0:30"
+        ],
+        "inputDisabled": true,
+        "canvases": []
+      }
+    }
+  ],
+  "screenshots": [
+    "challenge-all-timeout-no-false-achievement.png",
+    "challenge-exhaustion-correct-answer-settings.png",
+    "challenge-image-loading-pauses-attempts-and-clock.png",
+    "challenge-next-image-ready.png",
+    "challenge-expired-correct-answer-is-timeout.png"
+  ],
+  "errors": [],
+  "finished": "2026-11-10T09:58:33.744Z",
+  "accepted_screenshots": [
+    "challenge-all-timeout-no-false-achievement.png",
+    "challenge-exhaustion-correct-answer-settings.png",
+    "challenge-image-loading-pauses-attempts-and-clock.png",
+    "challenge-next-image-ready.png",
+    "challenge-expired-correct-answer-is-timeout.png"
+  ],
+  "inspection": "All five screenshots inspected and accepted. Exhaustion case rerun against final 17:57:49 build, with explicit .challenge-game-board .reset-button count=0 assertion; refreshed exhaustion screenshot inspected and accepted."
+}

@@ -1,0 +1,64 @@
+{
+  "conditions": "single target ordering, real PNG fixture; container and canvas dimensions must agree",
+  "shapes": [
+    {
+      "viewport": [
+        1440,
+        1000
+      ],
+      "canvas": [
+        598,
+        598
+      ],
+      "container": [
+        600,
+        600
+      ],
+      "bitmap": [
+        600,
+        600
+      ],
+      "inlineStyle": "max-width: 100%; width: 600px !important; height: 600px !important;"
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "canvas": [
+        348,
+        348
+      ],
+      "container": [
+        350,
+        350
+      ],
+      "bitmap": [
+        350,
+        350
+      ],
+      "inlineStyle": "max-width: 100%; width: 350px !important; height: 350px !important;"
+    },
+    {
+      "viewport": [
+        844,
+        390
+      ],
+      "canvas": [
+        598,
+        598
+      ],
+      "container": [
+        600,
+        600
+      ],
+      "bitmap": [
+        600,
+        600
+      ],
+      "inlineStyle": "max-width: 100%; width: 600px !important; height: 600px !important;"
+    }
+  ],
+  "resizeKeepsPixels": true,
+  "sameTargetResetKeepsPristine": true
+}

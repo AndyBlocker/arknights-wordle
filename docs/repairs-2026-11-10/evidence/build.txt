@@ -1,0 +1,203 @@
+
+> arknights-wordle@0.1.0 build
+> vue-cli-service build
+
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+All browser targets in the browserslist configuration have supported ES module.
+Therefore we don't build two separate bundles for differential loading.
+
+
+-  Building for production...
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ WARNING  Compiled with 4 warnings6:01:02 PM
+
+[eslint] 
+/home/andyblocker/arknights-wordle-fixes/frontend/src/App.vue
+  556:9  warning  Unexpected console statement  no-console
+  565:9  warning  Unexpected console statement  no-console
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/MobilePuzzleApp.vue
+  274:40  warning  'gameSessionId' is defined but never used  no-unused-vars
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/bw.js
+  20:3  warning  Unexpected console statement  no-console
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/components/ChallengeBoard.vue
+  281:18  warning  'emit' is defined but never used                  no-unused-vars
+  381:9   warning  Unexpected console statement                      no-console
+  472:9   warning  Unexpected console statement                      no-console
+  623:11  warning  'getModeTags' is assigned a value but never used  no-unused-vars
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/components/ChallengeResult.vue
+  142:18  warning  'emit' is defined but never used  no-unused-vars
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/config/renderingConfig.js
+  88:5  warning  Unexpected console statement  no-console
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/logic/achievementChecker.js
+   91:30  warning  'guessCount' is defined but never used  no-unused-vars
+  204:7   warning  Unexpected console statement            no-console
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/logic/advancedColorExtraction.js
+  20:13  warning  Unexpected console statement  no-console
+  56:13  warning  Unexpected console statement  no-console
+  71:9   warning  Unexpected console statement  no-console
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/logic/challengeService.js
+   58:9  warning  Unexpected console statement  no-console
+   89:5  warning  Unexpected console statement  no-console
+  311:5  warning  Unexpected console statement  no-console
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/logic/puzzleService.js
+  357:56  warning  Unexpected console statement                    no-console
+  542:84  warning  'gameLevel' is assigned a value but never used  no-unused-vars
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/utils/achievementEmitter.js
+  26:5  warning  Unexpected console statement  no-console
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/utils/cookieSettings.js
+   9:5  warning  Unexpected console statement  no-console
+  20:5  warning  Unexpected console statement  no-console
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/utils/dataLoader.js
+  78:37  warning  'operators' is defined but never used  no-unused-vars
+  85:44  warning  'filters' is defined but never used    no-unused-vars
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/utils/errorHandler.js
+  22:9  warning  Unexpected console statement  no-console
+  35:5  warning  Unexpected console statement  no-console
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/utils/imagePreloader.js
+  159:54  warning  Unexpected console statement  no-console
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/utils/pinyinCache.js
+   98:7  warning  Unexpected console statement  no-console
+  158:7  warning  Unexpected console statement  no-console
+  246:5  warning  Unexpected console statement  no-console
+  283:5  warning  Unexpected console statement  no-console
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/utils/validator.js
+  336:9  warning  Unexpected console statement  no-console
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/workers/integralImageWorker.js
+  18:9  warning  'dataLength' is assigned a value but never used  no-unused-vars
+
+✖ 34 problems (0 errors, 34 warnings)
+
+
+You may use special comments to disable some warnings.
+Use // eslint-disable-next-line to ignore the next line.
+Use /* eslint-disable */ to ignore all warnings in a file.
+ warning  
+
+asset size limit: The following asset(s) exceed the recommended size limit (244 KiB).
+This can impact web performance.
+Assets: 
+  js/chunk-vendors.2d663c63.js (391 KiB)
+  data/operators.json (814 KiB)
+
+ warning  
+
+entrypoint size limit: The following entrypoint(s) combined asset size exceeds the recommended limit (244 KiB). This can impact web performance.
+Entrypoints:
+  index (553 KiB)
+      js/chunk-vendors.2d663c63.js
+      js/chunk-common.bf1aaef6.js
+      css/index.a665d78f.css
+      js/index.f984da9e.js
+  bw (483 KiB)
+      js/chunk-vendors.2d663c63.js
+      js/chunk-common.bf1aaef6.js
+      css/bw.ce364f35.css
+      js/bw.6c969e5e.js
+
+
+ warning  
+
+webpack performance recommendations: 
+You can limit the size of your bundles by using import() or require.ensure to lazy load some parts of your application.
+For more info visit https://webpack.js.org/guides/code-splitting/
+
+  File                                 Size               Gzipped
+
+  dist/js/chunk-vendors.2d663c63.js    390.97 KiB         168.70 KiB
+  dist/js/index.f984da9e.js            84.64 KiB          26.16 KiB
+  dist/js/bw.6c969e5e.js               28.46 KiB          11.41 KiB
+  dist/js/chunk-common.bf1aaef6.js     24.40 KiB          8.53 KiB
+  dist/cc7062b63bb0bec8.js             2.44 KiB           1.17 KiB
+  dist/css/index.a665d78f.css          53.34 KiB          9.52 KiB
+  dist/css/bw.ce364f35.css             38.73 KiB          7.17 KiB
+
+  Images and other types of assets omitted.
+  Build at: 2026-11-10T10:01:02.077Z - Hash: 42deb1a9b92c2d95 - Time: 5724ms
+
+ DONE  Build complete. The dist directory is ready to be deployed.
+ INFO  Check out deployment instructions at https://cli.vuejs.org/guide/deployment.html
+       
