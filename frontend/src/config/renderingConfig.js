@@ -18,7 +18,8 @@ export const RENDERING_CONFIG = {
     SAMPLING_INTERVAL: 3, // 移动端友好的采样间隔
     
     // 缓存大小限制
-    MAX_CACHE_SIZE: 15
+    MAX_CACHE_SIZE: 15,
+    MAX_CACHE_BYTES: 48 * 1024 * 1024
   }
 };
 

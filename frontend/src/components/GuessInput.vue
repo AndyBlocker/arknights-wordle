@@ -13,7 +13,7 @@
         type="text"
         v-model="searchTerm"
         @input="onSearchInput"
-        @focus="showSuggestions = true"
+        @focus="showSuggestions = !!searchTerm.trim()"
         @keydown.enter.prevent="submitSelectedOperator"
         @keydown.down="handleDownKey"
         @keydown.up="handleUpKey"
@@ -23,35 +23,37 @@
         class="operator-search-input"
         autocomplete="off"
         role="combobox"
-        :aria-expanded="showSuggestions && filteredOperators.length > 0"
+        :aria-expanded="suggestionsOpen"
+        :aria-controls="suggestionsOpen ? `${inputId}-listbox` : null"
         aria-autocomplete="list"
-        :aria-activedescendant="activeIndex >= 0 ? `option-${activeIndex}` : null"
+        :aria-activedescendant="suggestionsOpen && activeIndex >= 0 && activeIndex < filteredOperators.length ? `${inputId}-option-${activeIndex}` : null"
         aria-label="搜索干员"
-        aria-describedby="search-instructions"
+        :aria-describedby="`${inputId}-instructions`"
       />
-      <button 
-        @click="submitSelectedOperator" 
-        :disabled="disabled || !canSubmit" 
+      <button
+        @click="submitSelectedOperator"
+        :disabled="disabled || !canSubmit"
         class="submit-button"
         aria-label="提交选择的干员"
-        :aria-describedby="canSubmit ? 'submit-help' : null"
+        :aria-describedby="!canSubmit ? `${inputId}-submit-help` : null"
       >
         提交
       </button>
     </div>
 
     <!-- 提交按钮帮助信息 -->
-    <div v-if="!canSubmit" id="submit-help" class="sr-only">
+    <div v-if="!canSubmit" :id="`${inputId}-submit-help`" class="sr-only">
       请先选择一个干员
     </div>
 
     <!-- 可访问性说明 -->
-    <div id="search-instructions" class="sr-only">
+    <div :id="`${inputId}-instructions`" class="sr-only">
       使用方向键导航选项，回车键选择，ESC键关闭下拉菜单
     </div>
 
-    <div 
-      v-if="showSuggestions && filteredOperators.length > 0" 
+    <div
+      v-if="suggestionsOpen"
+      :id="`${inputId}-listbox`"
       class="suggestions-dropdown"
       role="listbox"
       aria-label="干员搜索结果"
@@ -59,7 +61,7 @@
       <div
         v-for="(operator, index) in filteredOperators"
         :key="operator.干员"
-        :id="`option-${index}`"
+        :id="`${inputId}-option-${index}`"
         @click="selectOperator(operator)"
         class="suggestion-item"
         :class="{ 'active': index === activeIndex }"
@@ -102,7 +104,7 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { getOperatorAvatarFile, getImagePath, getRarityColor } from '../utils/imageUtils';
 import { pinyinCache } from '../utils/pinyinCache';
-import { InputValidator, debounce } from '../utils/validator';
+let inputCounter = 0;
 
 export default {
   name: 'GuessInput',
@@ -122,6 +124,8 @@ export default {
   },
   emits: ['submit'],
   setup(props, { emit }) {
+    const inputId = `operator-search-${++inputCounter}`;
+    let focusTimer = null;
     const searchInput = ref(null);
     const searchTerm = ref('');
     const selectedOperator = ref(null);
@@ -151,11 +155,11 @@ export default {
         }
         let matched = false;
         let matchScore = 0; // 匹配得分，用于排序
-        
+
         const nameLower = op.干员.toLowerCase();
         // 创建不含特殊字符的版本用于匹配
         const nameClean = op.干员.replace(/[·\u00B7\u2022\u2027]/g, '').toLowerCase();
-        
+
         // 1. 精确匹配优先级最高
         if (nameLower === searchLower || nameClean === searchLower) {
           matched = true;
@@ -174,20 +178,20 @@ export default {
         // 4. 拼音匹配（仅对中文干员）
         else if (isChinese(op.干员) && operatorPinyinMap.value[op.干员]) {
           const pinyinData = operatorPinyinMap.value[op.干员];
-          
+
           // 使用增强的拼音匹配功能
           if (pinyinCache.isMatch(searchLower, pinyinData)) {
             matched = true;
-            
+
             // 根据匹配类型给分
             if (pinyinData.full === searchLower || pinyinData.first === searchLower) {
               matchScore = 700; // 完整拼音匹配
             } else if (pinyinData.full.startsWith(searchLower) || pinyinData.first.startsWith(searchLower)) {
               matchScore = 600; // 拼音前缀匹配
-            } else if (pinyinData.variants.full.some(v => v === searchLower) || 
+            } else if (pinyinData.variants.full.some(v => v === searchLower) ||
                       pinyinData.variants.first.some(v => v === searchLower)) {
               matchScore = 550; // 多音字精确匹配
-            } else if (pinyinData.variants.full.some(v => v.startsWith(searchLower)) || 
+            } else if (pinyinData.variants.full.some(v => v.startsWith(searchLower)) ||
                       pinyinData.variants.first.some(v => v.startsWith(searchLower))) {
               matchScore = 500; // 多音字前缀匹配
             } else {
@@ -195,7 +199,7 @@ export default {
             }
           }
         }
-        
+
         if (matched) {
           results.push({ operator: op, score: matchScore });
         }
@@ -215,12 +219,28 @@ export default {
     const searchResults = ref([]);
     const searchDebounceTimer = ref(null);
 
+    const clearPendingSearch = () => {
+      if (searchDebounceTimer.value) clearTimeout(searchDebounceTimer.value);
+      searchDebounceTimer.value = null;
+    };
+
+    const clearSearch = () => {
+      clearPendingSearch();
+      searchTerm.value = '';
+      selectedOperator.value = null;
+      searchResults.value = [];
+      activeIndex.value = 0;
+      showSuggestions.value = false;
+    };
+
     const debouncedSearch = (term) => {
       if (searchDebounceTimer.value) {
         clearTimeout(searchDebounceTimer.value);
       }
-      
+
       searchDebounceTimer.value = setTimeout(() => {
+        searchDebounceTimer.value = null;
+        if (props.disabled || term !== searchTerm.value) return;
         if (!term.trim()) {
           searchResults.value = [];
           activeIndex.value = 0;
@@ -232,28 +252,38 @@ export default {
       }, 150); // 150ms防抖
     };
 
-    const filteredOperators = computed(() => searchResults.value);
+    const filteredOperators = computed(() => {
+      const guessedNames = new Set(props.guessedOperators.map(op => op.干员 || op));
+      const availableNames = new Set(props.operators.map(op => op.干员));
+      return searchResults.value.filter(op => availableNames.has(op.干员) && !guessedNames.has(op.干员));
+    });
+    const suggestionsOpen = computed(() => !props.disabled && showSuggestions.value && !!searchTerm.value.trim() && filteredOperators.value.length > 0);
 
     const canSubmit = computed(() => {
-      return selectedOperator.value || filteredOperators.value.length === 1;
+      const selected = selectedOperator.value;
+      const selectable = selected
+        ? props.operators.some(op => op.干员 === selected.干员) && !isGuessedOperator(selected.干员)
+        : filteredOperators.value.length === 1;
+      return !props.disabled && !!searchTerm.value.trim() && selectable;
     });
 
     const onSearchInput = () => {
+      clearPendingSearch();
       // 轻量级验证：只检查长度，允许用户自由输入
       if (searchTerm.value && searchTerm.value.length > 30) {
         searchTerm.value = searchTerm.value.substring(0, 30);
       }
-      
+
       selectedOperator.value = null;
       showSuggestions.value = true;
-      
+
       // 如果搜索词为空，立即清空结果和重置索引
       if (!searchTerm.value.trim()) {
         searchResults.value = [];
         activeIndex.value = 0;
         return;
       }
-      
+
       // 对于即时搜索（短查询），直接搜索以提高响应性
       if (searchTerm.value.length <= 2) {
         searchResults.value = searchOperators(searchTerm.value).slice(0, 8);
@@ -265,14 +295,20 @@ export default {
     };
 
     const selectOperator = (operator) => {
+      if (props.disabled || isGuessedOperator(operator.干员)) return;
+      clearPendingSearch();
       selectedOperator.value = operator;
       searchTerm.value = operator.干员;
       showSuggestions.value = false;
     };
 
     const submitSelectedOperator = () => {
+      if (props.disabled || !searchTerm.value.trim()) return;
+      clearPendingSearch();
+      // Enter may arrive before the debounce; resolve the current query, never stale results.
+      if (!selectedOperator.value) searchResults.value = searchOperators(searchTerm.value).slice(0, 8);
       const operators = filteredOperators.value;
-      
+
       if (!selectedOperator.value && operators.length === 1) {
         selectOperator(operators[0]);
       } else if (!selectedOperator.value && operators.length > 1) {
@@ -282,17 +318,16 @@ export default {
           selectOperator(operators[safeIndex]);
         }
       }
-      
+
       if (selectedOperator.value) {
         // 简单的名称检查，信任用户选择的干员
         const operatorName = selectedOperator.value.干员;
-        if (operatorName && operatorName.trim()) {
+        if (operatorName && operatorName.trim() && !isGuessedOperator(operatorName) && props.operators.some(op => op.干员 === operatorName)) {
+          clearSearch();
           emit('submit', operatorName.trim());
-          searchTerm.value = '';
-          selectedOperator.value = null;
-          activeIndex.value = 0;
-          setTimeout(() => {
-            searchInput.value?.focus();
+          if (focusTimer) clearTimeout(focusTimer);
+          focusTimer = setTimeout(() => {
+            if (!props.disabled) searchInput.value?.focus();
           }, 100);
         }
       }
@@ -304,23 +339,23 @@ export default {
         activeIndex.value = 0;
         return;
       }
-      
+
       // 确保activeIndex在有效范围内
       if (activeIndex.value < 0 || activeIndex.value >= operators.length) {
         activeIndex.value = 0;
       }
-      
+
       let newIndex = activeIndex.value + direction;
-      
+
       // 循环导航
       if (newIndex < 0) {
         newIndex = operators.length - 1;
       } else if (newIndex >= operators.length) {
         newIndex = 0;
       }
-      
+
       activeIndex.value = newIndex;
-      
+
       // 确保选中的项目在视野内
       scrollActiveItemIntoView();
     };
@@ -346,7 +381,7 @@ export default {
     const scrollActiveItemIntoView = () => {
       // 滚动活动项目到视野内
       nextTick(() => {
-        const activeElement = document.getElementById(`option-${activeIndex.value}`);
+        const activeElement = document.getElementById(`${inputId}-option-${activeIndex.value}`);
         if (activeElement) {
           activeElement.scrollIntoView({
             behavior: 'smooth',
@@ -365,21 +400,21 @@ export default {
       if (!isChinese(operator.干员)) return '';
       const data = operatorPinyinMap.value[operator.干员];
       if (!data) return '';
-      
+
       // 优先显示全拼音，如果太长则显示首字母
       const full = data.full || '';
       const first = data.first || '';
-      
+
       // 如果全拼音长度适中，显示全拼音
       if (full.length <= 12) {
         return full;
       }
-      
+
       // 如果全拼音太长，显示首字母（如果有的话）
       if (first && first.length <= 8) {
         return first;
       }
-      
+
       // 作为后备，截断显示全拼音
       return full.length > 15 ? full.substring(0, 12) + '...' : full;
     };
@@ -424,11 +459,15 @@ export default {
 
     // 监听operators变化，重新生成拼音映射
     watch(() => props.operators, (newOperators) => {
+      clearSearch();
       if (newOperators && newOperators.length > 0) {
-        console.log('GuessInput: 重新生成拼音映射，干员数量:', newOperators.length);
         generatePinyinMap();
       }
     }, { immediate: true });
+
+    watch(() => props.disabled, (disabled) => {
+      if (disabled) clearSearch();
+    });
 
     onMounted(() => {
       generatePinyinMap();
@@ -437,12 +476,13 @@ export default {
 
     onBeforeUnmount(() => {
       removeClickOutsideListener();
-      if (searchDebounceTimer.value) {
-        clearTimeout(searchDebounceTimer.value);
-      }
+      clearPendingSearch();
+      if (focusTimer) clearTimeout(focusTimer);
     });
 
     return {
+      inputId,
+      suggestionsOpen,
       containerRef,
       searchInput,
       searchTerm,
@@ -510,6 +550,7 @@ export default {
 }
 
 .operator-search-input {
+  min-width: 0;
   flex: 1;
   padding: 12px 12px 12px 40px;
   font-size: 16px;
@@ -529,7 +570,8 @@ export default {
 }
 
 .operator-search-input:focus-visible {
-  outline: none;
+  outline: 2px solid var(--color-primary);
+  outline-offset: -3px;
 }
 
 .operator-search-input:disabled {
@@ -568,7 +610,8 @@ export default {
 }
 
 .submit-button:focus-visible {
-  outline: none;
+  outline: 2px solid var(--color-text);
+  outline-offset: -4px;
 }
 
 .submit-button:disabled {

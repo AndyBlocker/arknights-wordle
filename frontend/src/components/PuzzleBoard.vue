@@ -1,5 +1,5 @@
 <template>
-  <div class="puzzle-board">
+  <div ref="boardElement" class="puzzle-board">
     <!-- 游戏状态区 -->
     <div class="game-status">
       <template v-if="gameWon">
@@ -41,7 +41,14 @@
 
     <!-- 图片 / 马赛克显示区域 -->
     <!-- 如果放弃或用完次数但没猜中，则沿用旧的“最终图片”逻辑 -->
-    <div v-if="(userGaveUp || (gameOver && !gameWon)) && !loadingImage" class="final-image-container">
+    <div v-if="loadError" class="image-loading-indicator" role="alert">
+      <div class="loading-content">
+        <p class="loading-text">{{ loadError }}</p>
+        <button type="button" @click="handleRetry" class="retry-button">重新加载</button>
+        <button v-if="canReset" type="button" @click="handleReset" class="retry-button">重新开始</button>
+      </div>
+    </div>
+    <div v-else-if="(userGaveUp || (gameOver && !gameWon)) && !loadingImage" class="final-image-container">
       <img
         v-if="puzzleImageUrl"
         :src="puzzleImageUrl"
@@ -54,7 +61,7 @@
     </div>
 
     <!-- 如果猜对，显示重叠的马赛克和原图 -->
-    <div v-else-if="gameWon && !loadingImage" class="final-overlay-container">
+    <div v-else-if="gameWon && !loadingImage" class="final-overlay-container" :style="{ width: scaledWidth + 'px', height: scaledHeight + 'px' }">
       <div class="overlay-mosaic">
         <!-- 马赛克图层，渲染到canvas -->
         <canvas
@@ -131,7 +138,7 @@
     <!-- 重新开始按钮 -->
     <div class="game-controls">
       <button
-        v-if="gameOver || gameWon || userGaveUp"
+        v-if="canReset && (gameOver || gameWon || userGaveUp)"
         @click="handleReset"
         class="reset-button"
       >
@@ -142,10 +149,11 @@
 </template>
 
 <script>
-import { ref, watch, onMounted, onBeforeUnmount, nextTick, computed } from 'vue';
+import { ref, shallowRef, watch, onMounted, onBeforeUnmount, nextTick, computed, getCurrentInstance } from 'vue';
 import { getOperatorAvatarFile, getImagePath } from '../utils/imageUtils';
 import {
   loadPuzzleImage,
+  withPuzzleDisplaySize,
   initBlocks,
   refineRandomBlocks,
   renderMosaic
@@ -217,34 +225,36 @@ export default {
     customHints: {
       type: Function,
       default: null
+    },
+    preloadedAssets: {
+      type: Object,
+      default: null
     }
   },
-  emits: ['reset'],
+  emits: ['reset', 'load-state'],
   setup(props, { emit }) {
+    const canReset = Boolean(getCurrentInstance()?.vnode.props?.onReset);
     const loadingImage = ref(true);
+    const loadError = ref('');
+    const boardElement = ref(null);
     const puzzleImageUrl = ref('');
     const scaledWidth = ref(0);
     const scaledHeight = ref(0);
-    const integralData = ref(null);
-    const originalImageData = ref(null); // 存储原始图像数据
+    const integralData = shallowRef(null);
+    const originalImageData = shallowRef(null);
+    const currentImage = shallowRef(null);
     const blocks = ref([]);
     const areaRefinementLevels = ref({});
     const mosaicCanvas = ref(null);
-    const initialViewportWidth = ref(window.innerWidth);
-    const preloadedImage = ref(null); // 缓存预加载的图片
-    
-    // 用于防止竞态条件的组件实例ID和操作标识
-    const componentId = ref(`puzzle_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
-    let currentInitPromise = null;
-    let currentTargetOperator = null;
-    let initTimeout = null;
-    const retryCount = ref(0);
-    const MAX_RETRIES = 2;
-    
-    // 加载状态
     const loadingStatus = ref('初始化中...');
     const loadingProgress = ref(0);
-    
+    let initVersion = 0;
+    let initController = null;
+    let initTimeout = null;
+    let disposed = false;
+
+    const viewportWidth = () => Math.min(window.innerWidth,
+      (boardElement.value?.clientWidth || window.innerWidth - 30) + 30);
 
     // 生成随机化且智能的提示列表
     const generatePuzzleHints = () => {
@@ -291,8 +301,8 @@ export default {
         },
         {
           label: '出生地',
-          value: () => props.targetOperator?.出生地 || '?',
-          shouldShow: () => props.targetOperator?.出生地 && props.targetOperator.出生地 !== props.targetOperator.国家
+          value: () => props.targetOperator?.出身地 || '?',
+          shouldShow: () => props.targetOperator?.出身地 && props.targetOperator.出生地 !== props.targetOperator.国家
         }
       ];
 
@@ -340,20 +350,12 @@ export default {
       return getImagePath(file);
     }
 
-    // 初始化Puzzle - 防止竞态条件
+    // A new session resets the puzzle even if random selection returns the same object.
     watch(
-      () => props.targetOperator,
-      async (newVal, oldVal) => {
-        // 如果新值和旧值相同，不执行任何操作
-        if (newVal === oldVal) return;
-        
-        if (newVal && newVal.干员) {
-          console.log(`[${componentId.value}] 目标干员变更为:`, newVal.干员);
-          currentTargetOperator = newVal;
-          // 重新生成提示列表
-          puzzleHints.value = generatePuzzleHints();
-          await initPuzzle();
-        }
+      () => [props.targetOperator, props.gameSessionId],
+      async ([target]) => {
+        puzzleHints.value = target?.干员 ? generatePuzzleHints() : [];
+        await initPuzzle();
       },
       { immediate: true }
     );
@@ -378,7 +380,7 @@ export default {
     // 如果在猜的过程中直接 gameOver 或 guessCorrect，需要触发一次渲染
     watch(
       () => [props.gameOver, props.gameWon, props.userGaveUp],
-      async ([over, won, gaveUp], [oldOver, oldWon, oldGaveUp]) => {
+      async () => {
         // 只要状态变化，就刷新一下
         if (!loadingImage.value) {
           await nextTick();
@@ -388,192 +390,96 @@ export default {
     );
 
     async function initPuzzle() {
-      const targetOp = props.targetOperator;
-      if (!targetOp || !targetOp.干员) {
-        console.warn(`[${componentId.value}] initPuzzle: 无效的目标干员`);
+      const version = ++initVersion;
+      initController?.abort();
+      const controller = new AbortController();
+      initController = controller;
+      const target = props.targetOperator;
+      const session = props.gameSessionId;
+      clearTimeout(initTimeout);
+      blocks.value = [];
+      integralData.value = null;
+      originalImageData.value = null;
+      currentImage.value = null;
+      puzzleImageUrl.value = '';
+      scaledWidth.value = scaledHeight.value = 0;
+      loadError.value = '';
+      loadingImage.value = true;
+      loadingStatus.value = '正在加载图片...';
+      loadingProgress.value = 10;
+      emit('load-state', 'loading');
+      if (!target?.干员) {
+        loadError.value = '暂时没有可加载的干员，请重新开始';
         loadingImage.value = false;
+        emit('load-state', 'error');
         return;
       }
-
-      // 取消之前的初始化操作和超时
-      if (currentInitPromise) {
-        console.log(`[${componentId.value}] 取消之前的初始化操作`);
-      }
-      if (initTimeout) {
-        clearTimeout(initTimeout);
-        initTimeout = null;
-      }
-
-      loadingImage.value = true;
-      loadingStatus.value = '准备加载图片...';
-      loadingProgress.value = 0;
-      console.log(`[${componentId.value}] 开始初始化谜题，目标干员: ${targetOp.干员}`);
-      
-      // 设置超时机制 (30秒)
-      initTimeout = setTimeout(() => {
-        if (loadingImage.value && props.targetOperator === targetOp) {
-          console.error(`[${componentId.value}] 初始化超时`);
-          handleInitTimeout(targetOp);
-        }
-      }, 30000);
-      
-      // 创建新的初始化Promise
-      currentInitPromise = (async () => {
-        // 模拟进度更新
-        loadingStatus.value = '正在加载图片...';
-        loadingProgress.value = 10;
-        
-        const result = await loadPuzzleImage(
-          targetOp,
-          600,
-          600,
-          initialViewportWidth.value,
-          props.gameSessionId,
-          props.customArtSelector
-        );
-        
-        loadingStatus.value = '图片加载完成';
-        loadingProgress.value = 50;
-        
-        return result;
-      })();
-
+      const active = () => !disposed && version === initVersion &&
+        props.targetOperator === target && props.gameSessionId === session;
+      let timeout;
       try {
-        const result = await currentInitPromise;
-        
-        // 验证操作仍然有效（目标干员没有改变）
-        if (props.targetOperator !== targetOp) {
-          console.log(`[${componentId.value}] 目标干员已改变，忽略此次初始化结果`);
-          return;
+        const prepared = props.preloadedAssets;
+        const validPrepared = prepared?.operatorName === target.干员 &&
+          prepared?.gameSessionId === session && prepared?.integralData &&
+          prepared?.originalImageData && prepared?.selectedArt && prepared?.puzzleImageUrl &&
+          prepared.imgWidth > 0 && prepared.imgHeight > 0;
+        const loading = validPrepared ? Promise.resolve(prepared) : loadPuzzleImage(
+          target, 600, 600, viewportWidth(), session, props.customArtSelector, controller.signal);
+        const result = await Promise.race([loading, new Promise((_, reject) => {
+          timeout = setTimeout(() => {
+            reject(new Error('图片加载超时，请检查网络后重试'));
+            controller.abort();
+          }, 30000);
+          initTimeout = timeout;
+        })]);
+        if (!active()) return;
+        if (result.operatorName !== target.干员 || result.gameSessionId !== session) {
+          throw new Error('图片与当前游戏不匹配，请重试');
         }
-
-        // 验证返回的结果是否与期望的干员匹配
-        if (result.operatorName !== targetOp.干员) {
-          console.error(`[${componentId.value}] 图片加载结果不匹配！期望: ${targetOp.干员}, 实际: ${result.operatorName}`);
-          throw new Error(`图片加载结果不匹配: 期望 ${targetOp.干员}, 实际 ${result.operatorName}`);
-        }
-
-        loadingStatus.value = '正在初始化游戏区块...';
-        loadingProgress.value = 70;
-
+        const display = withPuzzleDisplaySize(result, 600, 600, viewportWidth());
+        currentImage.value = result;
         puzzleImageUrl.value = result.puzzleImageUrl;
-        scaledWidth.value = result.scaledWidth;
-        scaledHeight.value = result.scaledHeight;
+        scaledWidth.value = display.scaledWidth;
+        scaledHeight.value = display.scaledHeight;
         integralData.value = result.integralData;
-        originalImageData.value = result.originalImageData; // 存储原始图像数据
-        
-        // 预加载并缓存图片，避免在显示答案时重新加载
-        if (result.puzzleImageUrl) {
-          const img = new Image();
-          img.onload = () => {
-            preloadedImage.value = img;
-            console.log(`[${componentId.value}] 图片已预加载到缓存`);
-          };
-          img.src = result.puzzleImageUrl;
-        }
-        
-        console.log(`[${componentId.value}] 已加载干员 ${result.operatorName} 的立绘: ${result.selectedArt}`);
-
-        blocks.value = initBlocks(
-          scaledWidth.value,
-          scaledHeight.value,
-          props.initialGridSize,
-          integralData.value,
-          0.01,
-          originalImageData.value
-        );
-        
-        loadingStatus.value = '正在设置游戏状态...';
-        loadingProgress.value = 90;
-
+        originalImageData.value = result.originalImageData;
+        blocks.value = initBlocks(scaledWidth.value, scaledHeight.value, props.initialGridSize,
+          integralData.value, 0.01, originalImageData.value);
         areaRefinementLevels.value = {};
-        for (let r = 0; r < props.initialGridSize.rows; r++) {
-          for (let c = 0; c < props.initialGridSize.cols; c++) {
-            areaRefinementLevels.value[`${r},${c}`] = 0;
+        for (let row = 0; row < props.initialGridSize.rows; row++) {
+          for (let col = 0; col < props.initialGridSize.cols; col++) {
+            areaRefinementLevels.value[`${row},${col}`] = 0;
           }
         }
-
-        loadingStatus.value = '初始化完成！';
         loadingProgress.value = 100;
-        
-        console.log(`[${componentId.value}] 谜题初始化完成，立绘URL: ${result.puzzleImageUrl}`);
-        
-        // 短暂延迟让用户看到100%完成
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
+        loadingStatus.value = '初始化完成';
         loadingImage.value = false;
+        emit('load-state', 'ready');
         await nextTick();
-
-        // 二次验证：确保仍然是正确的目标干员
-        if (props.targetOperator === targetOp) {
-          // 初次渲染马赛克
-          if (!props.gameOver && !props.gameWon && !props.userGaveUp) {
-            renderMosaicIfNeeded();
-          } else if (props.gameWon) {
-            // 如果开局就满足 gameWon（极少情况），也给它渲染一下
-            renderMosaicIfNeeded();
-          }
-        } else {
-          console.warn(`[${componentId.value}] 渲染时发现目标干员已改变，跳过渲染`);
-        }
-      } catch (err) {
-        // 检查是否因为目标干员改变导致的取消
-        if (props.targetOperator !== targetOp) {
-          console.log(`[${componentId.value}] 初始化被取消（目标干员已改变）`);
-        } else {
-          console.error(`[${componentId.value}] 初始化 Puzzle 出错:`, err);
-          // 显示错误提示给用户
-          loadingStatus.value = '加载失败，请重试';
+        if (active()) renderMosaicIfNeeded();
+      } catch (error) {
+        if (active()) {
+          loadError.value = error.message || '加载失败，请重试';
+          loadingStatus.value = loadError.value;
           loadingProgress.value = 0;
-          
-          // 3秒后自动重置加载状态
-          setTimeout(() => {
-            if (loadingImage.value) {
-              loadingImage.value = false;
-            }
-          }, 3000);
-        }
-        
-        // 确保加载状态被重置
-        if (props.targetOperator === targetOp) {
           loadingImage.value = false;
+          emit('load-state', 'error');
         }
       } finally {
-        currentInitPromise = null;
-        if (initTimeout) {
-          clearTimeout(initTimeout);
-          initTimeout = null;
-        }
-      }
-    }
-
-    function handleInitTimeout(targetOp) {
-      console.error(`[${componentId.value}] 初始化超时，尝试重试...`);
-      
-      if (retryCount.value < MAX_RETRIES) {
-        retryCount.value++;
-        loadingStatus.value = `加载超时，正在重试 (${retryCount.value}/${MAX_RETRIES})...`;
-        loadingProgress.value = 0;
-        
-        // 延迟重试
-        setTimeout(() => {
-          if (props.targetOperator === targetOp) {
-            initPuzzle();
-          }
-        }, 1000);
-      } else {
-        // 达到最大重试次数
-        loadingStatus.value = '加载失败，请手动重试';
-        loadingProgress.value = 0;
-        loadingImage.value = false;
-        retryCount.value = 0;
+        clearTimeout(timeout);
+        if (initTimeout === timeout) initTimeout = null;
       }
     }
 
     function renderMosaicIfNeeded() {
       const canvas = mosaicCanvas.value;
-      if (!canvas || !integralData.value) return;
+      if (!canvas || !integralData.value || loadingImage.value || loadError.value) return;
       const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        loadError.value = '当前浏览器无法绘制图片，请重试';
+        emit('load-state', 'error');
+        return;
+      }
       
       // 计算游戏级别（基于已猜次数）
       const gameLevel = Math.min(5, Math.max(1, props.guesses.length + 1));
@@ -582,6 +488,7 @@ export default {
     }
 
     async function refineAndRender() {
+      if (loadingImage.value || loadError.value || !integralData.value) return;
       refineRandomBlocks(
         blocks.value,
         areaRefinementLevels.value,
@@ -603,37 +510,41 @@ export default {
     }
 
     function handleRetry() {
-      retryCount.value = 0;
-      initPuzzle();
+      return initPuzzle();
     }
 
-    // 处理窗口大小变化以响应式调整Canvas尺寸
+    // Scale the existing partition, preserving revealed areas and selected art.
     let resizeTimeout = null;
     const handleResize = () => {
-      // 防抖：避免频繁触发
-      if (resizeTimeout) {
-        clearTimeout(resizeTimeout);
-      }
-      
-      resizeTimeout = setTimeout(() => {
-        // 更新初始视口宽度
-        initialViewportWidth.value = window.innerWidth;
-        
-        // 如果游戏正在进行且有Canvas，重新渲染
-        if (!loadingImage.value && integralData.value && mosaicCanvas.value) {
-          nextTick(() => {
-            renderMosaicIfNeeded();
-          });
-        }
-      }, 150);
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(async () => {
+        if (loadingImage.value || loadError.value || !currentImage.value) return;
+        const display = withPuzzleDisplaySize(currentImage.value, 600, 600, viewportWidth());
+        const xScale = display.scaledWidth / scaledWidth.value;
+        const yScale = display.scaledHeight / scaledHeight.value;
+        blocks.value = blocks.value.map(block => ({ ...block,
+          x: block.x * xScale, y: block.y * yScale,
+          width: block.width * xScale, height: block.height * yScale }));
+        scaledWidth.value = display.scaledWidth;
+        scaledHeight.value = display.scaledHeight;
+        await nextTick();
+        if (!disposed) renderMosaicIfNeeded();
+      }, 100);
     };
 
     onMounted(() => {
+      handleResize();
       // 添加窗口大小变化监听
       window.addEventListener('resize', handleResize, { passive: true });
     });
 
     onBeforeUnmount(() => {
+      disposed = true;
+      initVersion++;
+      initController?.abort();
+      currentImage.value = integralData.value = originalImageData.value = null;
+      blocks.value = [];
+      // Shared workers/caches belong to the service, not an individual board.
       // 清理监听器和超时
       window.removeEventListener('resize', handleResize);
       if (resizeTimeout) {
@@ -645,6 +556,9 @@ export default {
     });
 
     return {
+      canReset,
+      boardElement,
+      loadError,
       loadingImage,
       loadingStatus,
       loadingProgress,
@@ -819,7 +733,7 @@ export default {
 
 .mosaic-container canvas {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: block;
   object-fit: contain;
 }
@@ -870,7 +784,7 @@ export default {
   border: none;
   border-radius: 6px;
   transition: opacity 0.3s ease;
-  object-fit: fill;
+  object-fit: contain;
   width: 100% !important;
   height: 100% !important;
 }

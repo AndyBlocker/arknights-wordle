@@ -1,6 +1,6 @@
 <template>
-  <div class="result-row" :class="{ 'answer-row': isAnswerRow }">
-    <div class="result-cell cell-avatar">
+  <div class="result-row" role="row" :class="{ 'answer-row': isAnswerRow }">
+    <div class="result-cell cell-avatar" role="cell" :aria-label="guess.干员">
       <div class="avatar-container">
         <img :src="getOperatorAvatar(guess)" class="operator-avatar" :alt="guess.干员" />
       </div>
@@ -8,12 +8,17 @@
     </div>
 
     <template v-for="tag in displayTags" :key="tag">
+      <div v-if="isUnknownComparison(comparison[tag])" class="result-cell unknown" role="cell" :aria-label="getComparisonLabel(tag, comparison[tag], guess[tag])">
+        <span>{{ comparison[tag].guessedValue == null ? '未知' : comparison[tag].guessedValue }}</span>
+        <span class="comparison-status">不可比较</span>
+      </div>
       <!-- 标签字段 -->
       <div
-        v-if="tag === '标签'"
-        class="result-cell tag-cell"
+        v-else-if="tag === '标签'"
+        class="result-cell tag-cell" role="cell" :aria-label="getComparisonLabel(tag, comparison[tag], guess[tag])"
         :class="getTagCellClass(comparison[tag])"
       >
+        <span class="comparison-symbol" aria-hidden="true">{{ getComparisonSymbol(comparison[tag]) }}</span>
         <div class="tags-container">
           <span
             v-for="gTag in comparison[tag].guessTags"
@@ -28,9 +33,10 @@
       <!-- 出生日期：部分匹配/或简单true -->
       <div
         v-else-if="isBirthdayComparison(comparison[tag])"
-        class="result-cell tag-cell"
+        class="result-cell tag-cell" role="cell" :aria-label="getComparisonLabel(tag, comparison[tag], guess[tag])"
         :class="getTagCellClass(comparison[tag])"
       >
+        <span class="comparison-symbol" aria-hidden="true">{{ getComparisonSymbol(comparison[tag]) }}</span>
         <div class="tags-container">
           <span
             v-for="token in comparison[tag].guessTokens"
@@ -43,24 +49,26 @@
       </div>
       <div
         v-else-if="tag === '出生日期'"
-        class="result-cell"
+        class="result-cell" role="cell" :aria-label="getComparisonLabel(tag, comparison[tag], guess[tag])"
         :class="getCellClass(comparison[tag])"
       >
-        {{ guess[tag] }}
+        {{ displayValue(guess[tag]) }}
+        <span class="comparison-symbol" aria-hidden="true">{{ getComparisonSymbol(comparison[tag]) }}</span>
       </div>
 
       <!-- 数值型字段 -->
       <div
         v-else-if="isNumericTag(tag)"
-        class="result-cell"
+        class="result-cell" role="cell" :aria-label="getComparisonLabel(tag, comparison[tag], guess[tag])"
         :class="getNumericCellClass(comparison[tag])"
       >
         <div class="cell-content">
           <template v-if="comparison[tag] === true">
-            {{ guess[tag] }}
+            {{ displayValue(guess[tag]) }}
           </template>
           <template v-else-if="typeof comparison[tag] === 'object' && comparison[tag] !== null">
-            {{ comparison[tag].guessedValue }}
+            {{ displayValue(comparison[tag].guessedValue) }}
+            <span v-if="comparison[tag].match" class="comparison-symbol" aria-hidden="true">✓</span>
             <span
               v-if="!comparison[tag].match"
               class="direction-indicator"
@@ -78,17 +86,18 @@
       <!-- 普通字符串 -->
       <div
         v-else
-        class="result-cell"
+        class="result-cell" role="cell" :aria-label="getComparisonLabel(tag, comparison[tag], guess[tag])"
         :class="getCellClass(comparison[tag])"
       >
+        <span class="comparison-symbol" aria-hidden="true">{{ getComparisonSymbol(comparison[tag]) }}</span>
         <template v-if="comparison[tag] === true">
-          {{ guess[tag] }}
+          {{ displayValue(guess[tag]) }}
         </template>
         <template v-else-if="typeof comparison[tag] === 'boolean'">
-          {{ guess[tag] }}
+          {{ displayValue(guess[tag]) }}
         </template>
         <template v-else>
-          {{ guess[tag] }}
+          {{ displayValue(guess[tag]) }}
         </template>
       </div>
     </template>
@@ -147,6 +156,7 @@ export default {
      * true 时 => correct
      */
     const getCellClass = (res) => {
+      if (isUnknownComparison(res)) return 'unknown';
       if (res === true) return 'correct';
       if (res === false) return 'incorrect';
       return 'incorrect';
@@ -156,6 +166,7 @@ export default {
      * 数值型字段，需要判断是完全相等、接近远离、方向等
      */
     const getNumericCellClass = (res) => {
+      if (isUnknownComparison(res)) return 'unknown';
       if (res === true) {
         // 直接命中
         return 'correct';
@@ -178,10 +189,35 @@ export default {
      */
     const getTagCellClass = (tagComparison) => {
       if (!tagComparison) return 'incorrect';
+      if (tagComparison.unknown) return 'unknown';
+      if (tagComparison.isBirthday) {
+        if (tagComparison.match || tagComparison.correctTokens?.length === 2) return 'correct';
+        return tagComparison.correctTokens?.length ? 'partial' : 'incorrect';
+      }
       if (tagComparison.correctTags && tagComparison.correctTags.length > 0) {
         return 'correct';
       }
       return 'incorrect';
+    };
+
+    const isUnknownComparison = (result) => result && typeof result === 'object' && result.unknown;
+    const displayValue = (value) => value == null || value === '' ? '未知' : value;
+    const getComparisonSymbol = (result) => {
+      if (isUnknownComparison(result)) return '？';
+      if (result === true || result?.match) return '✓';
+      if (result?.isBirthday) return result.correctTokens?.length ? '≈' : '×';
+      if (result?.correctTags) return result.correctTags.length ? '✓' : '×';
+      return '×';
+    };
+    const getComparisonLabel = (tag, result, rawValue) => {
+      const value = result && typeof result === 'object' && Object.prototype.hasOwnProperty.call(result, 'guessedValue') ? result.guessedValue : rawValue;
+      const prefix = `${tag}：${displayValue(value)}，`;
+      if (isUnknownComparison(result)) return `${tag}：${displayValue(result.guessedValue)}，资料未知，不可比较`;
+      if (result === true || result?.match) return `${prefix}匹配`;
+      if (result?.direction) return `${prefix}答案更${result.direction === 'higher' ? '大' : '小'}，${result.differenceType === 'close' ? '接近' : '相差较远'}`;
+      if (result?.isBirthday) return `${prefix}${result.correctTokens?.length === 2 ? '匹配' : result.correctTokens?.length ? '部分匹配' : '不匹配'}`;
+      if (result?.correctTags) return `${prefix}${result.correctTags.length ? '有匹配标签' : '不匹配'}`;
+      return `${prefix}不匹配`;
     };
 
     /**
@@ -193,6 +229,10 @@ export default {
     };
 
     return {
+      isUnknownComparison,
+      displayValue,
+      getComparisonSymbol,
+      getComparisonLabel,
       isNumericTag,
       isBirthdayComparison,
       getCellClass,
@@ -204,7 +244,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .result-row {
   display: table-row;
   width: 100%;
@@ -224,6 +264,8 @@ export default {
 
 .result-cell {
   display: table-cell;
+  min-width: 104px;
+  white-space: nowrap;
   padding: 12px;
   text-align: center;
   vertical-align: middle;
@@ -286,6 +328,11 @@ export default {
   background-color: rgba(244, 67, 54, 0.2); /* 浅红色 */
 }
 
+.unknown { background-color: var(--color-card-bg); }
+.partial { background-color: rgba(255, 152, 0, 0.2); }
+.comparison-status { display: block; font-size: 11px; }
+.comparison-symbol { margin: 0 3px; font-weight: 700; }
+
 /* 数值差距为 close => 浅橙色, far => 更红一些 */
 .higher-close,
 .lower-close {
@@ -341,7 +388,8 @@ export default {
     height: 36px;
   }
   .operator-name {
-    display: none;
+    display: block;
+    font-size: 12px;
   }
 }
 </style>

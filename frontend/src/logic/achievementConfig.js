@@ -101,17 +101,17 @@ export const ACHIEVEMENTS = {
     {
       id: 'speedster',
       name: '闪电快手',
-      description: '平均用时不超过15秒',
+      description: '至少答对一题，平均用时不超过15秒',
       icon: '⚡',
-      condition: 'averageTime <= 15',
+      condition: 'correctAnswers > 0 && averageTime <= 15',
       trigger: 'final'
     },
     {
       id: 'efficient',
       name: '一击制胜',
-      description: '平均猜测次数不超过2次',
+      description: '全部答对，平均猜测次数不超过2次',
       icon: '🎯',
-      condition: 'averageGuesses <= 2',
+      condition: 'totalQuestions > 0 && correctAnswers === totalQuestions && averageGuesses <= 2',
       trigger: 'final'
     },
     {

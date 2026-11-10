@@ -4,7 +4,7 @@
     <div class="challenge-search">
       <guess-input
         :operators="filteredOperators"
-        :disabled="gameOver || gameWon"
+        :disabled="gameOver || gameWon || (settings.gameMode === 'puzzle' && puzzleLoadState !== 'ready')"
         :guessedOperators="guesses"
         @submit="handleGuess"
         class="challenge-input"
@@ -19,7 +19,7 @@
       </div>
       <div v-else class="result-fail">
         <span class="result-icon">😞</span>
-        <span class="result-text">时间到！答案是 {{ question.targetOperator.干员 }}</span>
+        <span class="result-text">{{ failureText }}答案是 {{ question.targetOperator.干员 }}</span>
       </div>
     </div>
 
@@ -33,9 +33,10 @@
         :gameWon="gameWon"
         :userGaveUp="false"
         :guesses="guesses"
-        :gameSessionId="`challenge_${question.id}`"
-        :puzzleHintInterval="3"
+        :gameSessionId="question.sessionId"
+        :puzzleHintInterval="settings.puzzleHintInterval || 3"
         :preloadedAssets="preloadedAssets"
+        @load-state="$emit('load-state', $event)"
         class="challenge-puzzle-board"
       />
     </div>
@@ -50,8 +51,8 @@
         :gameWon="gameWon"
         :maxGuesses="settings.maxGuesses"
         :userGaveUp="false"
-        :potentialMode="'满潜'"
-        :trustMode="'满信赖'"
+        :potentialMode="settings.potentialMode || '满潜'"
+        :trustMode="settings.trustMode || '满信赖'"
         :selectedTagGroup="getSelectedTagGroup()"
         :isChallenge="true"
         class="challenge-game-board"
@@ -95,6 +96,14 @@ export default {
       type: Array,
       default: () => []
     },
+    puzzleLoadState: {
+      type: String,
+      default: 'loading'
+    },
+    endReason: {
+      type: String,
+      default: ''
+    },
     gameOver: {
       type: Boolean,
       default: false
@@ -108,8 +117,10 @@ export default {
       default: null
     }
   },
-  emits: ['guess'],
+  emits: ['guess', 'load-state'],
   setup(props, { emit }) {
+    const failureText = computed(() => props.endReason === 'timeout' ? '时间到！' : '次数已用尽！');
+
     // 过滤干员
     const filteredOperators = computed(() => {
       if (props.settings.onlySixStar) {
@@ -140,6 +151,7 @@ export default {
 
     return {
       filteredOperators,
+      failureText,
       handleGuess,
       getSelectedTagGroup
     };

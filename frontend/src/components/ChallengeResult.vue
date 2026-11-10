@@ -123,6 +123,7 @@
 import { ref, computed } from 'vue';
 import { calculateFinalStats } from '../logic/challengeService';
 import { achievementChecker } from '../logic/achievementChecker';
+import { formatElapsedTime } from '../logic/challengeTiming';
 import { getOperatorAvatarFile, getImagePath } from '../utils/imageUtils';
 
 export default {
@@ -162,17 +163,7 @@ export default {
     };
 
     // 格式化时间
-    const formatTime = (seconds) => {
-      if (seconds === 0 || seconds === Infinity || seconds >= 300) {
-        return '无限制';
-      }
-      const mins = Math.floor(seconds / 60);
-      const secs = Math.round(seconds % 60);
-      if (mins > 0) {
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-      }
-      return `${secs}秒`;
-    };
+    const formatTime = formatElapsedTime;
 
     return {
       finalStats,

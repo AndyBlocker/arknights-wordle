@@ -12,16 +12,18 @@
         <div class="setup-section">
           <h3 class="section-title">选择游戏模式</h3>
           <div class="mode-grid">
-            <div 
+            <button
+              type="button"
               v-for="mode in availableModes" 
               :key="mode.id"
               class="mode-card"
               :class="{ active: challengeSettings.gameMode === mode.id }"
+              :aria-pressed="challengeSettings.gameMode === mode.id"
               @click="challengeSettings.gameMode = mode.id"
             >
               <div class="mode-name">{{ mode.name }}</div>
               <div class="mode-desc">{{ mode.description }}</div>
-            </div>
+            </button>
           </div>
         </div>
 
@@ -30,12 +32,13 @@
           <h3 class="section-title">挑战参数</h3>
           <div class="param-grid">
             <div class="param-item">
-              <label class="param-label">题目数量</label>
+              <label class="param-label" for="challenge-question-count">题目数量</label>
               <div class="param-control">
                 <input 
                   type="range" 
                   min="3" 
                   max="20" 
+                  id="challenge-question-count"
                   v-model.number="challengeSettings.questionCount"
                   class="modern-range"
                 />
@@ -44,13 +47,14 @@
             </div>
             
             <div class="param-item">
-              <label class="param-label">单题时间限制</label>
+              <label class="param-label" for="challenge-question-time">单题时间限制</label>
               <div class="param-control">
                 <input 
                   type="range" 
                   min="30" 
                   max="300" 
                   step="15"
+                  id="challenge-question-time"
                   v-model.number="challengeSettings.timePerQuestion"
                   class="modern-range"
                 />
@@ -61,12 +65,13 @@
             </div>
             
             <div class="param-item">
-              <label class="param-label">最大猜测次数</label>
+              <label class="param-label" for="challenge-max-guesses">最大猜测次数</label>
               <div class="param-control">
                 <input 
                   type="range" 
                   min="3" 
                   max="8" 
+                  id="challenge-max-guesses"
                   v-model.number="challengeSettings.maxGuesses"
                   class="modern-range"
                 />
@@ -139,13 +144,14 @@
             <!-- 小头模式特有设置 -->
             <template v-if="challengeSettings.gameMode === 'puzzle'">
               <div class="param-item">
-                <label class="param-label">提示间隔</label>
+                <label class="param-label" for="challenge-hint-interval">提示间隔</label>
                 <div class="param-control">
                   <input 
                     type="range" 
                     min="1" 
                     max="5" 
-                    v-model.number="challengeSettings.puzzleHintInterval"
+                    id="challenge-hint-interval"
+                  v-model.number="challengeSettings.puzzleHintInterval"
                     class="modern-range"
                   />
                   <span class="param-value">每 {{ challengeSettings.puzzleHintInterval }} 次错误显示提示</span>
@@ -218,8 +224,11 @@
             :comparisons="currentComparisons"
             :gameOver="gameOver"
             :gameWon="gameWon"
+            :endReason="endReason"
+            :puzzleLoadState="puzzleLoadState"
             :preloadedAssets="currentQuestion.puzzleAssets"
             @guess="handleGuess"
+            @load-state="onPuzzleLoadState"
             class="question-board"
           />
         </div>
@@ -240,6 +249,7 @@
 
 <script>
 import { ref, computed, onBeforeUnmount } from 'vue';
+import { getQuestionDeadline, getRemainingSeconds, getElapsedSeconds } from '../logic/challengeTiming';
 import { generateChallengeQuestions, calculateChallengeScore } from '../logic/challengeService';
 import { compareOperators } from '../logic/gameLogic';
 import { achievementChecker } from '../logic/achievementChecker';
@@ -300,8 +310,24 @@ export default {
     const currentComparisons = ref([]);
     const gameOver = ref(false);
     const gameWon = ref(false);
+    const endReason = ref('');
+    const puzzleLoadState = ref('ready');
     const questionStartTime = ref(0);
     let gameTimer = null;
+    let nextQuestionTimer = null;
+    let questionDeadline = Infinity;
+    let questionSettled = false;
+    let questionClockStarted = false;
+    let activeElapsed = 0;
+    let runToken = 0;
+    let questionToken = 0;
+
+    const clearTimers = () => {
+      clearInterval(gameTimer);
+      clearInterval(totalTimer);
+      clearTimeout(nextQuestionTimer);
+      gameTimer = totalTimer = nextQuestionTimer = null;
+    };
 
     // 计算属性
     const canStartChallenge = computed(() => {
@@ -312,6 +338,9 @@ export default {
 
     // 开始挑战
     const startChallenge = async () => {
+      if (challengePhase.value !== 'setup') return;
+      clearTimers();
+      const token = ++runToken;
       challengePhase.value = 'preparing';
       preparingProgress.value = 0;
       
@@ -325,6 +354,7 @@ export default {
           }
         );
         
+        if (token !== runToken) return;
         challengeQuestions.value = questions;
         currentQuestionIndex.value = 0;
         challengeScore.value = 0;
@@ -347,6 +377,7 @@ export default {
         startQuestion();
         
       } catch (error) {
+        if (token !== runToken) return;
         console.error('准备挑战失败:', error);
         challengePhase.value = 'setup';
       }
@@ -359,37 +390,73 @@ export default {
         return;
       }
       
+      clearInterval(gameTimer);
+      clearTimeout(nextQuestionTimer);
+      gameTimer = nextQuestionTimer = null;
+      questionToken++;
+      questionSettled = false;
+      endReason.value = '';
+      questionClockStarted = false;
+      activeElapsed = 0;
+      puzzleLoadState.value = challengeSettings.value.gameMode === 'puzzle' ? 'loading' : 'ready';
       currentQuestion.value = challengeQuestions.value[currentQuestionIndex.value];
       currentGuesses.value = [];
       currentComparisons.value = [];
       gameOver.value = false;
       gameWon.value = false;
-      questionStartTime.value = Date.now();
-      
-      // 通知成就系统开始新题目
-      achievementChecker.startQuestion();
-      
-      // 设置时间限制
-      if (challengeSettings.value.timePerQuestion >= 300) {
-        timeLeft.value = Infinity; // 无限制
-      } else {
-        timeLeft.value = challengeSettings.value.timePerQuestion;
-        // 启动计时器
+      timeLeft.value = challengeSettings.value.timePerQuestion >= 300 ? Infinity : challengeSettings.value.timePerQuestion;
+      questionDeadline = Infinity;
+      if (challengeSettings.value.gameMode !== 'puzzle') startQuestionClock();
+    };
+
+    const startQuestionClock = () => {
+      if (questionSettled || questionClockStarted || challengePhase.value !== 'playing') return;
+      questionClockStarted = true;
+      questionStartTime.value = Date.now() - activeElapsed * 1000;
+      if (activeElapsed === 0) achievementChecker.startQuestion();
+      questionDeadline = getQuestionDeadline(questionStartTime.value, challengeSettings.value.timePerQuestion);
+      timeLeft.value = getRemainingSeconds(questionDeadline, Date.now());
+      if (questionDeadline !== Infinity) {
+        const token = questionToken;
         gameTimer = setInterval(() => {
-          timeLeft.value--;
-          if (timeLeft.value <= 0) {
-            timeUp();
-          }
-        }, 1000);
+          if (token === questionToken) refreshClock();
+        }, 250);
       }
     };
 
+    const onPuzzleLoadState = (state) => {
+      if (challengePhase.value !== 'playing' || challengeSettings.value.gameMode !== 'puzzle' || questionSettled) return;
+      if (!['loading', 'ready', 'error'].includes(state)) return;
+      if (state !== 'ready' && questionClockStarted) {
+        refreshClock();
+        if (questionSettled) return;
+        activeElapsed = getElapsedSeconds(questionStartTime.value, Date.now());
+        clearInterval(gameTimer);
+        gameTimer = null;
+        questionClockStarted = false;
+      }
+      puzzleLoadState.value = state;
+      if (state === 'ready') startQuestionClock();
+    };
+
+    const refreshClock = () => {
+      if (challengePhase.value !== 'playing' || questionSettled || !currentQuestion.value || !questionClockStarted) return;
+      timeLeft.value = getRemainingSeconds(questionDeadline, Date.now());
+      if (timeLeft.value <= 0) timeUp();
+    };
+    document.addEventListener('visibilitychange', refreshClock);
+
     // 处理猜测
     const handleGuess = (operatorName) => {
-      if (gameOver.value || gameWon.value) return;
+      if (challengePhase.value !== 'playing' || !currentQuestion.value || questionSettled || gameOver.value || gameWon.value) return;
+      if (typeof operatorName !== 'string' || !operatorName.trim()) return;
+      if (challengeSettings.value.gameMode === 'puzzle' && puzzleLoadState.value !== 'ready') return;
+      refreshClock();
+      if (questionSettled) return;
       
       // 找到猜测的干员 - 增强查找逻辑
-      const guessedOp = props.operators.find(op => {
+      const candidates = challengeSettings.value.onlySixStar ? props.operators.filter(op => op.星级 === 6) : props.operators;
+      const guessedOp = candidates.find(op => {
         // 1. 精确匹配
         if (op.干员 === operatorName) return true;
         
@@ -406,6 +473,7 @@ export default {
         return;
       }
       
+      if (currentGuesses.value.some(op => op.干员 === guessedOp.干员)) return;
       currentGuesses.value.push(guessedOp);
       
       // 检查是否猜对
@@ -438,30 +506,35 @@ export default {
       
       if (isCorrect) {
         gameWon.value = true;
-        questionComplete(true);
+        questionComplete(true, 'correct');
       } else if (currentGuesses.value.length >= challengeSettings.value.maxGuesses) {
         gameOver.value = true;
-        questionComplete(false);
+        questionComplete(false, 'guesses-exhausted');
       }
     };
 
     // 时间到
     const timeUp = () => {
-      if (!gameOver.value && !gameWon.value) {
-        gameOver.value = true;
-        questionComplete(false);
+      if (!questionSettled && !gameOver.value && !gameWon.value) {
+        questionComplete(false, 'timeout');
       }
     };
 
     // 题目完成
-    const questionComplete = (isCorrect) => {
+    const questionComplete = (isCorrect, reason) => {
+      if (questionSettled || challengePhase.value !== 'playing' || !currentQuestion.value) return;
+      questionSettled = true;
+      endReason.value = reason;
+      gameWon.value = isCorrect;
+      gameOver.value = !isCorrect;
       if (gameTimer) {
         clearInterval(gameTimer);
         gameTimer = null;
       }
       
       // 计算实际用时
-      const timeUsed = Math.floor((Date.now() - questionStartTime.value) / 1000);
+      const elapsed = getElapsedSeconds(questionStartTime.value, Date.now());
+      const timeUsed = reason === 'timeout' ? Math.min(elapsed, challengeSettings.value.timePerQuestion) : elapsed;
       
       // 通知成就系统完成题目
       achievementChecker.completeQuestion(timeUsed, currentGuesses.value.length);
@@ -480,18 +553,24 @@ export default {
         guesses: [...currentGuesses.value],
         comparisons: [...currentComparisons.value],
         isCorrect,
+        endReason: reason,
         timeUsed,
         score
       });
       
       // 1.5秒后进入下一题
-      setTimeout(() => {
-        nextQuestion();
+      const token = questionToken;
+      nextQuestionTimer = setTimeout(() => {
+        if (challengePhase.value === 'playing' && token === questionToken) nextQuestion();
       }, 1500);
     };
 
     // 下一题
     const nextQuestion = () => {
+      if (challengePhase.value !== 'playing' || !questionSettled) return;
+      clearTimeout(nextQuestionTimer);
+      nextQuestionTimer = null;
+      if (currentQuestion.value) currentQuestion.value.puzzleAssets = null;
       currentQuestionIndex.value++;
       if (currentQuestionIndex.value < challengeQuestions.value.length) {
         startQuestion();
@@ -502,6 +581,8 @@ export default {
 
     // 完成挑战
     const finishChallenge = () => {
+      clearTimeout(nextQuestionTimer);
+      nextQuestionTimer = null;
       if (gameTimer) {
         clearInterval(gameTimer);
         gameTimer = null;
@@ -523,6 +604,12 @@ export default {
 
     // 重新开始
     const restartChallenge = () => {
+      runToken++;
+      questionToken++;
+      clearTimers();
+      currentQuestion.value = null;
+      questionSettled = false;
+      endReason.value = '';
       challengePhase.value = 'setup';
       challengeQuestions.value = [];
       currentQuestionIndex.value = 0;
@@ -568,29 +655,27 @@ export default {
 
     // 格式化时间
     const formatTime = (seconds) => {
-      if (seconds === Infinity || seconds >= 300) {
+      if (seconds === Infinity) {
         return '∞';
       }
       const mins = Math.floor(seconds / 60);
-      const secs = seconds % 60;
+      const secs = Math.floor(seconds % 60);
       return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
     // 格式化总时间
     const formatTotalTime = (seconds) => {
       const mins = Math.floor(seconds / 60);
-      const secs = seconds % 60;
+      const secs = Math.floor(seconds % 60);
       return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
     // 清理
     onBeforeUnmount(() => {
-      if (gameTimer) {
-        clearInterval(gameTimer);
-      }
-      if (totalTimer) {
-        clearInterval(totalTimer);
-      }
+      runToken++;
+      questionToken++;
+      clearTimers();
+      document.removeEventListener('visibilitychange', refreshClock);
     });
 
     return {
@@ -607,6 +692,9 @@ export default {
       currentComparisons,
       gameOver,
       gameWon,
+      endReason,
+      puzzleLoadState,
+      onPuzzleLoadState,
       canStartChallenge,
       startChallenge,
       handleGuess,
@@ -714,6 +802,9 @@ export default {
 }
 
 .mode-card {
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
   background: rgba(255, 255, 255, 0.1);
   border: 2px solid var(--color-border);
   border-radius: 12px;

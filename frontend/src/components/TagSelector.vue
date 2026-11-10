@@ -1,11 +1,13 @@
 <template>
   <div class="tag-selector">
     <div class="tag-groups">
-      <div
+      <button
+        type="button"
         v-for="group in tagGroups"
         :key="group.id"
         class="tag-group-item"
         :class="{ active: selectedGroup.id === group.id }"
+        :aria-pressed="selectedGroup.id === group.id"
         @click="selectGroup(group.id)"
       >
         <div class="group-header">
@@ -18,7 +20,7 @@
             {{ tag }}
           </span>
         </div>
-      </div>
+      </button>
     </div>
   </div>
 </template>

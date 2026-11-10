@@ -6,10 +6,10 @@
 - `frontend/src/logic/`: Pure game services. `gameLogic.js` normalizes operator stats, compares guesses, and exposes helper filters; `puzzleService.js` handles art selection, caching and mosaic refinement via an integral-image worker.
 - `frontend/src/utils/`: Shared helpers. `dataLoader.js` fetches JSON with abort guards, `imagePreloader.js` caches remote sprites with eviction limits, `workerManager.js` manages the integral-image worker lifecycle, `validator.js` centralizes input sanitisation, `imageUtils.js` derives media URLs, and `themes.js` stores theme cookies.
 - `frontend/public/`: Static assets and `data/operators.json` for offline operator metadata. `frontend/dist/` is generated output—never edit manually.
-- `server/`: Express + Socket.IO backend (`index.js`) that offers health checks and simple in-memory room management (currently dormant after removing challenge play).
+- `server/`: Dormant Express + Socket.IO multiplayer backend. The deployed single-player challenge mode runs entirely in the frontend.
 
 ## Build, Test, and Development Commands
-- `cd frontend && npm install` once per environment to sync dependencies; repeat after lockfile updates.
+- `cd frontend && npm ci` installs the locked frontend dependencies.
 - `npm run serve` (in `frontend/`) boots the local client with hot reload on `http://localhost:8080`.
 - `cd server && npm install && npm start` launches the websocket backend on port 3012; run it alongside the client for multiplayer playtests.
 - `npm run build` (frontend) emits production bundles in `dist/`; use `npm run lint` to validate formatting before every PR.
@@ -21,8 +21,9 @@
 - Keep component files focused: template + script + scoped style in one `.vue` file; move shared helpers into `utils/`.
 
 ## Testing Guidelines
-- There is no bundled unit suite yet; add Vue Test Utils or vitest specs under a new `frontend/tests/` folder and mirror feature names.
-- Start each test filename with the module, e.g. `logic-puzzle.spec.js`, and assert both happy paths and failure states.
+- `cd frontend && npm test` runs the Node regression suite in `tests/*.test.cjs`, exercising actual game functions and component setup handlers.
+- Add focused regression cases for corrected failures, including errors and cancellation; keep test filenames scoped to the feature.
+- Browser repair checks and controlled-fixture limits are documented in `docs/repairs-2026-11-10/`. A mobile viewport check is not a physical-device or screen-reader certification.
 - Run `npm run lint` plus manual smoke tests in desktop and mobile browsers after each significant change.
 - When touching `server/`, add lightweight integration checks using supertest or document manual API verifications in the PR.
 

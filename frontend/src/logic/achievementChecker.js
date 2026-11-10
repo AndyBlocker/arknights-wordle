@@ -107,7 +107,7 @@ export class AchievementChecker {
   // 完成挑战，计算最终平均猜测次数
   completeChallenge(results) {
     const totalGuesses = results.reduce((sum, result) => sum + result.guesses.length, 0);
-    this.stats.averageGuesses = totalGuesses / results.length;
+    this.stats.averageGuesses = results.length ? totalGuesses / results.length : 0;
   }
 
   // 检查是否是阿戈尔
@@ -183,6 +183,7 @@ export class AchievementChecker {
       // 创建一个安全的评估环境
       const context = {
         accuracy: this.stats.accuracy,
+        correctAnswers: this.stats.correctAnswers,
         averageTime: this.stats.averageTime,
         averageGuesses: this.stats.averageGuesses,
         totalQuestions: this.stats.totalQuestions,

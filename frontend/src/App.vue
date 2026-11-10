@@ -31,6 +31,11 @@
           <div class="loading-spinner"></div>
           <p class="loading-text">正在加载干员数据...</p>
         </div>
+        <section v-else-if="isError && !operatorData.length" class="data-error" role="alert">
+          <h2>干员数据加载失败</h2>
+          <p>{{ error.message }}</p>
+          <button type="button" @click="loadData">重新加载数据</button>
+        </section>
         <div v-else class="game-container">
           <!-- 游戏规则 -->
           <div class="rules-section">
@@ -97,7 +102,7 @@
           <div v-if="!isInChallengeMode" class="search-section">
             <guess-input
               :operators="filteredOperators"
-              :disabled="gameOver || gameWon"
+              :disabled="gameOver || gameWon || (selectedTagGroup.id === 'puzzle' && puzzleLoadState !== 'ready')"
               :guessedOperators="guesses"
               @submit="makeGuess"
               class="main-search"
@@ -110,7 +115,7 @@
               <div class="settings-header">
                 <span class="settings-icon">⚙️</span>
                 <h3>小头模式设置</h3>
-                <button class="toggle-btn" @click="showAdvanced = !showAdvanced">
+                <button class="toggle-btn" :aria-expanded="showAdvanced" aria-label="展开或收起游戏设置" @click="showAdvanced = !showAdvanced">
                   <span class="toggle-icon">{{ showAdvanced ? '➖' : '➕' }}</span>
                 </button>
               </div>
@@ -123,7 +128,7 @@
                         <span class="setting-desc">限制猜测范围为6星干员</span>
                       </div>
                       <label class="modern-switch">
-                        <input type="checkbox" v-model="onlySixStar" />
+                        <input type="checkbox" v-model="onlySixStar" aria-label="只猜六星干员" />
                         <span class="switch-slider"></span>
                       </label>
                     </div>
@@ -134,7 +139,7 @@
                         <span class="setting-desc">当前设置: {{ maxGuesses }} 次</span>
                       </div>
                       <div class="range-container">
-                        <input type="range" min="3" max="15" v-model.number="maxGuesses" class="modern-range" />
+                        <input type="range" min="3" max="15" v-model.number="maxGuesses" class="modern-range" aria-label="最大猜测次数" />
                         <div class="range-marks">
                           <span>3</span>
                           <span>15</span>
@@ -148,7 +153,7 @@
                         <span class="setting-desc">每 {{ puzzleHintInterval }} 次错误猜测显示一条提示</span>
                       </div>
                       <div class="range-container">
-                        <input type="range" min="1" max="5" v-model.number="puzzleHintInterval" class="modern-range" />
+                        <input type="range" min="1" max="5" v-model.number="puzzleHintInterval" class="modern-range" aria-label="提示间隔" />
                         <div class="range-marks">
                           <span>1</span>
                           <span>5</span>
@@ -171,7 +176,7 @@
               <div class="settings-header">
                 <span class="settings-icon">🎮</span>
                 <h3>{{ selectedTagGroup.name }}模式设置</h3>
-                <button class="toggle-btn" @click="showAdvanced = !showAdvanced">
+                <button class="toggle-btn" :aria-expanded="showAdvanced" aria-label="展开或收起游戏设置" @click="showAdvanced = !showAdvanced">
                   <span class="toggle-icon">{{ showAdvanced ? '➖' : '➕' }}</span>
                 </button>
               </div>
@@ -184,7 +189,7 @@
                         <span class="setting-desc">限制猜测范围为6星干员</span>
                       </div>
                       <label class="modern-switch">
-                        <input type="checkbox" v-model="onlySixStar" />
+                        <input type="checkbox" v-model="onlySixStar" aria-label="只猜六星干员" />
                         <span class="switch-slider"></span>
                       </label>
                     </div>
@@ -247,6 +252,7 @@
                           :min="3"
                           v-model.number="maxGuesses"
                           class="modern-range"
+                          aria-label="最大猜测次数"
                         />
                         <div class="range-marks">
                           <span>3</span>
@@ -308,6 +314,7 @@
                 :guesses="guesses"
                 :gameSessionId="gameSessionId"
                 :puzzleHintInterval="puzzleHintInterval"
+                @load-state="puzzleLoadState = $event"
                 @reset="resetGame"
                 class="board-component"
               />
@@ -362,9 +369,6 @@ import { getCurrentTheme, setTheme } from './themes';
 import { createErrorBoundary } from './utils/errorHandler';
 import ErrorToast from './components/ErrorToast.vue';
 import { InputValidator } from './utils/validator';
-import { imagePreloader } from './utils/imagePreloader';
-import { getImagePath } from './utils/imageUtils';
-import { getAvailableArts } from './logic/puzzleService';
 
 export default {
   name: 'App',
@@ -382,7 +386,10 @@ export default {
     const operatorData = ref([]);
     const { error, isError, clearError, handleError } = createErrorBoundary();
     const toastMessages = ref([]);
-    const gameSessionId = ref(Date.now().toString()); // 游戏会话ID
+    let gameSequence = 0;
+    let toastSequence = 0;
+    const gameSessionId = ref(`${Date.now()}-${gameSequence}`);
+    const puzzleLoadState = ref('loading');
 
     const maxGuesses = ref(6);
     const guesses = ref([]);
@@ -438,42 +445,6 @@ export default {
         selectedTagGroup.value = group;
         resetGame();
         
-        // 如果切换到小头模式，启动预加载
-        if (groupId === 'puzzle') {
-          startPuzzlePreloading();
-        }
-      }
-    };
-
-    // 预加载小头模式图片
-    const startPuzzlePreloading = async () => {
-      if (filteredOperators.value.length === 0) return;
-      
-      try {
-        console.log('开始预加载小头模式图片...');
-        
-        // 选择一些高频干员进行预加载（6星干员优先）
-        const operatorsToPreload = filteredOperators.value
-          .filter(op => op.星级 >= 5) // 5星及以上
-          .slice(0, 10); // 限制数量避免过多网络请求
-        
-        const urlsToPreload = [];
-        
-        for (const operator of operatorsToPreload) {
-          const arts = getAvailableArts(operator);
-          // 每个干员预加载1-2张立绘
-          const artToPreload = arts.slice(0, 2);
-          for (const artFile of artToPreload) {
-            urlsToPreload.push(getImagePath(artFile));
-          }
-        }
-        
-        // 批量预加载，低优先级避免影响当前游戏
-        await imagePreloader.preloadBatch(urlsToPreload, 2);
-        console.log(`预加载完成，共加载 ${urlsToPreload.length} 张图片`);
-        
-      } catch (error) {
-        console.warn('预加载失败:', error);
       }
     };
 
@@ -546,8 +517,8 @@ export default {
     });
 
     const showToast = (message, type = 'error') => {
-      const toast = { id: Date.now(), message, type };
-      toastMessages.value.push(toast);
+      const toast = { id: ++toastSequence, message, type };
+      toastMessages.value = [toast];
     };
 
     const removeToast = (id) => {
@@ -559,6 +530,7 @@ export default {
 
     // 加载干员数据
     const loadData = async () => {
+      loading.value = true;
       try {
         clearError();
         const data = await loadOperatorsData('./data/operators.json');
@@ -569,10 +541,6 @@ export default {
         const errorInfo = handleError(err, '加载干员数据');
         showToast(errorInfo.message);
         
-        // 尝试加载备用数据或提供重试选项
-        if (operatorData.value.length === 0) {
-          console.warn('尝试使用空白数据继续运行...');
-        }
       } finally {
         loading.value = false;
         if (operatorData.value.length > 0) {
@@ -583,7 +551,6 @@ export default {
 
     const pickRandomTarget = () => {
       const availableOperators = filteredOperators.value;
-      console.log(`选择目标干员，可用干员数量: ${availableOperators.length}`);
       
       if (availableOperators.length === 0) {
         console.warn('没有可用的干员来选择作为目标');
@@ -593,7 +560,6 @@ export default {
       
       const newTarget = selectRandomOperator(availableOperators);
       if (newTarget) {
-        console.log(`新目标干员已选择: ${newTarget.干员} (${newTarget.星级}星, ${newTarget.职业})`);
         targetOperator.value = newTarget;
       } else {
         console.warn('selectRandomOperator 返回了空值');
@@ -602,6 +568,10 @@ export default {
     };
 
     const makeGuess = (operatorName) => {
+      if (loading.value || isInChallengeMode.value || !targetOperator.value ||
+          gameOver.value || gameWon.value || userGaveUp.value ||
+          guesses.value.length >= maxGuesses.value) return;
+      if (selectedTagGroup.value.id === 'puzzle' && puzzleLoadState.value !== 'ready') return;
       // 候选数据中的规范名称可能包含校验器不保留的字符（例如 GALLUS²）。
       const exactMatch = typeof operatorName === 'string'
         ? filteredOperators.value.find((op) => op.干员 === operatorName)
@@ -631,6 +601,10 @@ export default {
       
       if (!guessedOp) {
         showToast(`未找到干员: ${sanitizedName}`);
+        return;
+      }
+      if (guesses.value.some(guess => guess.干员 === guessedOp.干员)) {
+        showToast('该干员已猜过', 'warning');
         return;
       }
 
@@ -671,7 +645,6 @@ export default {
     };
 
     const resetGame = () => {
-      console.log('重置游戏开始');
       
       // 先清空目标干员，防止UI显示过期数据
       targetOperator.value = null;
@@ -682,7 +655,8 @@ export default {
       gameOver.value = false;
       gameWon.value = false;
       userGaveUp.value = false;
-      gameSessionId.value = Date.now().toString(); // 生成新的游戏会话ID
+      gameSessionId.value = `${Date.now()}-${++gameSequence}`;
+      puzzleLoadState.value = 'loading';
       
       // 等待下一个tick再选择新目标，确保UI已经更新
       nextTick(() => {
@@ -690,20 +664,20 @@ export default {
       });
     };
 
-    // 当潜能或信赖或 maxGuesses 改变，需要重新计算对比结果
-    watch([potentialMode, trustMode, maxGuesses], () => {
+    watch([potentialMode, trustMode], () => {
       if (selectedTagGroup.value.id !== 'puzzle' && guesses.value.length > 0) {
         recalcAllComparisons();
       }
+    });
+    // Existing settings apply immediately in every mode, including the puzzle.
+    watch(maxGuesses, () => {
+      gameOver.value = !gameWon.value && (userGaveUp.value || guesses.value.length >= maxGuesses.value);
     });
 
     const recalcAllComparisons = () => {
       comparisons.value = guesses.value.map((guess) =>
         compareOperators(guess, targetOperator.value, selectedTagGroup.value.tags, potentialMode.value, trustMode.value)
       );
-      if (guesses.value.length >= maxGuesses.value && !gameWon.value) {
-        gameOver.value = true;
-      }
     };
 
     const toggleTheme = () => {
@@ -722,6 +696,7 @@ export default {
 
     return {
       loading,
+      loadData,
       operatorData,
       maxGuesses,
       guesses,
@@ -757,6 +732,7 @@ export default {
 
       // 游戏会话
       gameSessionId,
+      puzzleLoadState,
       
       // 小头模式设置
       puzzleHintInterval,
@@ -772,4 +748,5 @@ export default {
 
 <style>
 @import url('./styles/modern-app.css');
+@import url('./styles/fixes.css');
 </style>

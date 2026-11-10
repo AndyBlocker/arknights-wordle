@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <Transition name="toast">
-      <div v-if="visible" class="error-toast" :class="{ 'success': type === 'success' }">
+      <div v-if="visible" class="error-toast" :class="{ 'success': type === 'success' }" :role="type === 'error' ? 'alert' : 'status'" :aria-live="type === 'error' ? 'assertive' : 'polite'" aria-atomic="true">
         <div class="toast-content">
           <div class="toast-icon">
             <svg v-if="type === 'error'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -20,7 +20,7 @@
             </svg>
           </div>
           <div class="toast-message">{{ message }}</div>
-          <button @click="close" class="toast-close">×</button>
+          <button @click="close" class="toast-close" aria-label="关闭提示">×</button>
         </div>
       </div>
     </Transition>

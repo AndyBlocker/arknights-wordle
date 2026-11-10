@@ -21,8 +21,6 @@ export async function loadOperatorsData(filePath = './data/operators.json') {
       }
     });
 
-    clearTimeout(timeoutId);
-
     if (!response.ok) {
       const errorMessage = response.status === 404 
         ? '干员数据文件未找到，请检查文件路径'
@@ -45,17 +43,20 @@ export async function loadOperatorsData(filePath = './data/operators.json') {
       throw new Error('干员数据为空');
     }
 
-    // 验证数据结构
-    const sampleOperator = data[0];
-    if (!sampleOperator.干员) {
-      throw new Error('干员数据结构错误，缺少必要字段');
+    const names = new Set();
+    for (const operator of data) {
+      if (!operator || typeof operator.干员 !== 'string' || !operator.干员.trim() ||
+          !/^[0-5]$/.test(String(operator.稀有度)) || typeof operator.职业 !== 'string') {
+        throw new Error('干员数据结构错误，缺少必要字段');
+      }
+      if (names.has(operator.干员)) {
+        throw new Error('干员数据存在重复记录');
+      }
+      names.add(operator.干员);
     }
 
-    console.log(`成功加载了 ${data.length} 个干员数据`);
     return data;
   } catch (error) {
-    clearTimeout(timeoutId);
-    
     if (error.name === 'AbortError') {
       const timeoutError = new Error('加载干员数据超时，请检查网络连接');
       errorHandler.handleError(timeoutError, 'dataLoader');
@@ -64,6 +65,9 @@ export async function loadOperatorsData(filePath = './data/operators.json') {
 
     errorHandler.handleError(error, 'dataLoader');
     throw error;
+  } finally {
+    // fetch only resolves the headers; keep the deadline through body parsing.
+    clearTimeout(timeoutId);
   }
 }
 

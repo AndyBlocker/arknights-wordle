@@ -7,207 +7,169 @@ import {
 } from './advancedColorExtraction';
 import { getCurrentConfig } from '../config/renderingConfig';
 
-// 图像缓存
-const imageCache = new Map();
+// Cache only pixel data; viewport-dependent display geometry is calculated on use.
 const integralCache = new Map();
-
-function addToCache(cache, key, value) {
-  const config = getCurrentConfig();
-  const maxSize = config.PERFORMANCE.MAX_CACHE_SIZE;
-  
-  if (cache.size >= maxSize) {
-    const firstKey = cache.keys().next().value;
-    cache.delete(firstKey);
-  }
-  cache.set(key, value);
-}
-
-/**
- * 生成可用的立绘文件名列表
- */
-export function getAvailableArts(operator) {
-    const arts = [];
-    // 基本立绘
-    arts.push(`立绘_${operator.干员}_1.png`);
-    // 若星级 >= 3 则加立绘_2
-    if ((operator.星级 || 0) >= 3) {
-        arts.push(`立绘_${operator.干员}_2.png`);
-    }
-    // 皮肤 (1..10)
-    for (let i = 1; i <= 10; i++) {
-        const s = operator[`皮肤${i}名称`];
-        if (s) {
-            arts.push(`立绘_${operator.干员}_skin${i}.png`);
-        }
-    }
-    return arts;
-}
-
-// 为每个干员存储选择的立绘，确保同一局游戏中一致性
 const operatorArtCache = new Map();
+let integralCacheBytes = 0;
 
-/**
- * 从干员的可用立绘随机选择一张，但在同一局游戏中保持一致
- */
+function pixelBytes(value) {
+  const arrays = [value.originalImageData?.data, value.integralData?.sumR,
+    value.integralData?.sumG, value.integralData?.sumB, value.integralData?.alphaCount];
+  return arrays.reduce((sum, array) => sum + (array?.byteLength || 0), 0);
+}
+
+function addToIntegralCache(key, value) {
+  const config = getCurrentConfig().PERFORMANCE;
+  const maxBytes = config.MAX_CACHE_BYTES || 48 * 1024 * 1024;
+  const bytes = pixelBytes(value);
+  if (integralCache.has(key)) {
+    integralCacheBytes -= pixelBytes(integralCache.get(key));
+    integralCache.delete(key);
+  }
+  if (bytes > maxBytes) return;
+  while (integralCache.size && (integralCache.size >= config.MAX_CACHE_SIZE || integralCacheBytes + bytes > maxBytes)) {
+    const oldest = integralCache.keys().next().value;
+    integralCacheBytes -= pixelBytes(integralCache.get(oldest));
+    integralCache.delete(oldest);
+  }
+  integralCache.set(key, value);
+  integralCacheBytes += bytes;
+}
+
+export function getPuzzleCacheStats() {
+  return { entries: integralCache.size, bytes: integralCacheBytes };
+}
+
+export function getAvailableArts(operator) {
+  const arts = [`立绘_${operator.干员}_1.png`];
+  // Rarity is stored as 0..5, whereas 星级 is 1..6. Three-star units cannot promote to elite 2.
+  const stars = Number(operator.星级 ?? (Number(operator.稀有度) + 1));
+  if (stars >= 4) arts.push(`立绘_${operator.干员}_2.png`);
+  for (let i = 1; i <= 10; i++) {
+    if (operator[`皮肤${i}名称`]) arts.push(`立绘_${operator.干员}_skin${i}.png`);
+  }
+  return arts;
+}
+
+function artCacheKey(operator, gameSessionId) {
+  return `${operator.干员}\u0000${gameSessionId || ''}`;
+}
+
+function rememberArt(key, filename) {
+  operatorArtCache.delete(key);
+  operatorArtCache.set(key, filename);
+  while (operatorArtCache.size > 100) operatorArtCache.delete(operatorArtCache.keys().next().value);
+}
+
 export function selectRandomArt(operator, gameSessionId = null) {
-    const list = getAvailableArts(operator);
-    if (!list || list.length === 0) {
-        return '';
-    }
-    
-    // 创建缓存键，结合干员名称和游戏会话ID
-    const cacheKey = gameSessionId ? `${operator.干员}_${gameSessionId}` : operator.干员;
-    
-    // 检查缓存
-    if (operatorArtCache.has(cacheKey)) {
-        return operatorArtCache.get(cacheKey);
-    }
-    
-    // 随机选择一张立绘
-    const idx = Math.floor(Math.random() * list.length);
-    const selectedArt = list[idx];
-    
-    // 缓存选择结果
-    operatorArtCache.set(cacheKey, selectedArt);
-    
-    // 控制缓存大小
-    if (operatorArtCache.size > 100) {
-        const firstKey = operatorArtCache.keys().next().value;
-        operatorArtCache.delete(firstKey);
-    }
-    
-    return selectedArt;
+  const key = artCacheKey(operator, gameSessionId);
+  if (operatorArtCache.has(key)) return operatorArtCache.get(key);
+  const arts = getAvailableArts(operator);
+  const selected = arts[Math.floor(Math.random() * arts.length)] || '';
+  rememberArt(key, selected);
+  return selected;
 }
 
-/**
- * 清理指定游戏会话的缓存
- */
 export function clearGameSessionCache(gameSessionId) {
-    const keysToDelete = [];
-    for (const key of operatorArtCache.keys()) {
-        if (key.includes(`_${gameSessionId}`)) {
-            keysToDelete.push(key);
-        }
-    }
-    keysToDelete.forEach(key => operatorArtCache.delete(key));
+  for (const key of operatorArtCache.keys()) {
+    if (key.endsWith(`\u0000${gameSessionId}`)) operatorArtCache.delete(key);
+  }
 }
 
-/**
- * 清理所有缓存
- */
 export function clearAllCache() {
-    operatorArtCache.clear();
-    imageCache.clear();
-    integralCache.clear();
+  operatorArtCache.clear();
+  integralCache.clear();
+  integralCacheBytes = 0;
 }
 
-/**
- * 加载图片并生成积分图 (integral image) 数据，以便高效计算区域平均颜色。
- */
-export async function loadPuzzleImage(operator, maxWidth = 600, maxHeight = 600, initialViewportWidth = 800, gameSessionId = null, customArtSelector = null) {
-    const fileName = customArtSelector ? customArtSelector(operator, gameSessionId) : selectRandomArt(operator, gameSessionId);
-    
-    // 如果customArtSelector返回空字符串，表示跳过该干员
-    if (!fileName) {
-        throw new Error(`没有可用的立绘文件用于干员: ${operator.干员}`);
-    }
-    
+export function withPuzzleDisplaySize(result, maxWidth = 600, maxHeight = 600, viewportWidth = 800) {
+  const { scaledW, scaledH } = calcScaledDimensions(result.imgWidth, result.imgHeight, maxWidth, maxHeight, viewportWidth);
+  return { ...result, scaledWidth: scaledW, scaledHeight: scaledH };
+}
+
+function assertActive(signal) {
+  if (signal?.aborted) throw Object.assign(new Error('图片加载已取消'), { name: 'AbortError' });
+}
+
+function waitForImage(promise, signal) {
+  if (!signal) return promise;
+  assertActive(signal);
+  return new Promise((resolve, reject) => {
+    const abort = () => reject(Object.assign(new Error('图片加载已取消'), { name: 'AbortError' }));
+    signal.addEventListener('abort', abort, { once: true });
+    promise.then(value => {
+      signal.removeEventListener('abort', abort);
+      resolve(value);
+    }, error => {
+      signal.removeEventListener('abort', abort);
+      reject(error);
+    });
+  });
+}
+
+/** Load a session's selected art, falling back to the same operator's base art. */
+export async function loadPuzzleImage(operator, maxWidth = 600, maxHeight = 600, initialViewportWidth = 800, gameSessionId = null, customArtSelector = null, signal = null) {
+  assertActive(signal);
+  const key = artCacheKey(operator, gameSessionId);
+  const selected = operatorArtCache.get(key) || (customArtSelector
+    ? customArtSelector(operator, gameSessionId) : selectRandomArt(operator, gameSessionId));
+  if (!selected) throw new Error('没有可用的立绘，请重试或重新开始');
+  const candidates = [...new Set([selected, `立绘_${operator.干员}_1.png`])];
+  let lastError;
+  for (const fileName of candidates) {
+    assertActive(signal);
     const puzzleImageUrl = getImagePath(fileName);
-    const cacheKey = `${fileName}_${maxWidth}_${maxHeight}`;
-
-    // 检查缓存
-    if (integralCache.has(cacheKey)) {
-        const cachedData = integralCache.get(cacheKey);
-        console.log(`使用缓存的积分图: ${fileName}`);
-        return {
-            ...cachedData,
-            puzzleImageUrl,
-            selectedArt: fileName,
-            operatorName: operator.干员
-        };
+    let pixels = integralCache.get(fileName);
+    if (pixels) {
+      integralCache.delete(fileName);
+      integralCache.set(fileName, pixels);
+    } else {
+      let img;
+      try {
+        img = await waitForImage(imagePreloader.preloadImage(puzzleImageUrl, 'high'), signal);
+      } catch (error) {
+        if (error.name === 'AbortError') throw error;
+        lastError = error;
+        continue;
+      }
+      assertActive(signal);
+      const imgWidth = img.naturalWidth;
+      const imgHeight = img.naturalHeight;
+      if (!(imgWidth > 0 && imgHeight > 0)) {
+        lastError = new Error('图片尺寸无效');
+        continue;
+      }
+      const performanceLevel = getDevicePerformanceLevel();
+      const shrinkLimit = performanceLevel === 'high' ? 1200 : performanceLevel === 'low' ? 400 : 800;
+      const scale = Math.min(1, shrinkLimit / Math.max(imgWidth, imgHeight));
+      const finalWidth = Math.max(1, Math.floor(imgWidth * scale));
+      const finalHeight = Math.max(1, Math.floor(imgHeight * scale));
+      const canvas = createOptimizedCanvas(finalWidth, finalHeight);
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('当前浏览器无法创建图像画布');
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, finalWidth, finalHeight);
+      let imageData;
+      try {
+        imageData = ctx.getImageData(0, 0, finalWidth, finalHeight);
+      } catch (error) {
+        lastError = error;
+        continue;
+      }
+      const integralData = await executeIntegralImageTask('createIntegralImage', {
+        imageData: { width: imageData.width, height: imageData.height, data: imageData.data }
+      }, 'high', { signal });
+      assertActive(signal);
+      pixels = { imgWidth: finalWidth, imgHeight: finalHeight, integralData, originalImageData: imageData };
+      addToIntegralCache(fileName, pixels);
     }
-
-    try {
-        console.log(`开始加载图片: ${puzzleImageUrl}`);
-        
-        // 使用预加载器加载图片，高优先级
-        const img = await imagePreloader.preloadImage(puzzleImageUrl, 'high');
-        
-        const imgWidth = img.naturalWidth;
-        const imgHeight = img.naturalHeight;
-        console.log(`图片尺寸: ${imgWidth}x${imgHeight}`);
-
-        // 计算缩放后的显示尺寸
-        const { scaledW, scaledH } = calcScaledDimensions(imgWidth, imgHeight, maxWidth, maxHeight, initialViewportWidth);
-
-        // 优化：根据设备性能调整处理尺寸
-        const devicePixelRatio = window.devicePixelRatio || 1;
-        const performanceLevel = getDevicePerformanceLevel();
-        let shrinkLimit = 800;
-        
-        if (performanceLevel === 'low') {
-            shrinkLimit = 400;
-        } else if (performanceLevel === 'high') {
-            shrinkLimit = 1200;
-        }
-
-        let finalWidth = imgWidth;
-        let finalHeight = imgHeight;
-        if (finalWidth > shrinkLimit || finalHeight > shrinkLimit) {
-            const scale = shrinkLimit / Math.max(finalWidth, finalHeight);
-            finalWidth = Math.floor(finalWidth * scale);
-            finalHeight = Math.floor(finalHeight * scale);
-        }
-
-        console.log(`处理尺寸: ${finalWidth}x${finalHeight}`);
-
-        // 使用OffscreenCanvas提高性能（如果支持）
-        const canvas = createOptimizedCanvas(finalWidth, finalHeight);
-        const ctx = canvas.getContext('2d');
-        
-        // 优化绘制设置
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'medium';
-        
-        ctx.drawImage(img, 0, 0, finalWidth, finalHeight);
-        const imageData = ctx.getImageData(0, 0, finalWidth, finalHeight);
-
-        console.log(`开始计算积分图...`);
-        
-        // 使用Web Worker计算积分图
-        const integralData = await executeIntegralImageTask('createIntegralImage', {
-            imageData: {
-                width: imageData.width,
-                height: imageData.height,
-                data: imageData.data
-            }
-        }, 'high');
-
-        console.log(`积分图计算完成`);
-
-        const result = {
-            imgWidth: finalWidth,
-            imgHeight: finalHeight,
-            scaledWidth: scaledW,
-            scaledHeight: scaledH,
-            integralData,
-            originalImageData: imageData // 保存原始图像数据用于高级颜色提取
-        };
-
-        // 缓存结果
-        addToCache(integralCache, cacheKey, result);
-
-        return {
-            ...result,
-            puzzleImageUrl,
-            selectedArt: fileName,
-            operatorName: operator.干员
-        };
-
-    } catch (error) {
-        console.error(`加载图片失败: ${puzzleImageUrl}`, error);
-        throw new Error(`图片加载失败: ${error.message}`);
-    }
+    assertActive(signal);
+    rememberArt(key, fileName);
+    return withPuzzleDisplaySize({ ...pixels, puzzleImageUrl, selectedArt: fileName,
+      operatorName: operator.干员, gameSessionId }, maxWidth, maxHeight, initialViewportWidth);
+  }
+  throw new Error(lastError?.name === 'AbortError' ? '图片加载超时，请重试' : '立绘加载失败，请检查网络后重试');
 }
 
 /**
@@ -243,8 +205,8 @@ function createOptimizedCanvas(width, height) {
 /**
  * 计算缩放后的显示尺寸（只是为了界面展示用，与生成积分图无关）
  */
-function calcScaledDimensions(w, h, maxW, maxH, viewportWidth) {
-    const containerWidth = Math.min(viewportWidth - 30, maxW);
+export function calcScaledDimensions(w, h, maxW, maxH, viewportWidth) {
+    const containerWidth = Math.max(1, Math.min(viewportWidth - 30, maxW));
 
     let scaledW = w;
     let scaledH = h;
@@ -392,7 +354,7 @@ function assignBlockAttributes(block, integralData, scaledWidth, scaledHeight, m
                 throw new Error('未获取到有效颜色');
             }
         } catch (e) {
-            console.warn('高级颜色提取失败，回退到传统方法:', e.message);
+            if (process.env.NODE_ENV !== 'production') console.warn('高级颜色提取失败，回退到传统方法:', e.message);
             // 回退到传统方法
             block.color = computeRegionAverage(integralData, origX1, origY1, origX2, origY2);
         }

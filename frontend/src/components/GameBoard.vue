@@ -3,17 +3,17 @@
     <div class="game-status">
       <template v-if="gameWon">
         <div class="status-message win">
-          <span>恭喜你猜对了！答案是 {{ targetOperator.干员 }}</span>
+          <span>恭喜你猜对了！答案是 {{ targetOperator?.干员 }}</span>
         </div>
       </template>
       <template v-else-if="userGaveUp">
         <div class="status-message lose">
-          <span>你已放弃游戏！正确答案是 {{ targetOperator.干员 }}</span>
+          <span>你已放弃游戏！正确答案是 {{ targetOperator?.干员 }}</span>
         </div>
       </template>
       <template v-else-if="gameOver && !userGaveUp">
         <div class="status-message lose">
-          <span>游戏结束！正确答案是 {{ targetOperator.干员 }}</span>
+          <span>游戏结束！正确答案是 {{ targetOperator?.干员 }}</span>
         </div>
       </template>
       <template v-else>
@@ -23,20 +23,21 @@
       </template>
     </div>
 
-    <div class="results-section">
-      <div class="results-table">
-        <div class="header-row">
-          <div class="header-cell cell-avatar">干员</div>
+    <div class="results-section" tabindex="0" role="region" aria-label="猜测结果，可横向滚动查看全部属性">
+      <div class="results-table" role="table" aria-label="猜测结果">
+        <div class="header-row" role="row">
+          <div class="header-cell cell-avatar" role="columnheader">干员</div>
           <div
             v-for="tag in displayTags"
             :key="tag"
             class="header-cell"
+            role="columnheader"
           >
             {{ tag }}
           </div>
         </div>
 
-        <div class="results-body">
+        <div class="results-body" role="rowgroup">
           <result-row
             v-for="(guess, index) in guesses"
             :key="index"
@@ -47,7 +48,7 @@
 
           <!-- 若用尽次数/放弃且没猜中 => 显示答案行 -->
           <result-row
-            v-if="(gameOver && !gameWon) || userGaveUp"
+            v-if="targetOperator && ((gameOver && !gameWon) || userGaveUp)"
             :guess="targetOperator"
             :comparison="answerComparison"
             :displayTags="displayTags"
@@ -59,7 +60,7 @@
 
     <div class="game-controls">
       <button
-        v-if="gameOver || gameWon"
+        v-if="!isChallenge && (gameOver || gameWon)"
         @click="handleReset"
         class="reset-button"
       >
@@ -72,7 +73,7 @@
 <script>
 import { computed } from 'vue';
 import ResultRow from './ResultRow.vue';
-import { getEffectiveValue } from '../logic/gameLogic';
+import { compareOperators } from '../logic/gameLogic';
 
 export default {
   name: 'GameBoard',
@@ -80,6 +81,10 @@ export default {
     ResultRow
   },
   props: {
+    isChallenge: {
+      type: Boolean,
+      default: false
+    },
     operatorData: {
       type: Array,
       required: true
@@ -142,42 +147,7 @@ export default {
     });
 
     function compareAsAnswer(op, tags, potentialMode, trustMode) {
-      const comp = {};
-      tags.forEach((tag) => {
-        if (tag === '标签') {
-          const allTags = op[tag]?.split(' ').map(s => s.trim()).filter(Boolean) || [];
-          comp[tag] = {
-            guessTags: allTags,
-            targetTags: allTags,
-            correctTags: allTags
-          };
-        } else if (tag === '出生日期') {
-          comp[tag] = true;
-        } else if (
-          [
-            '稀有度',
-            '满级攻击',
-            '满级生命',
-            '满级防御',
-            '满级法术抗性',
-            '部署费用',
-            '阻挡数',
-            '星级',
-            '攻击间隔',
-            '身高'
-          ].includes(tag)
-        ) {
-          const val = getEffectiveValue(op, tag, potentialMode, trustMode);
-          comp[tag] = {
-            match: true,
-            guessedValue: val,
-            targetValue: val
-          };
-        } else {
-          comp[tag] = true;
-        }
-      });
-      return comp;
+      return op ? compareOperators(op, op, tags, potentialMode, trustMode) : {};
     }
 
     return {

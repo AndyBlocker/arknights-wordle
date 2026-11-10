@@ -4,10 +4,11 @@ class ImagePreloader {
   constructor() {
     this.cache = new Map(); // URL -> { img, timestamp, size }
     this.loading = new Map(); // URL -> Promise
-    this.maxCacheSize = 50; // 最大缓存图片数
+    this.maxCacheSize = 12; // 最大缓存图片数
     this.maxCacheAge = 30 * 60 * 1000; // 30分钟过期
     this.totalCacheSize = 0;
-    this.maxTotalSize = 100 * 1024 * 1024; // 100MB总限制
+    this.maxTotalSize = 48 * 1024 * 1024; // 解码图片的独立字节预算
+    this.generation = 0;
   }
 
   /**
@@ -19,6 +20,8 @@ class ImagePreloader {
       const cached = this.cache.get(url);
       // 检查是否过期
       if (Date.now() - cached.timestamp < this.maxCacheAge) {
+        this.cache.delete(url);
+        this.cache.set(url, cached);
         return cached.img;
       } else {
         this.removeFromCache(url);
@@ -31,15 +34,16 @@ class ImagePreloader {
     }
 
     // 创建加载Promise
+    const generation = this.generation;
     const loadPromise = this.loadImageWithTimeout(url, priority);
     this.loading.set(url, loadPromise);
 
     try {
       const img = await loadPromise;
-      this.addToCache(url, img);
+      if (generation === this.generation) this.addToCache(url, img);
       return img;
     } finally {
-      this.loading.delete(url);
+      if (this.loading.get(url) === loadPromise) this.loading.delete(url);
     }
   }
 
@@ -62,6 +66,7 @@ class ImagePreloader {
 
       const timeoutId = setTimeout(() => {
         img.onload = img.onerror = null;
+        img.src = '';
         reject(new Error(`图片加载超时: ${url}`));
       }, timeout);
 
@@ -86,6 +91,8 @@ class ImagePreloader {
     // 估算图片大小
     const estimatedSize = img.naturalWidth * img.naturalHeight * 4; // RGBA
     
+    if (estimatedSize > this.maxTotalSize) return;
+    this.removeFromCache(url);
     // 清理过期缓存
     this.cleanupExpiredCache();
     
@@ -119,19 +126,8 @@ class ImagePreloader {
    * 移除最旧的缓存项
    */
   removeOldestFromCache() {
-    let oldestUrl = null;
-    let oldestTime = Date.now();
-    
-    for (const [url, cached] of this.cache.entries()) {
-      if (cached.timestamp < oldestTime) {
-        oldestTime = cached.timestamp;
-        oldestUrl = url;
-      }
-    }
-    
-    if (oldestUrl) {
-      this.removeFromCache(oldestUrl);
-    }
+    const oldestUrl = this.cache.keys().next().value;
+    if (oldestUrl !== undefined) this.removeFromCache(oldestUrl);
   }
 
   /**
@@ -159,8 +155,8 @@ class ImagePreloader {
     for (let i = 0; i < urls.length; i += maxConcurrent) {
       const batch = urls.slice(i, i + maxConcurrent);
       const batchPromises = batch.map(url => 
-        this.preloadImage(url, 'normal').catch(err => {
-          console.warn(`预加载失败: ${url}`, err);
+        this.preloadImage(url, 'low').catch(err => {
+          if (process.env.NODE_ENV !== 'production') console.warn('预加载失败', err);
           return null;
         })
       );
@@ -189,6 +185,7 @@ class ImagePreloader {
    * 清空缓存
    */
   clearCache() {
+    this.generation++;
     this.cache.clear();
     this.loading.clear();
     this.totalCacheSize = 0;

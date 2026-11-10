@@ -1,9 +1,9 @@
 // 挑战模式相关逻辑和服务
 
 import { selectRandomOperator } from './gameLogic';
-import { loadPuzzleImage, getAvailableArts } from './puzzleService';
-import { getImagePath } from '../utils/imageUtils';
-import { imagePreloader } from '../utils/imagePreloader';
+import { loadPuzzleImage } from './puzzleService';
+
+let challengeSequence = 0;
 
 /**
  * 生成挑战题目
@@ -25,6 +25,7 @@ export async function generateChallengeQuestions(operators, settings, progressCa
   }
   
   const questions = [];
+  const runId = `${Date.now()}_${++challengeSequence}`;
   const usedOperators = new Set();
   
   progressCallback(0.1);
@@ -42,15 +43,16 @@ export async function generateChallengeQuestions(operators, settings, progressCa
     
     const question = {
       id: `q_${i + 1}`,
+      sessionId: `challenge_${runId}_q_${i + 1}`,
       targetOperator,
       gameMode,
       questionIndex: i
     };
     
     // 如果是小头模式，预加载图片
-    if (gameMode === 'puzzle') {
+    if (gameMode === 'puzzle' && i === 0) {
       try {
-        const preloadResult = await preloadPuzzleAssets(targetOperator, `challenge_q${i + 1}`);
+        const preloadResult = await preloadPuzzleAssets(targetOperator, question.sessionId);
         question.puzzleAssets = preloadResult;
       } catch (error) {
         console.warn(`预加载题目 ${i + 1} 的图片失败:`, error);
@@ -62,7 +64,6 @@ export async function generateChallengeQuestions(operators, settings, progressCa
     progressCallback(0.1 + (i + 1) / questionCount * 0.9);
   }
   
-  console.log(`成功生成 ${questions.length} 道挑战题目`);
   return questions;
 }
 
@@ -83,14 +84,7 @@ async function preloadPuzzleAssets(operator, sessionId) {
       sessionId
     );
     
-    return {
-      puzzleImageUrl: puzzleResult.puzzleImageUrl,
-      scaledWidth: puzzleResult.scaledWidth,
-      scaledHeight: puzzleResult.scaledHeight,
-      integralData: puzzleResult.integralData,
-      originalImageData: puzzleResult.originalImageData,
-      selectedArt: puzzleResult.selectedArt
-    };
+    return puzzleResult;
   } catch (error) {
     console.error('预加载拼图资源失败:', error);
     throw error;
@@ -108,14 +102,14 @@ async function preloadPuzzleAssets(operator, sessionId) {
 export function calculateChallengeScore(isCorrect, timeUsed, guessCount, settings) {
   if (!isCorrect) return 0;
   
-  const { timePerQuestion, maxGuesses } = settings;
+  const { maxGuesses } = settings;
   
   // 基础分数
   let baseScore = 1000;
   
   // 时间效率奖励（基于实际用时，无论是否有时间限制）
   let timeBonus = 0;
-  if (timeUsed > 0) {
+  if (Number.isFinite(timeUsed) && timeUsed >= 0) {
     // 用时越短，奖励越高
     if (timeUsed <= 10) {
       timeBonus = 300; // 10秒内完成
@@ -258,7 +252,7 @@ function calculateRanking(totalScore, settings) {
  * @returns {string} 分享码
  */
 export function generateShareCode(challengeData) {
-  const { settings, results } = challengeData;
+  const { settings } = challengeData;
   
   // 构建分享数据
   const shareData = {

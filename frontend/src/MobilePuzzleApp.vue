@@ -19,6 +19,13 @@
         </div>
       </div>
       
+      <section v-if="loading" class="data-loading" role="status">正在加载干员数据...</section>
+      <section v-else-if="loadError" class="data-error" role="alert">
+        <h2>干员数据加载失败</h2>
+        <p>{{ loadError }}</p>
+        <button type="button" @click="initGame">重新加载数据</button>
+      </section>
+
       <!-- 游戏状态显示 -->
       <div v-if="gameWon || gameOver" class="game-result-banner" :class="guessRating">
         <div class="result-content">
@@ -45,11 +52,11 @@
       </div>
 
       <!-- 输入区域 -->
-      <div class="input-section">
+      <div v-if="!loading && !loadError" class="input-section">
         <div class="mobile-guess-input">
           <guess-input
             :operators="operators"
-            :disabled="gameOver"
+            :disabled="gameOver || gameWon || !targetOperator || puzzleLoadState !== 'ready'"
             :guessedOperators="guesses"
             @submit="onGuessSubmit"
             class="mobile-search"
@@ -79,6 +86,7 @@
             gameOverMessage: '考试结束！',
             giveUpMessage: '你已放弃考试！'
           }"
+          @load-state="puzzleLoadState = $event"
           @reset="resetGame"
           class="mobile-puzzle-board"
         />
@@ -116,9 +124,9 @@
     </div>
     
     <!-- 重置确认弹窗 -->
-    <div v-if="showResetConfirm" class="confirm-modal" @click="showResetConfirm = false">
+    <div v-if="showResetConfirm" class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="reset-dialog-title" @keydown="handleModalKeydown" @click="showResetConfirm = false">
       <div class="confirm-content" @click.stop>
-        <div class="confirm-text">确定要重新开始考试吗？</div>
+        <div id="reset-dialog-title" class="confirm-text">确定要重新开始考试吗？</div>
         <div class="confirm-subtitle">当前进度将会丢失</div>
         <div class="confirm-actions">
           <button @click="showResetConfirm = false" class="cancel-btn">
@@ -132,7 +140,7 @@
     </div>
 
     <!-- 临时消息弹窗 -->
-    <div v-if="showTempMessage" class="temp-message-modal" @click="hideTempMessage">
+    <div v-if="showTempMessage" class="temp-message-modal" role="status" aria-live="polite" @click="hideTempMessage">
       <div class="temp-message-content">
         <div class="temp-message-text">{{ tempMessage }}</div>
       </div>
@@ -141,7 +149,7 @@
 </template>
 
 <script>
-import { ref, onMounted, nextTick, computed } from 'vue';
+import { ref, onMounted, onBeforeUnmount, nextTick, computed, watch } from 'vue';
 import { loadOperatorsData } from './utils/dataLoader';
 import { selectRandomOperator, preprocessOperators } from './logic/gameLogic';
 import { getOperatorAvatarFile, getImagePath } from './utils/imageUtils';
@@ -157,6 +165,12 @@ export default {
   },
   setup() {
     // 响应式数据
+    const loading = ref(true);
+    const loadError = ref('');
+    const puzzleLoadState = ref('loading');
+    let gameSequence = 0;
+    let messageTimeout = null;
+    let modalReturnFocus = null;
     const operators = ref([]);
     const targetOperator = ref(null);
     const guesses = ref([]);
@@ -168,7 +182,7 @@ export default {
     
     // 游戏配置
     const maxGuesses = ref(6);
-    const gameSessionId = ref(Date.now().toString());
+    const gameSessionId = ref(`${Date.now()}-${gameSequence}`);
     
     // 判断是否为皮肤干员的函数
     const isSkinOperator = (operator) => {
@@ -259,38 +273,31 @@ export default {
     // 专门为移动端拼图模式设计的立绘选择函数
     const selectPuzzleArt = (operator, gameSessionId) => {
       const list = getAvailableArts(operator);
-      console.log(`[BW] ${operator.干员} 所有可用立绘:`, list);
       
       if (!list || list.length === 0) {
-        console.log(`[BW] ${operator.干员} 没有可用立绘`);
         return '';
       }
       
       // 排除皮肤立绘 (包含skin的文件名)
       const basicArts = list.filter(art => !art.includes('skin'));
-      console.log(`[BW] ${operator.干员} 排除皮肤后:`, basicArts);
       
       if (basicArts.length === 0) {
-        console.log(`[BW] ${operator.干员} 没有基础立绘，跳过`);
         return '';
       }
       
       // 优先选择精二立绘（格式为：立绘_干员名_2.png）
       const elite2Art = basicArts.find(art => art.endsWith('_2.png'));
       if (elite2Art) {
-        console.log(`[BW] ${operator.干员} 选择精二立绘:`, elite2Art);
         return elite2Art;
       }
       
       // 如果没有精二立绘，选择精一立绘（格式为：立绘_干员名_1.png）
       const elite1Art = basicArts.find(art => art.endsWith('_1.png'));
       if (elite1Art) {
-        console.log(`[BW] ${operator.干员} 选择精一立绘:`, elite1Art);
         return elite1Art;
       }
       
       // 如果既没有精二也没有精一立绘，返回空字符串跳过该干员
-      console.log(`[BW] ${operator.干员} 没有精一或精二立绘，跳过`);
       return '';
     };
 
@@ -303,13 +310,9 @@ export default {
       // 移动端包含所有星级的干员，只排除皮肤干员
       const filtered = operators.value.filter(op => {
         const notSkin = !isSkinOperator(op);
-        if (!notSkin) {
-          console.log(`[BW过滤] 排除皮肤干员: ${op.干员}`);
-        }
         return notSkin;
       });
       
-      console.log(`[BW过滤] 加载了 ${operators.value.length} 个干员，过滤后有 ${filtered.length} 个可用干员`);
       return filtered;
     });
 
@@ -345,38 +348,26 @@ export default {
     
     
     
-    // 初始化游戏
+    // Always remove the boot overlay, including failed requests, so retry is reachable.
     const initGame = async () => {
+      loading.value = true;
+      loadError.value = '';
       try {
-        // 加载干员数据
         const data = await loadOperatorsData('../data/operators.json');
-        
-        // 预处理干员数据（重要！转换星级等字段）
         preprocessOperators(data);
         operators.value = data;
-        
-        console.log(`加载了 ${data.length} 个干员，过滤后有 ${filteredOperators.value.length} 个可用干员`);
-        
-        // 开始新游戏
         startNewGame();
-        
-        // 隐藏加载屏幕
+      } catch (error) {
+        loadError.value = error.message || '请检查网络连接后重试';
+      } finally {
+        loading.value = false;
         await nextTick();
         const loadingScreen = document.getElementById('loading-screen');
-        const app = document.getElementById('app');
-        if (loadingScreen) {
-          loadingScreen.style.display = 'none';
-        }
-        if (app) {
-          app.classList.add('loaded');
-        }
-        
-      } catch (error) {
-        console.error('初始化失败:', error);
-        showTempMessageFunc('数据加载失败，请刷新页面重试');
+        if (loadingScreen) loadingScreen.style.display = 'none';
+        document.getElementById('app')?.classList.add('loaded');
       }
     };
-    
+
     // 开始新游戏
     const startNewGame = () => {
       // 重置游戏状态
@@ -387,7 +378,8 @@ export default {
       hideTempMessage();
       
       // 生成新的游戏会话ID
-      gameSessionId.value = Date.now().toString();
+      gameSessionId.value = `${Date.now()}-${++gameSequence}`;
+      puzzleLoadState.value = 'loading';
       
       // 选择有精二立绘的目标干员
       const availableOperators = filteredOperators.value;
@@ -408,13 +400,14 @@ export default {
       }
       
       targetOperator.value = selectRandomOperator(operatorsWithValidArt);
-      console.log('目标干员:', targetOperator.value?.干员);
     };
     
     
     // 提交猜测
     const submitGuess = (operatorName) => {
-      if (!operatorName || gameOver.value) return;
+      if (typeof operatorName !== 'string' || !operatorName.trim() || loading.value || loadError.value ||
+          !targetOperator.value || gameOver.value || gameWon.value ||
+          puzzleLoadState.value !== 'ready' || guesses.value.length >= maxGuesses.value) return;
       
       // 查找干员
       const guessedOperator = operators.value.find(op => 
@@ -427,6 +420,11 @@ export default {
         return;
       }
       
+      if (guesses.value.some(guess => guess.干员 === guessedOperator.干员)) {
+        showTempMessageFunc('该干员已猜过');
+        return;
+      }
+
       // 添加猜测
       guesses.value.push(guessedOperator);
       
@@ -449,7 +447,8 @@ export default {
       tempMessage.value = message;
       showTempMessage.value = true;
       
-      setTimeout(() => {
+      clearTimeout(messageTimeout);
+      messageTimeout = setTimeout(() => {
         showTempMessage.value = false;
       }, timeout);
     };
@@ -459,6 +458,35 @@ export default {
       showTempMessage.value = false;
     };
     
+    watch(showResetConfirm, async (open) => {
+      if (open) {
+        modalReturnFocus = document.activeElement;
+        await nextTick();
+        document.querySelector('.confirm-modal button')?.focus();
+      } else if (modalReturnFocus?.isConnected) {
+        modalReturnFocus.focus();
+      }
+    });
+
+    const handleModalKeydown = (event) => {
+      if (event.key === 'Escape') {
+        showResetConfirm.value = false;
+        event.preventDefault();
+      } else if (event.key === 'Tab') {
+        const buttons = [...event.currentTarget.querySelectorAll('button')];
+        const first = buttons[0];
+        const last = buttons[buttons.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          last.focus();
+          event.preventDefault();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          first.focus();
+          event.preventDefault();
+        }
+      }
+    };
+    onBeforeUnmount(() => clearTimeout(messageTimeout));
+
     // 确认重置游戏
     const confirmReset = () => {
       showResetConfirm.value = false;
@@ -487,6 +515,11 @@ export default {
     
     return {
       // 数据
+      loading,
+      loadError,
+      puzzleLoadState,
+      initGame,
+      handleModalKeydown,
       operators,
       targetOperator,
       guesses,
@@ -1586,114 +1619,6 @@ export default {
   max-height: 50vh;
 }
 
-/* 问题3&4: 拼图容器宽度兼容 + aspect-ratio备份 */
-.puzzle-section ::v-deep(.puzzle-container),
-.mobile-puzzle-board ::v-deep(.mosaic-container),
-.mobile-puzzle-board ::v-deep(.final-image-container),
-.mobile-puzzle-board ::v-deep(.final-compare-container),
-.mobile-puzzle-board ::v-deep(.final-overlay-container) {
-  width: min(calc(100vw - 40px), 85%);
-  max-width: 380px;
-  position: relative;
-  margin: 0 auto;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  background: transparent !important;
-}
-
-/* 中等屏幕优化 */
-@media screen and (min-width: 500px) and (max-width: 768px) {
-  .puzzle-section ::v-deep(.puzzle-container),
-  .mobile-puzzle-board ::v-deep(.mosaic-container),
-  .mobile-puzzle-board ::v-deep(.final-image-container),
-  .mobile-puzzle-board ::v-deep(.final-compare-container),
-  .mobile-puzzle-board ::v-deep(.final-overlay-container) {
-    width: min(calc(100vw - 60px), 80%);
-    max-width: 450px;
-  }
-}
-
-/* 平板端拼图容器优化 */
-@media screen and (min-width: 769px) and (max-width: 1023px) {
-  .puzzle-section ::v-deep(.puzzle-container),
-  .mobile-puzzle-board ::v-deep(.mosaic-container),
-  .mobile-puzzle-board ::v-deep(.final-image-container),
-  .mobile-puzzle-board ::v-deep(.final-compare-container),
-  .mobile-puzzle-board ::v-deep(.final-overlay-container) {
-    width: min(calc(100vw - 50px), 85%);
-    max-width: 500px;
-  }
-}
-
-/* 桌面端拼图容器优化 */
-@media screen and (min-width: 1024px) and (max-width: 1199px) {
-  .puzzle-section ::v-deep(.puzzle-container),
-  .mobile-puzzle-board ::v-deep(.mosaic-container),
-  .mobile-puzzle-board ::v-deep(.final-image-container),
-  .mobile-puzzle-board ::v-deep(.final-compare-container),
-  .mobile-puzzle-board ::v-deep(.final-overlay-container) {
-    width: min(calc(100vw - 60px), 80%);
-    max-width: 600px;
-  }
-}
-
-/* 超宽屏优化 */
-@media screen and (min-width: 1200px) {
-  .puzzle-section ::v-deep(.puzzle-container),
-  .mobile-puzzle-board ::v-deep(.mosaic-container),
-  .mobile-puzzle-board ::v-deep(.final-image-container),
-  .mobile-puzzle-board ::v-deep(.final-compare-container),
-  .mobile-puzzle-board ::v-deep(.final-overlay-container) {
-    width: min(calc(100vw - 80px), 75%);
-    max-width: 700px;
-  }
-}
-
-/* 现代浏览器使用aspect-ratio保持1:1比例 */
-@supports(aspect-ratio: 1/1) {
-  .puzzle-section ::v-deep(.puzzle-container),
-  .mobile-puzzle-board ::v-deep(.mosaic-container),
-  .mobile-puzzle-board ::v-deep(.final-overlay-container),
-  .mobile-puzzle-board ::v-deep(.final-image-container) {
-    aspect-ratio: 1/1;
-    height: auto;
-  }
-  
-  .puzzle-section ::v-deep(.puzzle-container) > *,
-  .mobile-puzzle-board ::v-deep(.mosaic-container) > *,
-  .mobile-puzzle-board ::v-deep(.final-overlay-container) > *,
-  .mobile-puzzle-board ::v-deep(.final-image-container) > * {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-}
-
-/* 备用方案：如果不支持aspect-ratio */
-@supports not (aspect-ratio: 1/1) {
-  .puzzle-section ::v-deep(.puzzle-container),
-  .mobile-puzzle-board ::v-deep(.mosaic-container),
-  .mobile-puzzle-board ::v-deep(.final-overlay-container),
-  .mobile-puzzle-board ::v-deep(.final-image-container) {
-    position: relative;
-    height: 0;
-    padding-bottom: 100%; /* 1:1 aspect ratio */
-  }
-  
-  .puzzle-section ::v-deep(.puzzle-container) > *,
-  .mobile-puzzle-board ::v-deep(.mosaic-container) > *,
-  .mobile-puzzle-board ::v-deep(.final-overlay-container) > *,
-  .mobile-puzzle-board ::v-deep(.final-image-container) > * {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-}
-
 /* 问题5: 结果弹窗Safe-Area处理 */
 .result-modal {
   padding: env(safe-area-inset-top, 0) 20px 20px;
@@ -1714,9 +1639,9 @@ export default {
 /* 确保Canvas在定位容器中正确显示 */
 .mobile-puzzle-board ::v-deep(canvas) {
   width: 100% !important;
-  height: 100% !important;
+  height: auto !important;
   max-width: 100% !important;
-  max-height: 100% !important;
+  max-height: none !important;
   object-fit: contain !important;
   border: none !important;
   box-shadow: none !important;

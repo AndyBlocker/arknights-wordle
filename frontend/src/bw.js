@@ -11,6 +11,7 @@ setTheme('dark');
 
 // 移动端专用样式
 import './styles/mobile.css';
+import './styles/fixes.css';
 
 const app = createApp(MobilePuzzleApp);
 
@@ -37,5 +38,3 @@ app.mount('#app');
 if ('serviceWorker' in navigator) {
   // 可以在这里注册service worker
 }
-
-console.log('泰拉鉴定大师课毕业考试 - 移动端版本已启动');

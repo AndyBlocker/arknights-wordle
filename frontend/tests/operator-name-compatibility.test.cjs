@@ -19,6 +19,10 @@ const guessSource = appSource.slice(
 // Exercise the actual submission handler without installing or mounting Vue.
 function createGame(operators, mode = 'normal') {
   const state = {
+    loading: { value: false },
+    isInChallengeMode: { value: false },
+    userGaveUp: { value: false },
+    puzzleLoadState: { value: 'ready' },
     filteredOperators: { value: operators },
     targetOperator: { value: operators[0] },
     selectedTagGroup: { value: { id: mode, tags: [] } },
