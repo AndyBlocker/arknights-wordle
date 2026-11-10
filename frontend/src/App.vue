@@ -602,8 +602,13 @@ export default {
     };
 
     const makeGuess = (operatorName) => {
-      // 验证干员名称
-      const validation = InputValidator.validateOperatorName(operatorName);
+      // 候选数据中的规范名称可能包含校验器不保留的字符（例如 GALLUS²）。
+      const exactMatch = typeof operatorName === 'string'
+        ? filteredOperators.value.find((op) => op.干员 === operatorName)
+        : undefined;
+      const validation = exactMatch
+        ? { isValid: true, sanitized: exactMatch.干员, errors: [] }
+        : InputValidator.validateOperatorName(operatorName);
       if (!validation.isValid) {
         showToast(`输入错误: ${validation.errors.join(', ')}`);
         return;
@@ -612,7 +617,7 @@ export default {
       const sanitizedName = validation.sanitized;
       
       // 增强的干员查找逻辑：支持带/不带特殊字符的匹配
-      const guessedOp = filteredOperators.value.find((op) => {
+      const guessedOp = exactMatch || filteredOperators.value.find((op) => {
         // 1. 精确匹配
         if (op.干员 === sanitizedName) return true;
         
