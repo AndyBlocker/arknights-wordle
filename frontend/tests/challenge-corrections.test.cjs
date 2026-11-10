@@ -196,3 +196,20 @@ test('puzzle attempts and the configured timer wait for a usable image and pause
   assert.equal(board.challengeResults.value[0].timeUsed, 30);
   cleanup();
 });
+
+test('cooperative refinement does not extend the configured challenge deadline', async () => {
+  const { board, setNow, cleanup } = createBoard();
+  board.challengeSettings.value.gameMode = 'puzzle';
+  await board.startChallenge();
+  board.onPuzzleLoadState('ready');
+  setNow(6000);
+  board.onPuzzleLoadState('refining');
+  board.handleGuess('0');
+  assert.equal(board.currentGuesses.value.length, 0);
+  setNow(32000);
+  board.onPuzzleLoadState('ready');
+  board.handleGuess('0');
+  assert.equal(board.challengeResults.value[0].endReason, 'timeout');
+  assert.equal(board.challengeResults.value[0].timeUsed, 30);
+  cleanup();
+});

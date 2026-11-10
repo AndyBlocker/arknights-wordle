@@ -318,7 +318,7 @@ function calcBlockAlphaCoverage(integral, block, scaledWidth, scaledHeight) {
 /**
  * 为单个 block 赋值它的 color、skipRefine 等信息
  */
-function assignBlockAttributes(block, integralData, scaledWidth, scaledHeight, minCoverage = 0.1, imageData = null) {
+function assignBlockAttributes(block, integralData, scaledWidth, scaledHeight, minCoverage = 0.1, imageData = null, config = getCurrentConfig()) {
     // 计算覆盖率
     const coverage = calcBlockAlphaCoverage(integralData, block, scaledWidth, scaledHeight);
     if (coverage < minCoverage) {
@@ -334,7 +334,6 @@ function assignBlockAttributes(block, integralData, scaledWidth, scaledHeight, m
     const origY2 = Math.floor((block.y + block.height) * ratioY) - 1;
     
     // 使用改进的颜色提取算法
-    const config = getCurrentConfig();
     const useAdvanced = config.COLOR_EXTRACTION.ENABLE_ADVANCED_EXTRACTION;
     const maxLevel = config.COLOR_EXTRACTION.MAX_LEVEL_FOR_ADVANCED;
     
@@ -376,6 +375,7 @@ function isValidColorValue(value) {
  */
 export function initBlocks(scaledWidth, scaledHeight, initialGridSize, integralData = null, minCoverage = 0.01, originalImageData = null) {
     const blocks = [];
+    const config = getCurrentConfig();
     const { rows, cols } = initialGridSize;
     const blockWidth = scaledWidth / cols;
     const blockHeight = scaledHeight / rows;
@@ -395,7 +395,7 @@ export function initBlocks(scaledWidth, scaledHeight, initialGridSize, integralD
                 skipRefine: false
             };
             if (integralData) {
-                assignBlockAttributes(block, integralData, scaledWidth, scaledHeight, minCoverage, originalImageData);
+                assignBlockAttributes(block, integralData, scaledWidth, scaledHeight, minCoverage, originalImageData, config);
             }
             blocks.push(block);
         }
@@ -406,134 +406,199 @@ export function initBlocks(scaledWidth, scaledHeight, initialGridSize, integralD
 /**
  * 细化：把某区域内的所有 block 划分成更小的 block
  */
-export function refineAreaBlocks(
-    blocks,
-    initialRow,
-    initialCol,
-    refinementFactor,
-    integralData = null,
-    scaledWidth = 0,
-    scaledHeight = 0,
-    minCoverage = 0.01,
-    originalImageData = null
+function* refineAreaSteps(
+    blocks, initialRow, initialCol, refinementFactor, integralData,
+    scaledWidth, scaledHeight, minCoverage, originalImageData, cloneSkipped = false
 ) {
     const { rows: refRows, cols: refCols } = refinementFactor;
-
-    // 找出此区域(初始row/col)的所有 block
-    const subBlocks = blocks.filter(b => b.initialRow === initialRow && b.initialCol === initialCol);
-
-    // 删除旧块
-    const indicesToRemove = subBlocks.map(sb => blocks.indexOf(sb)).filter(i => i >= 0);
-    indicesToRemove.sort((x, y) => y - x);
-    indicesToRemove.forEach(idx => blocks.splice(idx, 1));
-
-    subBlocks.forEach(block => {
-        // 若已经 skipRefine，就不再细分
-        if (block.skipRefine) {
+    const subBlocks = [];
+    let kept = 0;
+    let operations = 0;
+    const previousLength = blocks.length;
+    for (let i = 0; i < previousLength; i++) {
+        const block = blocks[i];
+        if (block.initialRow === initialRow && block.initialCol === initialCol) subBlocks.push(block);
+        else blocks[kept++] = block;
+        if ((++operations & 255) === 0) yield;
+    }
+    blocks.length = kept;
+    const config = getCurrentConfig();
+    for (const original of subBlocks) {
+        if (original.skipRefine) {
+            // A draft must never mutate an object still owned by the visible frame.
+            const block = cloneSkipped ? { ...original } : original;
             block.level += 1;
             blocks.push(block);
-            return;
+            if ((++operations & 255) === 0) yield;
+            continue;
         }
-
-        // 细化
-        const newW = block.width / refCols;
-        const newH = block.height / refRows;
+        const newW = original.width / refCols;
+        const newH = original.height / refRows;
         for (let r = 0; r < refRows; r++) {
             for (let c = 0; c < refCols; c++) {
                 const newBlock = {
-                    row: block.row * refRows + r,
-                    col: block.col * refCols + c,
-                    x: block.x + c * newW,
-                    y: block.y + r * newH,
+                    row: original.row * refRows + r,
+                    col: original.col * refCols + c,
+                    x: original.x + c * newW,
+                    y: original.y + r * newH,
                     width: newW,
                     height: newH,
                     initialRow,
                     initialCol,
-                    level: block.level + 1,
+                    level: original.level + 1,
                     skipRefine: false
                 };
                 if (integralData && scaledWidth > 0 && scaledHeight > 0) {
-                    assignBlockAttributes(newBlock, integralData, scaledWidth, scaledHeight, minCoverage, originalImageData);
+                    assignBlockAttributes(newBlock, integralData, scaledWidth, scaledHeight, minCoverage, originalImageData, config);
                 }
                 blocks.push(newBlock);
+                // Coarse weighted-color scans are expensive; inspect the budget
+                // after each of those blocks, but batch cheap fine-block work.
+                const coarseColor = originalImageData && config.COLOR_EXTRACTION.ENABLE_ADVANCED_EXTRACTION &&
+                    newBlock.level <= config.COLOR_EXTRACTION.MAX_LEVEL_FOR_ADVANCED;
+                if (coarseColor || (++operations & 255) === 0) yield;
             }
         }
-    });
+    }
 }
 
-/**
- * 随机细化 blocks
- */
-export function refineRandomBlocks(
-    blocks, 
-    areaRefinementLevels, 
-    refinementCount, 
-    refinementFactor, 
-    initialGridSize,
-    integralData = null,
-    scaledWidth = 0,
-    scaledHeight = 0,
-    minCoverage = 0.01,
-    originalImageData = null
-) {
-    let needed = refinementCount;
-    const { rows, cols } = initialGridSize;
+function drainSteps(iterator) {
+    while (!iterator.next().done) { /* Synchronous API compatibility. */ }
+}
 
+/** Preserve the existing synchronous service API. */
+export function refineAreaBlocks(
+    blocks, initialRow, initialCol, refinementFactor, integralData = null,
+    scaledWidth = 0, scaledHeight = 0, minCoverage = 0.01, originalImageData = null
+) {
+    drainSteps(refineAreaSteps(blocks, initialRow, initialCol, refinementFactor,
+        integralData, scaledWidth, scaledHeight, minCoverage, originalImageData));
+}
+
+function planRefinementAreas(areaRefinementLevels, refinementCount, initialGridSize) {
     const allAreas = [];
-    for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-            allAreas.push({
-                row: r, col: c,
-                level: areaRefinementLevels[`${r},${c}`] || 0
-            });
+    for (let row = 0; row < initialGridSize.rows; row++) {
+        for (let col = 0; col < initialGridSize.cols; col++) {
+            allAreas.push({ row, col, level: areaRefinementLevels[`${row},${col}`] || 0 });
         }
     }
-
-    // 按照细化等级升序
-    allAreas.sort((u, v) => u.level - v.level);
-
-    let idx = 0;
-    while (needed > 0 && idx < allAreas.length) {
-        const currLevel = allAreas[idx].level;
-        const sameLevelGroup = allAreas.filter(a => a.level === currLevel);
-
+    allAreas.sort((a, b) => a.level - b.level);
+    const plan = [];
+    let needed = refinementCount;
+    let index = 0;
+    while (needed > 0 && index < allAreas.length) {
+        const level = allAreas[index].level;
+        const sameLevelGroup = allAreas.filter(area => area.level === level);
         if (sameLevelGroup.length <= needed) {
-            sameLevelGroup.forEach(a => {
-                refineAreaBlocks(
-                    blocks, 
-                    a.row, 
-                    a.col, 
-                    refinementFactor, 
-                    integralData, 
-                    scaledWidth, 
-                    scaledHeight,
-                    minCoverage,
-                    originalImageData
-                );
-                areaRefinementLevels[`${a.row},${a.col}`] = currLevel + 1;
-            });
+            plan.push(...sameLevelGroup);
             needed -= sameLevelGroup.length;
-            idx += sameLevelGroup.length;
+            index += sameLevelGroup.length;
         } else {
             for (let i = 0; i < needed; i++) {
-                const randIdx = Math.floor(Math.random() * sameLevelGroup.length);
-                const area = sameLevelGroup.splice(randIdx, 1)[0];
-                refineAreaBlocks(
-                    blocks, 
-                    area.row, 
-                    area.col, 
-                    refinementFactor,
-                    integralData,
-                    scaledWidth,
-                    scaledHeight,
-                    minCoverage,
-                    originalImageData
-                );
-                areaRefinementLevels[`${area.row},${area.col}`] = area.level + 1;
+                const randomIndex = Math.floor(Math.random() * sameLevelGroup.length);
+                plan.push(sameLevelGroup.splice(randomIndex, 1)[0]);
             }
             needed = 0;
         }
     }
+    return plan;
+}
+
+function* refinePlannedAreasSteps(
+    blocks, levels, plan, factor, integral, width, height, coverage, image, cloneSkipped = false
+) {
+    for (const area of plan) {
+        yield* refineAreaSteps(blocks, area.row, area.col, factor, integral,
+            width, height, coverage, image, cloneSkipped);
+        levels[`${area.row},${area.col}`] = area.level + 1;
+    }
+}
+
+/** Same selection, ordering, block count and colors as the original API. */
+export function refineRandomBlocks(
+    blocks, areaRefinementLevels, refinementCount, refinementFactor, initialGridSize,
+    integralData = null, scaledWidth = 0, scaledHeight = 0,
+    minCoverage = 0.01, originalImageData = null
+) {
+    const plan = planRefinementAreas(areaRefinementLevels, refinementCount, initialGridSize);
+    drainSteps(refinePlannedAreasSteps(blocks, areaRefinementLevels, plan, refinementFactor,
+        integralData, scaledWidth, scaledHeight, minCoverage, originalImageData));
+}
+
+async function runCooperatively(iterator, options = {}) {
+    const { signal } = options;
+    const environment = typeof window === 'undefined' ? {} : window;
+    const now = options.now || (() => environment.performance?.now() ?? Date.now());
+    const configured = Number(options.budgetMs);
+    const budget = Number.isFinite(configured) && configured > 0 ? configured : 6;
+    const yieldToMain = options.yieldToMain || (() => environment.scheduler?.yield
+        ? environment.scheduler.yield() : new Promise(resolve => setTimeout(resolve, 0)));
+    let deadline = now() + budget;
+    let yields = 0;
+    let step;
+    do {
+        assertActive(signal);
+        step = iterator.next();
+        if (step.done) break;
+        if (now() >= deadline) {
+            await yieldToMain();
+            yields++;
+            assertActive(signal);
+            deadline = now() + budget;
+        }
+    } while (!step.done);
+    assertActive(signal);
+    return yields;
+}
+
+/**
+ * Cooperative, transactional refinement. Inputs remain unchanged, including on
+ * cancellation; the caller commits the returned draft only for its live session.
+ */
+export async function refineRandomBlocksAsync(
+    blocks, areaRefinementLevels, refinementCount, refinementFactor, initialGridSize,
+    integralData = null, scaledWidth = 0, scaledHeight = 0,
+    minCoverage = 0.01, originalImageData = null, options = {}
+) {
+    assertActive(options.signal);
+    // Capture all randomness before yielding so unrelated UI work cannot alter
+    // this guess's selected areas while it is being calculated.
+    const plan = planRefinementAreas(areaRefinementLevels, refinementCount, initialGridSize);
+    const draft = blocks.slice();
+    const levels = { ...areaRefinementLevels };
+    const yields = await runCooperatively(refinePlannedAreasSteps(draft, levels, plan,
+        refinementFactor, integralData, scaledWidth, scaledHeight, minCoverage, originalImageData, true), options);
+    assertActive(options.signal);
+    return { blocks: draft, areaRefinementLevels: levels, yields };
+}
+
+function* paintMosaicSteps(ctx, blocks) {
+    for (let index = 0; index < blocks.length; index++) {
+        const block = blocks[index];
+        ctx.fillStyle = block.color;
+        ctx.fillRect(block.x, block.y, block.width, block.height);
+        if ((index & 255) === 255) yield;
+    }
+}
+
+/** Draw offscreen in slices and replace the visible canvas only when complete. */
+export async function renderMosaicAsync(
+    ctx, blocks, integralData, scaledWidth, scaledHeight, gameLevel = 1, options = {}
+) {
+    // Retained for synchronous API compatibility; colors are already in blocks.
+    void gameLevel;
+    assertActive(options.signal);
+    if (!ctx || typeof ctx.drawImage !== 'function') throw new Error('Canvas cannot commit a mosaic frame');
+    const surface = options.createCanvas
+        ? options.createCanvas(scaledWidth, scaledHeight) : createOptimizedCanvas(scaledWidth, scaledHeight);
+    const staging = surface.getContext('2d');
+    if (!staging) throw new Error('Cannot create mosaic staging canvas');
+    staging.clearRect(0, 0, scaledWidth, scaledHeight);
+    const yields = await runCooperatively(paintMosaicSteps(staging, blocks), options);
+    assertActive(options.signal);
+    ctx.clearRect(0, 0, scaledWidth, scaledHeight);
+    ctx.drawImage(surface, 0, 0);
+    return { renderedBlocks: blocks.length, yields };
 }
 
 /**

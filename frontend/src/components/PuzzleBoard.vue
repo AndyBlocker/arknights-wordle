@@ -1,5 +1,6 @@
 <template>
-  <div ref="boardElement" class="puzzle-board">
+  <div ref="boardElement" class="puzzle-board" :aria-busy="isRefining">
+    <div v-if="isRefining" class="refinement-status" role="status">正在细化画面…</div>
     <!-- 游戏状态区 -->
     <div class="game-status">
       <template v-if="gameWon">
@@ -155,8 +156,8 @@ import {
   loadPuzzleImage,
   withPuzzleDisplaySize,
   initBlocks,
-  refineRandomBlocks,
-  renderMosaic
+  refineRandomBlocksAsync,
+  renderMosaicAsync
 } from '../logic/puzzleService';
 
 export default {
@@ -243,8 +244,11 @@ export default {
     const integralData = shallowRef(null);
     const originalImageData = shallowRef(null);
     const currentImage = shallowRef(null);
-    const blocks = ref([]);
-    const areaRefinementLevels = ref({});
+    // Canvas-owned geometry is not rendered by Vue templates. Deep proxies
+    // multiply every array scan/mutation as the mosaic becomes more detailed.
+    const blocks = shallowRef([]);
+    const areaRefinementLevels = shallowRef({});
+    const isRefining = ref(false);
     const mosaicCanvas = ref(null);
     const loadingStatus = ref('初始化中...');
     const loadingProgress = ref(0);
@@ -252,6 +256,9 @@ export default {
     let initController = null;
     let initTimeout = null;
     let disposed = false;
+    let refinementController = null;
+    let paintController = null;
+    let resizePending = false;
 
     const viewportWidth = () => Math.min(window.innerWidth,
       (boardElement.value?.clientWidth || window.innerWidth - 30) + 30);
@@ -381,10 +388,17 @@ export default {
     watch(
       () => [props.gameOver, props.gameWon, props.userGaveUp],
       async () => {
+        if (props.gameWon || props.userGaveUp) {
+          refinementController?.abort();
+          paintController?.abort();
+          refinementController = null;
+          isRefining.value = false;
+          if (!loadingImage.value && !loadError.value) emit('load-state', 'ready');
+        }
         // 只要状态变化，就刷新一下
         if (!loadingImage.value) {
           await nextTick();
-          renderMosaicIfNeeded();
+          await renderMosaicIfNeeded();
         }
       }
     );
@@ -392,6 +406,11 @@ export default {
     async function initPuzzle() {
       const version = ++initVersion;
       initController?.abort();
+      refinementController?.abort();
+      paintController?.abort();
+      refinementController = null;
+      isRefining.value = false;
+      resizePending = false;
       const controller = new AbortController();
       initController = controller;
       const target = props.targetOperator;
@@ -456,7 +475,7 @@ export default {
         loadingImage.value = false;
         emit('load-state', 'ready');
         await nextTick();
-        if (active()) renderMosaicIfNeeded();
+        if (active()) await renderMosaicIfNeeded();
       } catch (error) {
         if (active()) {
           loadError.value = error.message || '加载失败，请重试';
@@ -471,7 +490,7 @@ export default {
       }
     }
 
-    function renderMosaicIfNeeded() {
+    async function renderMosaicIfNeeded() {
       const canvas = mosaicCanvas.value;
       if (!canvas || !integralData.value || loadingImage.value || loadError.value) return;
       const ctx = canvas.getContext('2d');
@@ -481,28 +500,62 @@ export default {
         return;
       }
       
-      // 计算游戏级别（基于已猜次数）
+      paintController?.abort();
+      const controller = new AbortController();
+      paintController = controller;
+      const version = initVersion;
       const gameLevel = Math.min(5, Math.max(1, props.guesses.length + 1));
-      
-      renderMosaic(ctx, blocks.value, integralData.value, scaledWidth.value, scaledHeight.value, gameLevel);
+      try {
+        await renderMosaicAsync(ctx, blocks.value, integralData.value, scaledWidth.value,
+          scaledHeight.value, gameLevel, { signal: controller.signal });
+      } catch (error) {
+        if (!controller.signal.aborted && !disposed && version === initVersion) {
+          loadError.value = '画面绘制失败，请重试';
+          emit('load-state', 'error');
+        }
+      }
     }
 
     async function refineAndRender() {
-      if (loadingImage.value || loadError.value || !integralData.value) return;
-      refineRandomBlocks(
-        blocks.value,
-        areaRefinementLevels.value,
-        props.refinementCount,
-        props.refinementFactor,
-        props.initialGridSize,
-        integralData.value,
-        scaledWidth.value,
-        scaledHeight.value,
-        0.01,
-        originalImageData.value
-      );
-      await nextTick();
-      renderMosaicIfNeeded();
+      if (isRefining.value || loadingImage.value || loadError.value || !integralData.value) return;
+      paintController?.abort();
+      const controller = new AbortController();
+      refinementController = controller;
+      const version = initVersion;
+      const active = () => !disposed && version === initVersion &&
+        refinementController === controller && !controller.signal.aborted;
+      isRefining.value = true;
+      emit('load-state', 'refining');
+      try {
+        const result = await refineRandomBlocksAsync(blocks.value, areaRefinementLevels.value,
+          props.refinementCount, props.refinementFactor, props.initialGridSize,
+          integralData.value, scaledWidth.value, scaledHeight.value, 0.01,
+          originalImageData.value, { signal: controller.signal });
+        if (!active()) return;
+        blocks.value = result.blocks;
+        areaRefinementLevels.value = result.areaRefinementLevels;
+        do {
+          if (resizePending) {
+            resizePending = false;
+            resizeGeometry();
+          }
+          await nextTick();
+          if (active()) await renderMosaicIfNeeded();
+          // A resize can arrive while an offscreen frame yields to the UI.
+          // Keep the input busy until that viewport also has a complete frame.
+        } while (active() && resizePending);
+      } catch (error) {
+        if (active()) {
+          loadError.value = '画面细化失败，请重试';
+          emit('load-state', 'error');
+        }
+      } finally {
+        if (active()) {
+          isRefining.value = false;
+          refinementController = null;
+          if (!loadError.value) emit('load-state', 'ready');
+        }
+      }
     }
 
     function handleReset() {
@@ -515,20 +568,30 @@ export default {
 
     // Scale the existing partition, preserving revealed areas and selected art.
     let resizeTimeout = null;
+    function resizeGeometry() {
+      const display = withPuzzleDisplaySize(currentImage.value, 600, 600, viewportWidth());
+      if (display.scaledWidth === scaledWidth.value && display.scaledHeight === scaledHeight.value) return false;
+      paintController?.abort();
+      const xScale = display.scaledWidth / scaledWidth.value;
+      const yScale = display.scaledHeight / scaledHeight.value;
+      for (const block of blocks.value) {
+        block.x *= xScale;
+        block.y *= yScale;
+        block.width *= xScale;
+        block.height *= yScale;
+      }
+      scaledWidth.value = display.scaledWidth;
+      scaledHeight.value = display.scaledHeight;
+      return true;
+    }
     const handleResize = () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(async () => {
         if (loadingImage.value || loadError.value || !currentImage.value) return;
-        const display = withPuzzleDisplaySize(currentImage.value, 600, 600, viewportWidth());
-        const xScale = display.scaledWidth / scaledWidth.value;
-        const yScale = display.scaledHeight / scaledHeight.value;
-        blocks.value = blocks.value.map(block => ({ ...block,
-          x: block.x * xScale, y: block.y * yScale,
-          width: block.width * xScale, height: block.height * yScale }));
-        scaledWidth.value = display.scaledWidth;
-        scaledHeight.value = display.scaledHeight;
+        if (isRefining.value) { resizePending = true; return; }
+        if (!resizeGeometry()) return;
         await nextTick();
-        if (!disposed) renderMosaicIfNeeded();
+        if (!disposed) await renderMosaicIfNeeded();
       }, 100);
     };
 
@@ -542,6 +605,8 @@ export default {
       disposed = true;
       initVersion++;
       initController?.abort();
+      refinementController?.abort();
+      paintController?.abort();
       currentImage.value = integralData.value = originalImageData.value = null;
       blocks.value = [];
       // Shared workers/caches belong to the service, not an individual board.
@@ -557,6 +622,7 @@ export default {
 
     return {
       canReset,
+      isRefining,
       boardElement,
       loadError,
       loadingImage,
@@ -578,11 +644,24 @@ export default {
 
 <style>
 .puzzle-board {
+  position: relative;
   margin-top: 20px;
   width: 100%;
   box-sizing: border-box;
   padding: 0;
   color: var(--color-text);
+}
+.refinement-status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 4;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--color-card-bg, #fff);
+  color: var(--color-text, #222);
+  font-size: 12px;
+  pointer-events: none;
 }
 
 .game-status {

@@ -426,8 +426,9 @@ export default {
 
     const onPuzzleLoadState = (state) => {
       if (challengePhase.value !== 'playing' || challengeSettings.value.gameMode !== 'puzzle' || questionSettled) return;
-      if (!['loading', 'ready', 'error'].includes(state)) return;
-      if (state !== 'ready' && questionClockStarted) {
+      if (!['loading', 'ready', 'error', 'refining'].includes(state)) return;
+      // Refinement is active play: keep the existing wall-time deadline running.
+      if (state !== 'ready' && state !== 'refining' && questionClockStarted) {
         refreshClock();
         if (questionSettled) return;
         activeElapsed = getElapsedSeconds(questionStartTime.value, Date.now());

@@ -76,9 +76,10 @@ test('integral cache obeys a byte budget rather than keeping fifteen large image
   assert.equal(api.getPuzzleCacheStats().bytes, 0);
 });
 
-function board({ load, onReset = true } = {}) {
+function board({ load, onReset = true, refine, paint, realRefs = false } = {}) {
   const watchers = [], mounts = [], unmounts = [], listeners = {}, events = [], renders = [];
   const ref = value => ({ value });
+  const refs = realRefs ? require('vue') : { ref, shallowRef: ref };
   const operator = { 干员: '芬', 星级: 3, 出身地: '卡西米尔', 国家: '维多利亚' };
   const props = { operators: [operator], targetOperator: operator, gameSessionId: 'one',
     maxGuesses: 6, guesses: [], gameOver: false, gameWon: false, userGaveUp: false,
@@ -89,7 +90,7 @@ function board({ load, onReset = true } = {}) {
   let calls = 0, initialized = 0;
   const result = () => ({ ...pixels, operatorName: props.targetOperator.干员, gameSessionId: props.gameSessionId, selectedArt: '立绘_芬_1.png', puzzleImageUrl: 'image' });
   const api = service();
-  const ctx = { module: { exports: {} }, ref, shallowRef: ref,
+  const ctx = { module: { exports: {} }, ref: refs.ref, shallowRef: refs.shallowRef,
     computed: getter => ({ get value() { return getter(); } }),
     getCurrentInstance: () => ({ vnode: { props: onReset ? { onReset() {} } : {} } }),
     watch: (getter, callback, options) => watchers.push({ getter, callback, options }),
@@ -101,8 +102,14 @@ function board({ load, onReset = true } = {}) {
     loadPuzzleImage: async (...args) => { calls++; return load ? load(...args) : result(); },
     withPuzzleDisplaySize: api.withPuzzleDisplaySize,
     initBlocks: () => { initialized++; return [{ x: 0, y: 0, width: 600, height: 600, level: 1, color: 'rgb(0,0,0)' }]; },
-    refineRandomBlocks: blocks => { blocks[0].level++; },
-    renderMosaic: (_ctx, blocks) => renders.push(blocks.map(block => ({ ...block }))),
+    refineRandomBlocksAsync: refine || (async (blocks, levels) => ({
+      blocks: blocks.map(block => ({ ...block, level: block.level + 1 })),
+      areaRefinementLevels: { ...levels }
+    })),
+    renderMosaicAsync: async (...args) => {
+      renders.push(args[1].map(block => ({ ...block })));
+      if (paint) await paint(...args);
+    },
   };
   vm.createContext(ctx);
   const script = source('components/PuzzleBoard.vue').match(/<script>([\s\S]*?)<\/script>/)[1];
@@ -115,6 +122,77 @@ function board({ load, onReset = true } = {}) {
     initialized: () => initialized, resize: async width => { ctx.window.innerWidth = width; state.boardElement.value.clientWidth = width - 30; listeners.resize(); await new Promise(resolve => setTimeout(resolve, 130)); },
     close: () => unmounts.forEach(callback => callback()) };
 }
+
+test('canvas geometry is not wrapped in Vue deep reactive proxies', async () => {
+  let checked = false;
+  const game = board({ realRefs: true, refine: async (blocks, levels) => {
+    const { isReactive } = require('vue');
+    assert.equal(isReactive(blocks), false);
+    assert.equal(isReactive(blocks[0]), false);
+    assert.equal(isReactive(levels), false);
+    checked = true;
+    return { blocks: blocks.map(block => ({ ...block, level: block.level + 1 })), areaRefinementLevels: { ...levels } };
+  } });
+  await game.start();
+  game.props.guesses.push({ 干员: '香草' });
+  const watcher = game.watchers.find(w => !w.options && typeof w.getter() === 'number');
+  await watcher.callback(1, 0);
+  assert.ok(checked);
+  assert.equal(game.state.isRefining.value, false);
+  assert.equal(game.events.at(-1)[1], 'ready');
+  game.close();
+});
+
+test('a late refinement cannot overwrite the new session or keep its input busy', async () => {
+  let resolveOld, oldSignal;
+  const game = board({ refine: (...args) => {
+    oldSignal = args.at(-1).signal;
+    return new Promise(resolve => { resolveOld = resolve; });
+  } });
+  await game.start();
+  game.props.guesses.push({ 干员: '香草' });
+  const guesses = game.watchers.find(w => !w.options && typeof w.getter() === 'number');
+  const pending = guesses.callback(1, 0);
+  assert.equal(game.state.isRefining.value, true);
+  game.props.gameSessionId = 'new-session';
+  const target = game.watchers.find(w => w.options?.immediate);
+  await target.callback(target.getter());
+  assert.equal(oldSignal.aborted, true);
+  resolveOld({ blocks: [{ level: 99 }], areaRefinementLevels: {} });
+  await pending;
+  assert.equal(game.renders.at(-1)[0].level, 1);
+  assert.equal(game.state.isRefining.value, false);
+  assert.equal(game.events.at(-1)[1], 'ready');
+  game.close();
+});
+
+test('a resize arriving during staged painting is completed before the input becomes ready', async () => {
+  let releasePaint, paintStarted;
+  const started = new Promise(resolve => { paintStarted = resolve; });
+  let calls = 0;
+  const game = board({ paint: async () => {
+    if (++calls === 2) {
+      paintStarted();
+      await new Promise(resolve => { releasePaint = resolve; });
+    }
+  } });
+  await game.start();
+  game.props.guesses.push({ 干员: '香草' });
+  const guesses = game.watchers.find(w => !w.options && typeof w.getter() === 'number');
+  const pending = guesses.callback(1, 0);
+  await started;
+  await game.resize(390);
+  assert.equal(game.state.isRefining.value, true);
+  assert.equal(game.state.scaledWidth.value, 600);
+  releasePaint();
+  await pending;
+  assert.equal(calls, 3);
+  assert.equal(game.state.scaledWidth.value, 360);
+  assert.equal(game.renders.at(-1)[0].width, 360);
+  assert.equal(game.state.isRefining.value, false);
+  assert.equal(game.events.at(-1)[1], 'ready');
+  game.close();
+});
 
 test('board error remains visible and the actual retry transitions to ready', async () => {
   let ready = false;
