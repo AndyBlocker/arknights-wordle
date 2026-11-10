@@ -28,6 +28,7 @@
 - When touching `server/`, add lightweight integration checks using supertest or document manual API verifications in the PR.
 
 ## Commit & Pull Request Guidelines
+- The repository owner prefers routine maintenance commits and pushes directly on `main` (confirmed 2026-11-10). Preserve unrelated uncommitted work; use an isolated clean worktree if needed.
 - Follow the repo trend: short, imperative summaries (`fix scroll glitch`, `add sponsor banner`) with optional bilingual context.
 - Reference issues in the body (`Fixes #12`) and describe user-visible impact alongside verification steps.
 - Screenshot UI tweaks and attach gameplay recordings when puzzle flows change.
