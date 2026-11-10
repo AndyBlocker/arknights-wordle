@@ -54,14 +54,14 @@
         :src="puzzleImageUrl"
         :alt="targetOperator.干员"
         class="final-image"
-        :style="{ maxWidth: '100%', width: scaledWidth + 'px', maxHeight: scaledHeight + 'px' }"
+        :style="{ maxWidth: '100%', width: scaledWidth + 'px !important', height: scaledHeight + 'px !important' }"
         loading="eager"
         :key="`final-lost-${gameSessionId}`"
       />
     </div>
 
     <!-- 如果猜对，显示重叠的马赛克和原图 -->
-    <div v-else-if="gameWon && !loadingImage" class="final-overlay-container" :style="{ width: scaledWidth + 'px', height: scaledHeight + 'px' }">
+    <div v-else-if="gameWon && !loadingImage" class="final-overlay-container" :style="{ maxWidth: '100%', width: scaledWidth + 'px !important', height: scaledHeight + 'px !important' }">
       <div class="overlay-mosaic">
         <!-- 马赛克图层，渲染到canvas -->
         <canvas
@@ -86,7 +86,7 @@
     </div>
 
     <!-- 如果游戏还在进行，正常显示马赛克（canvas） -->
-    <div v-else-if="!loadingImage" class="mosaic-container" :style="{ maxWidth: '100%', width: scaledWidth + 'px', height: scaledHeight + 'px' }">
+    <div v-else-if="!loadingImage" class="mosaic-container" :style="{ maxWidth: '100%', width: scaledWidth + 'px !important', height: scaledHeight + 'px !important' }">
       <canvas
         ref="mosaicCanvas"
         :width="scaledWidth"
