@@ -1,0 +1,25 @@
+{
+  "status": "已上线并通过公网HTML、JS/CSS及数据哈希核验",
+  "checked_at": "2026-11-10T10:36:26.020669+00:00",
+  "url": "https://mer.dev/arknights-wordle/",
+  "release": "release_20261110_183548",
+  "previous_release": "release_20261110_180312",
+  "source_commit": "71d6fb938f1c309338a6eaf7da589001dc9d0e91",
+  "source_branch": "fix/puzzle-progressive-performance-20261110",
+  "operator_count": 440,
+  "operator_sha256": "a4bcdf8635c7509423e444f59b8192a875299369a619ac0c52955d9fdca48682",
+  "verified_pages": {
+    "/": "41a8580746d0341c5f62a0b90255bdace8cc2e0afddd0567e5d91af116ceda4d",
+    "bw/": "3691fe0e0ecf967fbdab9379617a913b2c038af994ed787daa7e28d783b42075"
+  },
+  "verified_assets": [
+    "css/bw.0296a6b3.css",
+    "css/index.2c7b0654.css",
+    "js/bw.a9a8c1e3.js",
+    "js/chunk-common.5099ed5d.js",
+    "js/chunk-vendors.2d663c63.js",
+    "js/index.b773946a.js"
+  ],
+  "backup": "/home/andyblocker/blog_deploy/backups/arknights-wordle-performance-20261110-183520",
+  "retained_old_assets": 20
+}

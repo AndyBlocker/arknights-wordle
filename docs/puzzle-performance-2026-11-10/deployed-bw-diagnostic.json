@@ -1,0 +1,23 @@
+{
+  "url": "https://mer.dev/arknights-wordle/bw/",
+  "pageErrors": [],
+  "visibleInput": true,
+  "inputDisabled": false,
+  "guesses": "0 / 6",
+  "mosaicVisible": true,
+  "scripts": [
+    "chunk-vendors.2d663c63.js",
+    "chunk-common.5099ed5d.js",
+    "bw.a9a8c1e3.js"
+  ],
+  "networkErrors": [
+    {
+      "host": "www.google-analytics.com",
+      "resource": "g/collect",
+      "error": "net::ERR_CONNECTION_CLOSED",
+      "count": 2
+    }
+  ],
+  "screenshot": "evidence/deployed-bw-diagnostic.png",
+  "limitation": "Independent fresh-context diagnosis after the first full smoke run timed out waiting for a visible combobox; the original timeout cause was not established. No application source changed."
+}

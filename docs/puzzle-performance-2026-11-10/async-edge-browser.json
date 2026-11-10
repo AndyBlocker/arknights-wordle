@@ -1,0 +1,200 @@
+{
+  "origin": "http://127.0.0.1:8828/arknights-wordle/",
+  "started": "2026-11-10T10:36:55.494Z",
+  "fixtureSha256": "1898a83551dbe142b8c75b23d7b61028612292d87dc99d036fd33811fbc1f43c",
+  "conditions": "Production build; fixed real Exusiai PNG and real operator subset, Math.random=0; avatars and analytics blocked. No CPU/network emulation. First-response 2rAF is recorded separately from final input-ready plus 2rAF. Both HTML and Offscreen fillRect are counted; visible drawImage commits tracked. Pixel hashes are computed after timing/CPU sample collection.",
+  "scenarios": [
+    {
+      "name": "restart-during-refinement",
+      "suffix": "",
+      "limit": 15,
+      "maxWrong": 14,
+      "steps": [],
+      "errors": [],
+      "environment": {
+        "cores": 80,
+        "memory": 32,
+        "dpr": 1,
+        "scripts": [
+          "http://127.0.0.1:8828/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "http://127.0.0.1:8828/arknights-wordle/js/chunk-common.5099ed5d.js",
+          "http://127.0.0.1:8828/arknights-wordle/js/index.b773946a.js",
+          "https://www.googletagmanager.com/gtag/js?id=G-QCYZ6ZEF46"
+        ]
+      },
+      "pristineHash": {
+        "width": 600,
+        "height": 600,
+        "fnv1a": "5c3e224d"
+      },
+      "conditions": "Functional boundary QA only; synchronous mode click injected at first real scheduler.yield while busy. Excluded from performance comparison.",
+      "afterRestartHash": {
+        "width": 600,
+        "height": 600,
+        "fnv1a": "5c3e224d"
+      },
+      "samePristineHash": true,
+      "finalState": {
+        "text": " 已猜次数: 0 / 15",
+        "busy": "false",
+        "restartFired": 9546.100000023842,
+        "atRestart": {
+          "time": 9546.100000023842,
+          "busy": "true",
+          "inputDisabled": true,
+          "commitsSinceClick": 0,
+          "batches": [],
+          "trigger": "first actual scheduler.yield while busy; synchronous DOM mode click"
+        },
+        "lastClick": {
+          "start": 9486.300000011921,
+          "batchIndex": 28,
+          "commitIndex": 14,
+          "firstResponseMs": 109.10000002384186
+        },
+        "commitsAfterRestart": [
+          {
+            "time": 9570.300000011921,
+            "width": 600,
+            "height": 600
+          }
+        ]
+      }
+    },
+    {
+      "name": "resize-during-staged-paint",
+      "suffix": "",
+      "limit": 15,
+      "maxWrong": 14,
+      "steps": [],
+      "errors": [],
+      "environment": {
+        "cores": 80,
+        "memory": 32,
+        "dpr": 1,
+        "scripts": [
+          "http://127.0.0.1:8828/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "http://127.0.0.1:8828/arknights-wordle/js/chunk-common.5099ed5d.js",
+          "http://127.0.0.1:8828/arknights-wordle/js/index.b773946a.js",
+          "https://www.googletagmanager.com/gtag/js?id=G-QCYZ6ZEF46"
+        ]
+      },
+      "conditions": "Functional boundary QA only; first staged-paint scheduler.yield paused until resize debounce has run. Artificial pause excluded from performance comparison.",
+      "resizeAt": {
+        "busy": "true",
+        "inputDisabled": true,
+        "click": {
+          "start": 8936.900000035763,
+          "batchIndex": 28,
+          "commitIndex": 14,
+          "firstResponseMs": 178.19999998807907
+        },
+        "batches": [
+          {
+            "kind": "offscreen",
+            "start": 9141.100000023842,
+            "count": 5120,
+            "last": 9148.100000023842,
+            "width": 600,
+            "height": 600
+          }
+        ],
+        "commitsSinceClick": 0,
+        "time": 9152.100000023842
+      },
+      "afterResizeDebounce": {
+        "busy": "true",
+        "viewport": 390,
+        "commitsSinceClick": 0,
+        "pausedAt": 9148.100000023842,
+        "releaseAt": 9388.5
+      },
+      "completion": {
+        "start": 8936.900000035763,
+        "firstResponseMs": 178.19999998807907,
+        "finalCompletionMs": 1032.3999999761581,
+        "batches": [
+          {
+            "kind": "offscreen",
+            "start": 9141.100000023842,
+            "count": 167197,
+            "last": 9670.600000023842,
+            "width": 600,
+            "height": 600
+          },
+          {
+            "kind": "visible",
+            "start": 9670.600000023842,
+            "count": 0,
+            "last": 9670.600000023842,
+            "width": 600,
+            "height": 600
+          },
+          {
+            "kind": "offscreen",
+            "start": 9684.900000035763,
+            "count": 167197,
+            "last": 9911.400000035763,
+            "width": 332,
+            "height": 332
+          },
+          {
+            "kind": "visible",
+            "start": 9911.400000035763,
+            "count": 0,
+            "last": 9911.400000035763,
+            "width": 332,
+            "height": 332
+          }
+        ],
+        "commits": [
+          {
+            "time": 9677.199999988079,
+            "width": 600,
+            "height": 600
+          },
+          {
+            "time": 9918,
+            "width": 332,
+            "height": 332
+          }
+        ],
+        "drawnBlocks": 334394,
+        "maxFrameGapMs": 116.70000000000073,
+        "longTasks": [],
+        "busyChanges": [
+          {
+            "time": 8946.400000035763,
+            "busy": "true"
+          },
+          {
+            "time": 9918.800000011921,
+            "busy": "false"
+          }
+        ],
+        "heap": 83502795
+      },
+      "mobileGeometry": {
+        "bitmap": [
+          332,
+          332
+        ],
+        "box": [
+          330,
+          330
+        ],
+        "parent": [
+          332,
+          332
+        ]
+      },
+      "restoredPixelHash": {
+        "width": 600,
+        "height": 600,
+        "fnv1a": "26f03ba3"
+      },
+      "matchesCompletedFourteenth": true
+    }
+  ],
+  "finished": "2026-11-10T10:37:16.733Z"
+}

@@ -1,0 +1,111 @@
+{
+  "assertion": "Every block property, array order and area level exactly match through seven wrong guesses under the same random seed, including transparent skipRefine regions.",
+  "results": [
+    {
+      "fixture": "opaque-square",
+      "rows": [
+        {
+          "click": 0,
+          "blocks": 16,
+          "identical": true,
+          "sha256": "74ac82477f41a104e401631cc43cf2f67dc94415ba6a9c625919c4fce8eae622"
+        },
+        {
+          "click": 1,
+          "blocks": 43,
+          "identical": true,
+          "sha256": "fca2acc55f3647b8727e1b39096c612bbd7cd2ba08baf85d258743b806921d09"
+        },
+        {
+          "click": 2,
+          "blocks": 88,
+          "identical": true,
+          "sha256": "a6ba4593b41a9ef0a0df1caee3a86b174fb4bad544b070717a2c53e94b22b920"
+        },
+        {
+          "click": 3,
+          "blocks": 196,
+          "identical": true,
+          "sha256": "6acef458eb3b1b46e0c2fb3306dced68b92532f23069f50161468e67e64a8f6c"
+        },
+        {
+          "click": 4,
+          "blocks": 448,
+          "identical": true,
+          "sha256": "e0e74ac7ae2a93be22f5fd2d49a638103f4bf98f12f6fb2f7dc493766cd8b68f"
+        },
+        {
+          "click": 5,
+          "blocks": 880,
+          "identical": true,
+          "sha256": "19feabf4d49ae1ee2bbb14623c77e82605057257b89f408ec5663b0a8000d1ec"
+        },
+        {
+          "click": 6,
+          "blocks": 2176,
+          "identical": true,
+          "sha256": "face8ebc58fa563a70fcc9d2d01da87c4848611660766bd94afbd9098382b574"
+        },
+        {
+          "click": 7,
+          "blocks": 3904,
+          "identical": true,
+          "sha256": "c76256f1bc372fb3cfaf8b4c3cd6022c5593dcfb6a67785a101c2e79a05c06a2"
+        }
+      ]
+    },
+    {
+      "fixture": "transparent-landscape",
+      "rows": [
+        {
+          "click": 0,
+          "blocks": 16,
+          "identical": true,
+          "sha256": "1f2d12fc9543bd576290605f20ee9d9487ce594f3e470239e889d656ca5baa79"
+        },
+        {
+          "click": 1,
+          "blocks": 40,
+          "identical": true,
+          "sha256": "71564eba6e94243bd318a4bedddbc2acea30db6ca70a041cbe30e9ad53ed0d83"
+        },
+        {
+          "click": 2,
+          "blocks": 70,
+          "identical": true,
+          "sha256": "adbbf502d3cfef554717dd49f5868f5bb29e2f6c3676ae658e6e69de36cc022b"
+        },
+        {
+          "click": 3,
+          "blocks": 136,
+          "identical": true,
+          "sha256": "d334cad41334a404e541d3de88cd99cf82577148bc0dabd6e9aeae1b9f304f5b"
+        },
+        {
+          "click": 4,
+          "blocks": 250,
+          "identical": true,
+          "sha256": "68f38a127e67e6f22fab504797c9ccbb8d9bfb5018ed4b93cb151c34832ded7c"
+        },
+        {
+          "click": 5,
+          "blocks": 448,
+          "identical": true,
+          "sha256": "3e40199853d7f423068ebac9a7ccef740997d3557adf7bb87a7ba93a40aa1ec4"
+        },
+        {
+          "click": 6,
+          "blocks": 1021,
+          "identical": true,
+          "sha256": "c79cdfb0dcd084dcd8f6cdc7009d1a6d142a8105394a2b82defe8f8e8591c8ff"
+        },
+        {
+          "click": 7,
+          "blocks": 1609,
+          "identical": true,
+          "sha256": "d7e5d98fb24b86f3670e4ccd5ce172a2cd1fe397c5e996942fe6b222765f3296"
+        }
+      ]
+    }
+  ]
+}

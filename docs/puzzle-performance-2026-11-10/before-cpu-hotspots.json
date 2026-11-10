@@ -1,0 +1,315 @@
+[
+  {
+    "name": "set",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 8891,
+    "selfSamples": 5201,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 979,
+      "column": 2,
+      "name": "set"
+    }
+  },
+  {
+    "name": "V",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 7889,
+    "selfSamples": 4937,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 898,
+      "column": 9,
+      "name": "noTracking"
+    }
+  },
+  {
+    "name": "(idle)",
+    "url": "",
+    "line": -1,
+    "column": -1,
+    "selfSamples": 4461
+  },
+  {
+    "name": "kn",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 12507,
+    "selfSamples": 2132,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 1391,
+      "column": 9,
+      "name": "toRaw"
+    }
+  },
+  {
+    "name": "wn",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 12369,
+    "selfSamples": 779,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 1382,
+      "column": 9,
+      "name": "isReadonly"
+    }
+  },
+  {
+    "name": "qn",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 12418,
+    "selfSamples": 718,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 1385,
+      "column": 9,
+      "name": "isShallow"
+    }
+  },
+  {
+    "name": "get",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 8292,
+    "selfSamples": 659,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 922,
+      "column": 2,
+      "name": "get"
+    }
+  },
+  {
+    "name": "(program)",
+    "url": "",
+    "line": -1,
+    "column": -1,
+    "selfSamples": 541
+  },
+  {
+    "name": "Tn",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 12719,
+    "selfSamples": 478,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 1404,
+      "column": 9,
+      "name": "isRef"
+    }
+  },
+  {
+    "name": "set",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 8891,
+    "selfSamples": 390,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 979,
+      "column": 2,
+      "name": "set"
+    }
+  },
+  {
+    "name": "V",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 7889,
+    "selfSamples": 387,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 898,
+      "column": 9,
+      "name": "noTracking"
+    }
+  },
+  {
+    "name": "mn",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 12081,
+    "selfSamples": 320,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 1347,
+      "column": 9,
+      "name": "createReactiveObject"
+    }
+  },
+  {
+    "name": "kn",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 12507,
+    "selfSamples": 311,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 1391,
+      "column": 9,
+      "name": "toRaw"
+    }
+  },
+  {
+    "name": "get",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 8292,
+    "selfSamples": 262,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 922,
+      "column": 2,
+      "name": "get"
+    }
+  },
+  {
+    "name": "kn",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 12507,
+    "selfSamples": 182,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 1391,
+      "column": 9,
+      "name": "toRaw"
+    }
+  },
+  {
+    "name": "Tn",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 12719,
+    "selfSamples": 144,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 1404,
+      "column": 9,
+      "name": "isRef"
+    }
+  },
+  {
+    "name": "C",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 7,
+    "column": 1750,
+    "selfSamples": 141,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/shared/dist/shared.esm-bundler.js",
+      "line": 49,
+      "column": 22,
+      "name": "key"
+    }
+  },
+  {
+    "name": "get",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 8292,
+    "selfSamples": 124,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 922,
+      "column": 2,
+      "name": "get"
+    }
+  },
+  {
+    "name": "wn",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 12369,
+    "selfSamples": 105,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 1382,
+      "column": 9,
+      "name": "isReadonly"
+    }
+  },
+  {
+    "name": "",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 7,
+    "column": 84,
+    "selfSamples": 103,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/shared/dist/shared.esm-bundler.js",
+      "line": 11,
+      "column": 10,
+      "name": "val"
+    }
+  },
+  {
+    "name": "F",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 5114,
+    "selfSamples": 99,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 655,
+      "column": 9,
+      "name": "trigger"
+    }
+  },
+  {
+    "name": "has",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 9325,
+    "selfSamples": 92,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 1021,
+      "column": 2,
+      "name": "has"
+    }
+  },
+  {
+    "name": "wn",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 12369,
+    "selfSamples": 70,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 1382,
+      "column": 9,
+      "name": "isReadonly"
+    }
+  },
+  {
+    "name": "qn",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 12418,
+    "selfSamples": 69,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 1385,
+      "column": 9,
+      "name": "isShallow"
+    }
+  },
+  {
+    "name": "get",
+    "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+    "line": 29,
+    "column": 8292,
+    "selfSamples": 61,
+    "original": {
+      "source": "webpack://arknights-wordle/node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js",
+      "line": 922,
+      "column": 2,
+      "name": "get"
+    }
+  }
+]

@@ -1,0 +1,25 @@
+{
+  "source_commit": "71d6fb938f1c309338a6eaf7da589001dc9d0e91",
+  "branch": "fix/puzzle-progressive-performance-20261110",
+  "node": "v22.23.4",
+  "artifacts": {
+    "win.png": "ab42fb26786bf234a5995d8a3e416e73daa99496dcbdb82e2b26c8fdea8a3acf",
+    "bg.jpg": "4154330ec8605da544ac821954283ab52d89511a906649bb010cc967bb5b31dd",
+    "cc7062b63bb0bec8.js": "ffc315ab9938ac9fa0f20f0dc5e24d6eabc88bcf17e708e67bd08064207eac59",
+    "index.html": "41a8580746d0341c5f62a0b90255bdace8cc2e0afddd0567e5d91af116ceda4d",
+    "js/chunk-vendors.2d663c63.js": "d63a6321ce1f4ac93408e662e99c0e333f86c426b4cc0af9e1c6a3a90fe6d437",
+    "js/chunk-common.5099ed5d.js": "c17e3bc7e44e374fdbe9e9de22275041fd5bd894705c02a1f5cc21a749922a1f",
+    "js/index.b773946a.js": "d0c52f067409fe1e91d181f69971227db2846b8d30724f61507f1db34ae48332",
+    "js/index.b773946a.js.map": "60cd202dbad66201963aaf647517b71f7b8e70076dbdd9ee866a3252fe13a9f8",
+    "js/chunk-common.5099ed5d.js.map": "1de9f408cf46a47fb515e3a674f62bfff224787f7133e936f2304aff61ccbf45",
+    "js/bw.a9a8c1e3.js.map": "ea78ddfd98145d64c2f1dddd749749c1fe606d27162dfbf9b4926b11857a910b",
+    "js/chunk-vendors.2d663c63.js.map": "b4ce7b93ee1ce30cffdec4a266ded4fddaa20873f24491cc6caffdef6ecad8e8",
+    "js/bw.a9a8c1e3.js": "df757ee38c3be7af7194e6e7ab7f286c871280c3a45addc7a527680dd739bc5a",
+    "data/achievements.txt": "0e86939d2226069c73e809aa4a354f63a00eaddcfb98b0a7085325339d68d137",
+    "data/operators.json": "a4bcdf8635c7509423e444f59b8192a875299369a619ac0c52955d9fdca48682",
+    "data/operators.meta.json": "42daa06bf914d5cdab08ed2882b7d799ed103ce4620649b477a0706ab31bef20",
+    "css/index.2c7b0654.css": "a9e99272b5b8b222e2a2ffd66a5c15c7802d27d3f7fbab2a8b09c87dce593808",
+    "css/bw.0296a6b3.css": "31790ff1802d7014a0e61a3a44fc8ec7e704280f4d1dd57af8984b699baecaf5",
+    "bw/index.html": "3691fe0e0ecf967fbdab9379617a913b2c038af994ed787daa7e28d783b42075"
+  }
+}

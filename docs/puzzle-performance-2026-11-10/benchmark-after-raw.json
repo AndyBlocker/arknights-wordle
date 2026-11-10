@@ -1,0 +1,217 @@
+{
+  "mode": "raw",
+  "conditions": "Frozen production functions; seeded opaque1200² gradient; display600²; high-quality sampling2; all areas eligible; 25-second per-mode process limit; Node timings are not browser/FPS metrics.",
+  "initMs": 144.58950700000003,
+  "rows": [
+    {
+      "click": 1,
+      "blocks": 43,
+      "refineMs": 79.77516999999997,
+      "renderLoopMs": 0.21387700000002496,
+      "fillCalls": 43,
+      "costs": {
+        "advancedCalls": 36,
+        "sampledPixels": 202500,
+        "assignedBlocks": 36,
+        "coverageCalls": 36,
+        "indexOfCalls": 0,
+        "spliceCalls": 0
+      }
+    },
+    {
+      "click": 2,
+      "blocks": 88,
+      "refineMs": 80.31357200000002,
+      "renderLoopMs": 0.05564299999997502,
+      "fillCalls": 88,
+      "costs": {
+        "advancedCalls": 60,
+        "sampledPixels": 203708,
+        "assignedBlocks": 60,
+        "coverageCalls": 60,
+        "indexOfCalls": 0,
+        "spliceCalls": 0
+      }
+    },
+    {
+      "click": 3,
+      "blocks": 196,
+      "refineMs": 77.18473,
+      "renderLoopMs": 0.07132500000000164,
+      "fillCalls": 196,
+      "costs": {
+        "advancedCalls": 144,
+        "sampledPixels": 207936,
+        "assignedBlocks": 144,
+        "coverageCalls": 144,
+        "indexOfCalls": 0,
+        "spliceCalls": 0
+      }
+    },
+    {
+      "click": 4,
+      "blocks": 448,
+      "refineMs": 45.63343500000002,
+      "renderLoopMs": 0.09492499999998927,
+      "fillCalls": 448,
+      "costs": {
+        "advancedCalls": 80,
+        "sampledPixels": 115520,
+        "assignedBlocks": 336,
+        "coverageCalls": 336,
+        "indexOfCalls": 0,
+        "spliceCalls": 0
+      }
+    },
+    {
+      "click": 5,
+      "blocks": 880,
+      "refineMs": 3.4390260000000126,
+      "renderLoopMs": 0.14398899999997639,
+      "fillCalls": 880,
+      "costs": {
+        "advancedCalls": 0,
+        "sampledPixels": 0,
+        "assignedBlocks": 576,
+        "coverageCalls": 576,
+        "indexOfCalls": 0,
+        "spliceCalls": 0
+      }
+    },
+    {
+      "click": 6,
+      "blocks": 2176,
+      "refineMs": 9.157938999999942,
+      "renderLoopMs": 0.5721690000000308,
+      "fillCalls": 2176,
+      "costs": {
+        "advancedCalls": 0,
+        "sampledPixels": 0,
+        "assignedBlocks": 1728,
+        "coverageCalls": 1728,
+        "indexOfCalls": 0,
+        "spliceCalls": 0
+      }
+    },
+    {
+      "click": 7,
+      "blocks": 3904,
+      "refineMs": 13.81287599999996,
+      "renderLoopMs": 1.7526699999999664,
+      "fillCalls": 3904,
+      "costs": {
+        "advancedCalls": 0,
+        "sampledPixels": 0,
+        "assignedBlocks": 2304,
+        "coverageCalls": 2304,
+        "indexOfCalls": 0,
+        "spliceCalls": 0
+      }
+    },
+    {
+      "click": 8,
+      "blocks": 10240,
+      "refineMs": 31.983397999999966,
+      "renderLoopMs": 1.651075999999989,
+      "fillCalls": 10240,
+      "costs": {
+        "advancedCalls": 0,
+        "sampledPixels": 0,
+        "assignedBlocks": 8448,
+        "coverageCalls": 8448,
+        "indexOfCalls": 0,
+        "spliceCalls": 0
+      }
+    },
+    {
+      "click": 9,
+      "blocks": 19456,
+      "refineMs": 46.51603899999998,
+      "renderLoopMs": 4.300867000000039,
+      "fillCalls": 19456,
+      "costs": {
+        "advancedCalls": 0,
+        "sampledPixels": 0,
+        "assignedBlocks": 12288,
+        "coverageCalls": 12288,
+        "indexOfCalls": 0,
+        "spliceCalls": 0
+      }
+    },
+    {
+      "click": 10,
+      "blocks": 47104,
+      "refineMs": 135.64961000000005,
+      "renderLoopMs": 14.071994999999902,
+      "fillCalls": 47104,
+      "costs": {
+        "advancedCalls": 0,
+        "sampledPixels": 0,
+        "assignedBlocks": 36864,
+        "coverageCalls": 36864,
+        "indexOfCalls": 0,
+        "spliceCalls": 0
+      }
+    },
+    {
+      "click": 11,
+      "blocks": 102400,
+      "refineMs": 266.56747700000005,
+      "renderLoopMs": 26.027417000000014,
+      "fillCalls": 102400,
+      "costs": {
+        "advancedCalls": 0,
+        "sampledPixels": 0,
+        "assignedBlocks": 73728,
+        "coverageCalls": 73728,
+        "indexOfCalls": 0,
+        "spliceCalls": 0
+      }
+    },
+    {
+      "click": 12,
+      "blocks": 212992,
+      "refineMs": 554.7992919999999,
+      "renderLoopMs": 35.268957999999884,
+      "fillCalls": 212992,
+      "costs": {
+        "advancedCalls": 0,
+        "sampledPixels": 0,
+        "assignedBlocks": 147456,
+        "coverageCalls": 147456,
+        "indexOfCalls": 0,
+        "spliceCalls": 0
+      }
+    },
+    {
+      "click": 13,
+      "blocks": 507904,
+      "refineMs": 1386.9819360000001,
+      "renderLoopMs": 292.43388000000004,
+      "fillCalls": 507904,
+      "costs": {
+        "advancedCalls": 0,
+        "sampledPixels": 0,
+        "assignedBlocks": 393216,
+        "coverageCalls": 393216,
+        "indexOfCalls": 0,
+        "spliceCalls": 0
+      }
+    },
+    {
+      "click": 14,
+      "blocks": 950272,
+      "refineMs": 2106.335359,
+      "renderLoopMs": 132.23562799999945,
+      "fillCalls": 950272,
+      "costs": {
+        "advancedCalls": 0,
+        "sampledPixels": 0,
+        "assignedBlocks": 589824,
+        "coverageCalls": 589824,
+        "indexOfCalls": 0,
+        "spliceCalls": 0
+      }
+    }
+  ]
+}

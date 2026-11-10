@@ -1,0 +1,17 @@
+复现实测（2026-11-10）
+
+1. frontend中 npm ci / npm test / npm run lint -- --no-fix / npm run build。
+2. 使用静态HTTP服务将frontend/dist映射到 /arknights-wordle/，包括 /arknights-wordle/bw/。
+3. 准备与当前Chromium兼容的Playwright Core与浏览器。
+4. 下载真实图片 https://media.prts.wiki/b/bd/%E7%AB%8B%E7%BB%98_%E8%83%BD%E5%A4%A9%E4%BD%BF_1.png
+   原始图片SHA256: 1898a83551dbe142b8c75b23d7b61028612292d87dc99d036fd33811fbc1f43c
+5. 在repo根目录运行：
+   PLAYWRIGHT_CORE_PATH=/path/to/playwright-core CHROMIUM_PATH=/path/to/chromium PERF_IMAGE=/path/to/exusiai.png PERF_ORIGIN=http://127.0.0.1:8828/arknights-wordle/ PERF_MAX_WRONG=14 node docs/puzzle-performance-2026-11-10/progressive-after-browser.cjs
+
+脚本默认路径是本次审计机器环境，换机器时请设置上述环境变量。PERF_OUTPUT可以指定独立输出，避免覆盖原始证据。正常性能样本必须不设置PERF_CANCEL/PERF_RENDER_RESIZE；这些边界QA有意控制调度时序，仅证明取消和尺寸正确性，不作为耗时基准。详细开关可查看脚本。
+
+旧浏览器样本来自修复前生产资产index.f984da9e/chunk-common.bf1aaef6。before-completion-browser.json与after-browser.json使用相同最终完成口径；before-browser.json的最初口径仅为click到2rAF，不直接混算。
+
+Node算法基准可在本repo执行benchmark-before.cjs、benchmark-after.cjs与benchmark-equivalence.cjs。benchmark-after-sources保留的是第一步同步线性算法；其wall时间不是最终异步浏览器延迟。测试套件puzzle-cooperative.test.cjs则直接对比当前最终API与冻结旧版，覆盖事务/取消/颜色/顺序/随机数时序。
+
+真实性边界：屏蔽头像和分析请求；真实干员数据子集，固定随机值，真实图片；没有CPU/网络节流。桌面无头测试不代表手机真机。LongTask观察器在旧版16秒阻塞时也为空，不能据此声称新版没有长任务或稳定60fps。

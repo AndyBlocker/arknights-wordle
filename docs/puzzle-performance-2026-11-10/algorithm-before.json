@@ -1,0 +1,322 @@
+{
+  "raw": {
+    "mode": "raw",
+    "conditions": "Frozen production functions; seeded opaque1200² gradient; display600²; high-quality sampling2; all areas eligible; 25-second per-mode process limit; Node timings are not browser/FPS metrics.",
+    "initMs": 140.769319,
+    "rows": [
+      {
+        "click": 1,
+        "blocks": 43,
+        "refineMs": 75.360569,
+        "renderLoopMs": 0.15559400000000778,
+        "fillCalls": 43,
+        "costs": {
+          "advancedCalls": 36,
+          "sampledPixels": 202500,
+          "assignedBlocks": 36,
+          "coverageCalls": 36,
+          "indexOfCalls": 9,
+          "spliceCalls": 9
+        }
+      },
+      {
+        "click": 2,
+        "blocks": 88,
+        "refineMs": 75.47183999999999,
+        "renderLoopMs": 0.07640800000001491,
+        "fillCalls": 88,
+        "costs": {
+          "advancedCalls": 60,
+          "sampledPixels": 203708,
+          "assignedBlocks": 60,
+          "coverageCalls": 60,
+          "indexOfCalls": 15,
+          "spliceCalls": 15
+        }
+      },
+      {
+        "click": 3,
+        "blocks": 196,
+        "refineMs": 77.92299000000003,
+        "renderLoopMs": 0.06387000000000853,
+        "fillCalls": 196,
+        "costs": {
+          "advancedCalls": 144,
+          "sampledPixels": 207936,
+          "assignedBlocks": 144,
+          "coverageCalls": 144,
+          "indexOfCalls": 36,
+          "spliceCalls": 36
+        }
+      },
+      {
+        "click": 4,
+        "blocks": 448,
+        "refineMs": 44.76848899999993,
+        "renderLoopMs": 0.0901529999999866,
+        "fillCalls": 448,
+        "costs": {
+          "advancedCalls": 80,
+          "sampledPixels": 115520,
+          "assignedBlocks": 336,
+          "coverageCalls": 336,
+          "indexOfCalls": 84,
+          "spliceCalls": 84
+        }
+      },
+      {
+        "click": 5,
+        "blocks": 880,
+        "refineMs": 3.4759370000000445,
+        "renderLoopMs": 0.15088800000000901,
+        "fillCalls": 880,
+        "costs": {
+          "advancedCalls": 0,
+          "sampledPixels": 0,
+          "assignedBlocks": 576,
+          "coverageCalls": 576,
+          "indexOfCalls": 144,
+          "spliceCalls": 144
+        }
+      },
+      {
+        "click": 6,
+        "blocks": 2176,
+        "refineMs": 10.063940000000002,
+        "renderLoopMs": 0.4127419999999802,
+        "fillCalls": 2176,
+        "costs": {
+          "advancedCalls": 0,
+          "sampledPixels": 0,
+          "assignedBlocks": 1728,
+          "coverageCalls": 1728,
+          "indexOfCalls": 432,
+          "spliceCalls": 432
+        }
+      },
+      {
+        "click": 7,
+        "blocks": 3904,
+        "refineMs": 14.346582000000012,
+        "renderLoopMs": 0.5051809999999932,
+        "fillCalls": 3904,
+        "costs": {
+          "advancedCalls": 0,
+          "sampledPixels": 0,
+          "assignedBlocks": 2304,
+          "coverageCalls": 2304,
+          "indexOfCalls": 576,
+          "spliceCalls": 576
+        }
+      },
+      {
+        "click": 8,
+        "blocks": 10240,
+        "refineMs": 36.95858599999997,
+        "renderLoopMs": 3.135446999999999,
+        "fillCalls": 10240,
+        "costs": {
+          "advancedCalls": 0,
+          "sampledPixels": 0,
+          "assignedBlocks": 8448,
+          "coverageCalls": 8448,
+          "indexOfCalls": 2112,
+          "spliceCalls": 2112
+        }
+      },
+      {
+        "click": 9,
+        "blocks": 19456,
+        "refineMs": 91.881171,
+        "renderLoopMs": 4.168601999999964,
+        "fillCalls": 19456,
+        "costs": {
+          "advancedCalls": 0,
+          "sampledPixels": 0,
+          "assignedBlocks": 12288,
+          "coverageCalls": 12288,
+          "indexOfCalls": 3072,
+          "spliceCalls": 3072
+        }
+      },
+      {
+        "click": 10,
+        "blocks": 47104,
+        "refineMs": 464.968658,
+        "renderLoopMs": 7.251974000000018,
+        "fillCalls": 47104,
+        "costs": {
+          "advancedCalls": 0,
+          "sampledPixels": 0,
+          "assignedBlocks": 36864,
+          "coverageCalls": 36864,
+          "indexOfCalls": 9216,
+          "spliceCalls": 9216
+        }
+      },
+      {
+        "click": 11,
+        "blocks": 102400,
+        "refineMs": 2985.419363,
+        "renderLoopMs": 21.556806999999935,
+        "fillCalls": 102400,
+        "costs": {
+          "advancedCalls": 0,
+          "sampledPixels": 0,
+          "assignedBlocks": 73728,
+          "coverageCalls": 73728,
+          "indexOfCalls": 18432,
+          "spliceCalls": 18432
+        }
+      },
+      {
+        "click": 12,
+        "blocks": 212992,
+        "refineMs": 8786.133652,
+        "renderLoopMs": 38.6094549999998,
+        "fillCalls": 212992,
+        "costs": {
+          "advancedCalls": 0,
+          "sampledPixels": 0,
+          "assignedBlocks": 147456,
+          "coverageCalls": 147456,
+          "indexOfCalls": 36864,
+          "spliceCalls": 36864
+        }
+      }
+    ],
+    "process_status": null,
+    "timed_out": true,
+    "stderr": ""
+  },
+  "vue-ref": {
+    "mode": "vue-ref",
+    "conditions": "Frozen production functions; seeded opaque1200² gradient; display600²; high-quality sampling2; all areas eligible; 25-second per-mode process limit; Node timings are not browser/FPS metrics.",
+    "initMs": 146.139813,
+    "rows": [
+      {
+        "click": 1,
+        "blocks": 43,
+        "refineMs": 85.71301399999999,
+        "renderLoopMs": 0.34153600000001916,
+        "fillCalls": 43,
+        "costs": {
+          "advancedCalls": 36,
+          "sampledPixels": 202500,
+          "assignedBlocks": 36,
+          "coverageCalls": 36,
+          "indexOfCalls": 9,
+          "spliceCalls": 9
+        }
+      },
+      {
+        "click": 2,
+        "blocks": 88,
+        "refineMs": 78.557931,
+        "renderLoopMs": 0.1471819999999866,
+        "fillCalls": 88,
+        "costs": {
+          "advancedCalls": 60,
+          "sampledPixels": 203708,
+          "assignedBlocks": 60,
+          "coverageCalls": 60,
+          "indexOfCalls": 15,
+          "spliceCalls": 15
+        }
+      },
+      {
+        "click": 3,
+        "blocks": 196,
+        "refineMs": 84.85144099999997,
+        "renderLoopMs": 0.2420520000000579,
+        "fillCalls": 196,
+        "costs": {
+          "advancedCalls": 144,
+          "sampledPixels": 207936,
+          "assignedBlocks": 144,
+          "coverageCalls": 144,
+          "indexOfCalls": 36,
+          "spliceCalls": 36
+        }
+      },
+      {
+        "click": 4,
+        "blocks": 448,
+        "refineMs": 79.31223799999998,
+        "renderLoopMs": 0.6356080000000475,
+        "fillCalls": 448,
+        "costs": {
+          "advancedCalls": 80,
+          "sampledPixels": 115520,
+          "assignedBlocks": 336,
+          "coverageCalls": 336,
+          "indexOfCalls": 84,
+          "spliceCalls": 84
+        }
+      },
+      {
+        "click": 5,
+        "blocks": 880,
+        "refineMs": 123.20308,
+        "renderLoopMs": 1.0905440000000226,
+        "fillCalls": 880,
+        "costs": {
+          "advancedCalls": 0,
+          "sampledPixels": 0,
+          "assignedBlocks": 576,
+          "coverageCalls": 576,
+          "indexOfCalls": 144,
+          "spliceCalls": 144
+        }
+      },
+      {
+        "click": 6,
+        "blocks": 2176,
+        "refineMs": 653.020257,
+        "renderLoopMs": 3.0754280000001017,
+        "fillCalls": 2176,
+        "costs": {
+          "advancedCalls": 0,
+          "sampledPixels": 0,
+          "assignedBlocks": 1728,
+          "coverageCalls": 1728,
+          "indexOfCalls": 432,
+          "spliceCalls": 432
+        }
+      },
+      {
+        "click": 7,
+        "blocks": 3904,
+        "refineMs": 2275.027187,
+        "renderLoopMs": 4.413070999999945,
+        "fillCalls": 3904,
+        "costs": {
+          "advancedCalls": 0,
+          "sampledPixels": 0,
+          "assignedBlocks": 2304,
+          "coverageCalls": 2304,
+          "indexOfCalls": 576,
+          "spliceCalls": 576
+        }
+      },
+      {
+        "click": 8,
+        "blocks": 10240,
+        "refineMs": 15525.906871,
+        "renderLoopMs": 11.894631000002846,
+        "fillCalls": 10240,
+        "costs": {
+          "advancedCalls": 0,
+          "sampledPixels": 0,
+          "assignedBlocks": 8448,
+          "coverageCalls": 8448,
+          "indexOfCalls": 2112,
+          "spliceCalls": 2112
+        }
+      }
+    ],
+    "process_status": null,
+    "timed_out": true,
+    "stderr": ""
+  }
+}

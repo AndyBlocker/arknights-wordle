@@ -1,0 +1,19 @@
+Final browser QA — 2026-11-10
+
+Production bundle: index.b773946a / chunk-common.5099ed5d.
+Normal timing samples: after-browser.json; baseline with identical final-readiness/pixel probe: before-completion-browser.json.
+
+Same real Exusiai PNG, real operator subset, deterministic random path, no CPU/network throttle. Main max15 completed all 14 wrong guesses.
+Guess 10: final ready+2rAF 16540.8ms -> 293.1ms; CDP CPU TaskDuration 16419.2ms -> 143.9ms; first 2rAF 16404.7ms -> 176.2ms; maximum frame gap 16349.4ms -> 116.7ms. Both versions painted 10336 blocks and produced identical final pixels.
+Guess 14: final 578.8ms; first 2rAF 166.0ms; CDP CPU 469.6ms; 167197 blocks, one visible canvas commit. Maximum frame gap 150.1ms.
+All first 10 final pixel hashes and block counts exactly match the baseline. Default6 and BW6 each completed 5 wrong guesses without page errors. All three completed-state 390px resizes retained a square canvas and returned to the exact desktop pixel hash.
+
+Boundary QA: async-edge-browser.json (artificial scheduler hooks; excluded from performance samples).
+Restart: synchronous mode click at the first actual cooperative yield while busy=true/inputDisabled=true, with zero visible commits. After 600ms, attempts stayed 0/15 and the pristine pixel hash was preserved.
+Late-paint resize: paused an actual staged-paint yield after 5120 offscreen fills while busy=true and zero visible commits, resized to390, waited180ms for debounce, verified still busy and uncommitted, then resumed. At readiness, bitmap332x332/CSS330x330. Restoring desktop exactly reproduced normal completed guess14 pixels.
+Desktop and mobile390 final canvas screenshots were opened and visually checked; figure proportions and reveal content are retained.
+
+Limits: these are single controlled desktop-headless Chromium samples, not a physical-device/60fps guarantee. First2rAF is not completion. The long-task observer emitted no entries even for the old16s stall, so empty arrays are inconclusive; rely on CDP CPU and rAF intervals. Source-image latency is intentionally excluded.
+The original timer-based cancellation QA missed the in-flight window and is preserved separately in after-invalid-cancel-timing.json/.log; it is a test-timing failure, not a product failure.
+
+Reproduction: node progressive-after-browser.cjs; env PERF_ORIGIN, PERF_OUTPUT, PERF_MAX_WRONG, PERF_CASE, PERF_RESIZE. Fixture/tool paths support PERF_IMAGE, PLAYWRIGHT_CORE_PATH, CHROMIUM_PATH. For independent boundary checks use PERF_CASE='^$' PERF_CANCEL=1 PERF_RENDER_RESIZE=1 PERF_OUTPUT=<edge.json> PERF_REFERENCE=<after-browser.json>. PNG fixture is external and not committed.

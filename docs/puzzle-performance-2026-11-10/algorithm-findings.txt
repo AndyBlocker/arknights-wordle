@@ -1,0 +1,21 @@
+小头连续细化性能根因与同算法对比（只读基准）
+
+方法：冻结优化前后真实puzzleService/advancedColorExtraction及积分图Worker函数，固定随机seed17，1200×1200不透明渐变、显示600×600、高质量采样2、初始4×4、每次细化9区域、每区域2×2。Node计时不是浏览器INP/FPS或真机性能，25秒子进程限制令before只能完成部分轮次。现场另有浏览器和构建进程，绝对时间仅作相同工具内比较。
+
+已确认主因：
+1. blocks是深层ref([])，数组indexOf/splice会遍历/搬移大量Proxy对象；块越多越严重。积分数据与ImageData本轮生产版本已经shallowRef，不应把它们误报为此次新增深代理瓶颈。
+2. refineAreaBlocks在每次细化区域时执行filter→每旧块indexOf→sort→逐次splice，数组扫描/搬移趋于平方级。
+3. 总图块仍按每区域×4增长，不透明最坏覆盖14次后为950272块。默认6次上限一局最多5次非终局细化，但用户可把主模式次数调到15。
+4. assignBlockAttributes每新块读取getCurrentConfig()，该生产函数会访问localStorage；优化为每init/每area读取后传入。基准使用常量配置桩，所以没有把真实localStorage时间包含进收益。
+5. 颜色已存block.color，renderMosaic只fillRect；高级颜色只level≤3生效，不存在每次重绘重复K-means。前3次高级颜色约75ms/次仍可优化，但后续15秒卡顿主因是数组处理。
+
+测量：
+Before vue-ref: 第1次 43块 85.7ms, 第2次 88块 78.6ms, 第3次 196块 84.9ms, 第4次 448块 79.3ms, 第5次 880块 123.2ms, 第6次 2176块 653.0ms, 第7次 3904块 2275.0ms, 第8次 10240块 15525.9ms
+Before raw: 第1次 43块 75.4ms, 第2次 88块 75.5ms, 第3次 196块 77.9ms, 第4次 448块 44.8ms, 第5次 880块 3.5ms, 第6次 2176块 10.1ms, 第7次 3904块 14.3ms, 第8次 10240块 37.0ms, 第9次 19456块 91.9ms, 第10次 47104块 465.0ms, 第11次 102400块 2985.4ms, 第12次 212992块 8786.1ms
+After shallowRef + stable linear compaction: 第1次 43块 74.5ms, 第2次 88块 76.5ms, 第3次 196块 78.1ms, 第4次 448块 45.5ms, 第5次 880块 4.5ms, 第6次 2176块 9.2ms, 第7次 3904块 14.3ms, 第8次 10240块 43.4ms, 第9次 19456块 51.1ms, 第10次 47104块 136.5ms, 第11次 102400块 275.9ms, 第12次 212992块 526.0ms, 第13次 507904块 1552.7ms, 第14次 950272块 2155.7ms
+
+画面/玩法等价验证：opaque-square及transparent-landscape两fixture，初始化与7轮细化的全部block属性、颜色、顺序、区域level在相同seed下JSON逐字节一致，完整SHA256见algorithm-equivalence.json。
+
+边界：线性化后最坏第14次仍约2.16秒计算+145ms遍历绘制，950272块；因此不能承诺15次高上限对所有设备都无卡顿。若浏览器复现长任务仍明显，建议保持同一选区/顺序/次数/颜色，分批计算并在块批次间让出主线程；提交期间拒绝重复操作且切局可取消。不要靠减少每次细化9区域、减少猜测次数或随意限细化等级来改变现有玩法。
+
+后续实现状态：已补共享generator内核的协作式refineRandomBlocksAsync与离屏renderMosaicAsync，默认6ms任务预算，取消不修改原状态或可见帧；新的5项puzzle-cooperative.test.cjs回归验证旧sync/新sync/新async完全相同的块与顺序、随机计划固定、取消原子性和一次完成帧提交。algorithm-after.json仍保留第一步线性压缩后的同步CPU基准，不冒充最终协作式API墙钟延迟；最终浏览器测量由root另录。

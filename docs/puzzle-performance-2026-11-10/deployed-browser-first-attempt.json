@@ -1,0 +1,144 @@
+{
+  "origin": "https://mer.dev/arknights-wordle/",
+  "started": "2026-11-10T10:36:04.684Z",
+  "fixtureSha256": "1898a83551dbe142b8c75b23d7b61028612292d87dc99d036fd33811fbc1f43c",
+  "conditions": "Production build; fixed real Exusiai PNG and real operator subset, Math.random=0; avatars and analytics blocked. No CPU/network emulation. First-response 2rAF is recorded separately from final input-ready plus 2rAF. Both HTML and Offscreen fillRect are counted; visible drawImage commits tracked. Pixel hashes are computed after timing/CPU sample collection.",
+  "scenarios": [
+    {
+      "name": "main-max-15",
+      "suffix": "",
+      "limit": 15,
+      "maxWrong": 2,
+      "steps": [
+        {
+          "guess": 1,
+          "name": "12F",
+          "start": 9014.800000011921,
+          "firstResponseMs": 62.19999998807907,
+          "finalCompletionMs": 182.69999998807907,
+          "batches": [
+            {
+              "kind": "offscreen",
+              "start": 9083.5,
+              "count": 28,
+              "last": 9085.800000011921,
+              "width": 600,
+              "height": 600
+            },
+            {
+              "kind": "visible",
+              "start": 9085.800000011921,
+              "count": 0,
+              "last": 9085.800000011921,
+              "width": 600,
+              "height": 600
+            }
+          ],
+          "commits": [
+            {
+              "time": 9086.300000011921,
+              "width": 600,
+              "height": 600
+            }
+          ],
+          "drawnBlocks": 28,
+          "maxFrameGapMs": 66.70000000000073,
+          "longTasks": [],
+          "busyChanges": [
+            {
+              "time": 9044.599999964237,
+              "busy": "true"
+            },
+            {
+              "time": 9088.099999964237,
+              "busy": "false"
+            }
+          ],
+          "heap": 39045248,
+          "cpuTaskMs": 182.871,
+          "scriptMs": 14.486999999999972,
+          "finalPixelHash": {
+            "width": 600,
+            "height": 600,
+            "fnv1a": "3c66c075"
+          }
+        },
+        {
+          "guess": 2,
+          "name": "Castle-3",
+          "start": 9763.199999988079,
+          "firstResponseMs": 120.30000001192093,
+          "finalCompletionMs": 230.10000002384186,
+          "batches": [
+            {
+              "kind": "offscreen",
+              "start": 9823.300000011921,
+              "count": 49,
+              "last": 9825.699999988079,
+              "width": 600,
+              "height": 600
+            },
+            {
+              "kind": "visible",
+              "start": 9825.800000011921,
+              "count": 0,
+              "last": 9825.800000011921,
+              "width": 600,
+              "height": 600
+            }
+          ],
+          "commits": [
+            {
+              "time": 9826.199999988079,
+              "width": 600,
+              "height": 600
+            }
+          ],
+          "drawnBlocks": 49,
+          "maxFrameGapMs": 66.70000000000073,
+          "longTasks": [],
+          "busyChanges": [
+            {
+              "time": 9772.5,
+              "busy": "true"
+            },
+            {
+              "time": 9827.800000011921,
+              "busy": "false"
+            }
+          ],
+          "heap": 36765980,
+          "cpuTaskMs": 46.55799999999988,
+          "scriptMs": 2.893999999999952,
+          "finalPixelHash": {
+            "width": 600,
+            "height": 600,
+            "fnv1a": "f121a65a"
+          }
+        }
+      ],
+      "errors": [],
+      "environment": {
+        "cores": 80,
+        "memory": 32,
+        "dpr": 1,
+        "scripts": [
+          "https://mer.dev/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "https://mer.dev/arknights-wordle/js/chunk-common.5099ed5d.js",
+          "https://mer.dev/arknights-wordle/js/index.b773946a.js",
+          "https://www.googletagmanager.com/gtag/js?id=G-QCYZ6ZEF46",
+          "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092"
+        ]
+      },
+      "pristineHash": {
+        "width": 600,
+        "height": 600,
+        "fnv1a": "5c3e224d"
+      }
+    }
+  ],
+  "error": {
+    "message": "locator.waitFor: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('combobox') to be visible\u001b[22m\n",
+    "stack": "locator.waitFor: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('combobox') to be visible\u001b[22m\n\n    at newPage (/tmp/deployed-puzzle-smoke.cjs:63:75)\n    at async /tmp/deployed-puzzle-smoke.cjs:112:46"
+  }
+}

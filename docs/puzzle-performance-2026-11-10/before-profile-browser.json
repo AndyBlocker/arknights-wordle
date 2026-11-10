@@ -1,0 +1,411 @@
+{
+  "origin": "http://127.0.0.1:8827/arknights-wordle/",
+  "conditions": "Production bundle; fixed real Exusiai PNG and real operator subset, Math.random=0 fixes target and region choices. Avatars/analytics blocked to remove network and decoding variation. No network/CPU emulation. Click latency is browser capture-phase click to second rAF after render, not field INP.",
+  "started": "2026-11-10T10:18:45.842Z",
+  "scenarios": [
+    {
+      "name": "main-max-15",
+      "suffix": "",
+      "limit": 15,
+      "maxWrong": 10,
+      "steps": [
+        {
+          "guess": 1,
+          "name": "12F",
+          "start": 1615.8999999761581,
+          "latency": 165.60000002384186,
+          "batchStart": 1,
+          "batches": [
+            {
+              "start": 1632.699999988079,
+              "count": 28,
+              "last": 1632.8999999761581
+            }
+          ],
+          "heap": 34518490,
+          "longTasks": [],
+          "canvas": 600,
+          "cpuTaskMs": 44.68699999999992,
+          "scriptMs": 3.141000000000005,
+          "drawnBlocks": 28
+        },
+        {
+          "guess": 2,
+          "name": "Castle-3",
+          "start": 2360.300000011921,
+          "latency": 112.59999996423721,
+          "batchStart": 2,
+          "batches": [
+            {
+              "start": 2377.699999988079,
+              "count": 49,
+              "last": 2378.199999988079
+            }
+          ],
+          "heap": 36233871,
+          "longTasks": [],
+          "canvas": 600,
+          "cpuTaskMs": 42.58299999999993,
+          "scriptMs": 1.8410000000000093,
+          "drawnBlocks": 49
+        },
+        {
+          "guess": 3,
+          "name": "CONFESS-47",
+          "start": 2923.5,
+          "latency": 113.10000002384186,
+          "batchStart": 3,
+          "batches": [
+            {
+              "start": 2942.899999976158,
+              "count": 91,
+              "last": 2943.800000011921
+            }
+          ],
+          "heap": 36860817,
+          "longTasks": [],
+          "canvas": 600,
+          "cpuTaskMs": 61.55500000000003,
+          "scriptMs": 2.4029999999999885,
+          "drawnBlocks": 91
+        },
+        {
+          "guess": 4,
+          "name": "Friston-3",
+          "start": 3468.300000011921,
+          "latency": 114.59999996423721,
+          "batchStart": 4,
+          "batches": [
+            {
+              "start": 3497.600000023842,
+              "count": 157,
+              "last": 3498.899999976158
+            }
+          ],
+          "heap": 37642594,
+          "longTasks": [],
+          "canvas": 600,
+          "cpuTaskMs": 56.12200000000001,
+          "scriptMs": 1.712000000000019,
+          "drawnBlocks": 157
+        },
+        {
+          "guess": 5,
+          "name": "GALLUS²",
+          "start": 4076.600000023842,
+          "latency": 109.69999998807907,
+          "batchStart": 5,
+          "batches": [
+            {
+              "start": 4126.800000011921,
+              "count": 274,
+              "last": 4128.699999988079
+            }
+          ],
+          "heap": 38655487,
+          "longTasks": [],
+          "canvas": 600,
+          "cpuTaskMs": 74.86999999999999,
+          "scriptMs": 1.5560000000000018,
+          "drawnBlocks": 274
+        },
+        {
+          "guess": 6,
+          "name": "Lancet-2",
+          "start": 4614.699999988079,
+          "latency": 166.69999998807907,
+          "batchStart": 6,
+          "batches": [
+            {
+              "start": 4741.100000023842,
+              "count": 604,
+              "last": 4743
+            }
+          ],
+          "heap": 33709964,
+          "longTasks": [],
+          "canvas": 600,
+          "cpuTaskMs": 153.16699999999983,
+          "scriptMs": 1.2619999999999854,
+          "drawnBlocks": 604
+        },
+        {
+          "guess": 7,
+          "name": "Miss.Christine",
+          "start": 5203,
+          "latency": 305.5,
+          "batchStart": 7,
+          "batches": [
+            {
+              "start": 5462.699999988079,
+              "count": 1024,
+              "last": 5465.899999976158
+            }
+          ],
+          "heap": 37599625,
+          "longTasks": [],
+          "canvas": 600,
+          "cpuTaskMs": 284.19600000000014,
+          "scriptMs": 1.6530000000000156,
+          "drawnBlocks": 1024
+        },
+        {
+          "guess": 8,
+          "name": "Mon3tr",
+          "start": 6023.199999988079,
+          "latency": 1414.1000000238419,
+          "batchStart": 8,
+          "batches": [
+            {
+              "start": 7413.100000023842,
+              "count": 2632,
+              "last": 7420.399999976158
+            }
+          ],
+          "heap": 35164869,
+          "longTasks": [
+            {
+              "start": 6023,
+              "duration": 1400
+            }
+          ],
+          "canvas": 600,
+          "cpuTaskMs": 1420.89,
+          "scriptMs": 1.4039999999999608,
+          "drawnBlocks": 2632
+        },
+        {
+          "guess": 9,
+          "name": "PhonoR-0",
+          "start": 7986.899999976158,
+          "latency": 1434,
+          "batchStart": 9,
+          "batches": [
+            {
+              "start": 9406.100000023842,
+              "count": 3541,
+              "last": 9412.699999988079
+            }
+          ],
+          "heap": 34957957,
+          "longTasks": [],
+          "canvas": 600,
+          "cpuTaskMs": 1443.1059999999998,
+          "scriptMs": 1.3319999999999999,
+          "drawnBlocks": 3541
+        },
+        {
+          "guess": 10,
+          "name": "THRM-EX",
+          "start": 9961.699999988079,
+          "latency": 16391.400000035763,
+          "batchStart": 10,
+          "batches": [
+            {
+              "start": 26314.899999976158,
+              "count": 10336,
+              "last": 26337.30000001192
+            }
+          ],
+          "heap": 40020785,
+          "longTasks": [],
+          "canvas": 600,
+          "cpuTaskMs": 16422.409000000003,
+          "scriptMs": 1.4379999999999948,
+          "drawnBlocks": 10336
+        }
+      ],
+      "errors": [],
+      "environment": {
+        "cores": 80,
+        "memory": 32,
+        "dpr": 1,
+        "scripts": [
+          "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "http://127.0.0.1:8827/arknights-wordle/js/chunk-common.bf1aaef6.js",
+          "http://127.0.0.1:8827/arknights-wordle/js/index.f984da9e.js",
+          "https://www.googletagmanager.com/gtag/js?id=G-QCYZ6ZEF46"
+        ]
+      },
+      "stopped": "bounded profiling after slow click",
+      "cpuProfileTop": [
+        {
+          "name": "set",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 8891,
+          "selfSamples": 5201
+        },
+        {
+          "name": "V",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 7889,
+          "selfSamples": 4937
+        },
+        {
+          "name": "(idle)",
+          "url": "",
+          "line": -1,
+          "column": -1,
+          "selfSamples": 4461
+        },
+        {
+          "name": "kn",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 12507,
+          "selfSamples": 2132
+        },
+        {
+          "name": "wn",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 12369,
+          "selfSamples": 779
+        },
+        {
+          "name": "qn",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 12418,
+          "selfSamples": 718
+        },
+        {
+          "name": "get",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 8292,
+          "selfSamples": 659
+        },
+        {
+          "name": "(program)",
+          "url": "",
+          "line": -1,
+          "column": -1,
+          "selfSamples": 541
+        },
+        {
+          "name": "Tn",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 12719,
+          "selfSamples": 478
+        },
+        {
+          "name": "set",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 8891,
+          "selfSamples": 390
+        },
+        {
+          "name": "V",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 7889,
+          "selfSamples": 387
+        },
+        {
+          "name": "mn",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 12081,
+          "selfSamples": 320
+        },
+        {
+          "name": "kn",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 12507,
+          "selfSamples": 311
+        },
+        {
+          "name": "get",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 8292,
+          "selfSamples": 262
+        },
+        {
+          "name": "kn",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 12507,
+          "selfSamples": 182
+        },
+        {
+          "name": "Tn",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 12719,
+          "selfSamples": 144
+        },
+        {
+          "name": "C",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 7,
+          "column": 1750,
+          "selfSamples": 141
+        },
+        {
+          "name": "get",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 8292,
+          "selfSamples": 124
+        },
+        {
+          "name": "wn",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 12369,
+          "selfSamples": 105
+        },
+        {
+          "name": "",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 7,
+          "column": 84,
+          "selfSamples": 103
+        },
+        {
+          "name": "F",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 5114,
+          "selfSamples": 99
+        },
+        {
+          "name": "has",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 9325,
+          "selfSamples": 92
+        },
+        {
+          "name": "wn",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 12369,
+          "selfSamples": 70
+        },
+        {
+          "name": "qn",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 12418,
+          "selfSamples": 69
+        },
+        {
+          "name": "get",
+          "url": "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "line": 29,
+          "column": 8292,
+          "selfSamples": 61
+        }
+      ]
+    }
+  ],
+  "finished": "2026-11-10T10:19:12.544Z"
+}

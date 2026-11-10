@@ -1,0 +1,335 @@
+{
+  "origin": "http://127.0.0.1:8827/arknights-wordle/",
+  "started": "2026-11-10T10:27:15.448Z",
+  "fixtureSha256": "1898a83551dbe142b8c75b23d7b61028612292d87dc99d036fd33811fbc1f43c",
+  "conditions": "Production build; fixed real Exusiai PNG and real operator subset, Math.random=0; avatars and analytics blocked. No CPU/network emulation. First-response 2rAF is recorded separately from final input-ready plus 2rAF. Both HTML and Offscreen fillRect are counted; visible drawImage commits tracked. Pixel hashes are computed after timing/CPU sample collection.",
+  "scenarios": [
+    {
+      "name": "main-max-15",
+      "suffix": "",
+      "limit": 15,
+      "maxWrong": 10,
+      "steps": [
+        {
+          "guess": 1,
+          "name": "12F",
+          "start": 1471.300000011921,
+          "firstResponseMs": 115.5,
+          "finalCompletionMs": 115.90000003576279,
+          "batches": [
+            {
+              "kind": "visible",
+              "start": 1483.5,
+              "count": 28,
+              "last": 1483.800000011921,
+              "width": 600,
+              "height": 600
+            }
+          ],
+          "commits": [],
+          "drawnBlocks": 28,
+          "maxFrameGapMs": 66.70000000000005,
+          "longTasks": [],
+          "busyChanges": [],
+          "heap": 37532883,
+          "cpuTaskMs": 46.1950000000001,
+          "scriptMs": 4.104000000000024,
+          "finalPixelHash": {
+            "width": 600,
+            "height": 600,
+            "fnv1a": "3c66c075"
+          }
+        },
+        {
+          "guess": 2,
+          "name": "Castle-3",
+          "start": 2235.5,
+          "firstResponseMs": 115,
+          "finalCompletionMs": 115,
+          "batches": [
+            {
+              "kind": "visible",
+              "start": 2247.5,
+              "count": 49,
+              "last": 2248,
+              "width": 600,
+              "height": 600
+            }
+          ],
+          "commits": [],
+          "drawnBlocks": 49,
+          "maxFrameGapMs": 66.80000000000018,
+          "longTasks": [],
+          "busyChanges": [],
+          "heap": 36082874,
+          "cpuTaskMs": 35.174000000000035,
+          "scriptMs": 1.6160000000000063,
+          "finalPixelHash": {
+            "width": 600,
+            "height": 600,
+            "fnv1a": "f121a65a"
+          }
+        },
+        {
+          "guess": 3,
+          "name": "CONFESS-47",
+          "start": 2846.2000000476837,
+          "firstResponseMs": 118.19999998807907,
+          "finalCompletionMs": 118.19999998807907,
+          "batches": [
+            {
+              "kind": "visible",
+              "start": 2863,
+              "count": 91,
+              "last": 2863.900000035763,
+              "width": 600,
+              "height": 600
+            }
+          ],
+          "commits": [],
+          "drawnBlocks": 91,
+          "maxFrameGapMs": 66.70000000000027,
+          "longTasks": [],
+          "busyChanges": [],
+          "heap": 41991896,
+          "cpuTaskMs": 51.362000000000016,
+          "scriptMs": 1.6230000000000133,
+          "finalPixelHash": {
+            "width": 600,
+            "height": 600,
+            "fnv1a": "2548511f"
+          }
+        },
+        {
+          "guess": 4,
+          "name": "Friston-3",
+          "start": 3511.900000035763,
+          "firstResponseMs": 114.69999998807907,
+          "finalCompletionMs": 114.69999998807907,
+          "batches": [
+            {
+              "kind": "visible",
+              "start": 3540.300000011921,
+              "count": 157,
+              "last": 3541.7000000476837,
+              "width": 600,
+              "height": 600
+            }
+          ],
+          "commits": [],
+          "drawnBlocks": 157,
+          "maxFrameGapMs": 66.59999999999991,
+          "longTasks": [],
+          "busyChanges": [],
+          "heap": 39700389,
+          "cpuTaskMs": 54.549999999999876,
+          "scriptMs": 2.012999999999987,
+          "finalPixelHash": {
+            "width": 600,
+            "height": 600,
+            "fnv1a": "736b072b"
+          }
+        },
+        {
+          "guess": 5,
+          "name": "GALLUS²",
+          "start": 4135.100000023842,
+          "firstResponseMs": 118.30000001192093,
+          "finalCompletionMs": 176.60000002384186,
+          "batches": [
+            {
+              "kind": "visible",
+              "start": 4184.5,
+              "count": 274,
+              "last": 4186.200000047684,
+              "width": 600,
+              "height": 600
+            }
+          ],
+          "commits": [],
+          "drawnBlocks": 274,
+          "maxFrameGapMs": 66.60000000000036,
+          "longTasks": [],
+          "busyChanges": [],
+          "heap": 46006170,
+          "cpuTaskMs": 79.67699999999999,
+          "scriptMs": 1.920000000000005,
+          "finalPixelHash": {
+            "width": 600,
+            "height": 600,
+            "fnv1a": "c2b254ef"
+          }
+        },
+        {
+          "guess": 6,
+          "name": "Lancet-2",
+          "start": 4811.300000011921,
+          "firstResponseMs": 176.30000001192093,
+          "finalCompletionMs": 234.9000000357628,
+          "batches": [
+            {
+              "kind": "visible",
+              "start": 4942.400000035763,
+              "count": 604,
+              "last": 4944.900000035763,
+              "width": 600,
+              "height": 600
+            }
+          ],
+          "commits": [],
+          "drawnBlocks": 604,
+          "maxFrameGapMs": 116.69999999999982,
+          "longTasks": [],
+          "busyChanges": [],
+          "heap": 45086175,
+          "cpuTaskMs": 159.97700000000003,
+          "scriptMs": 1.7240000000000033,
+          "finalPixelHash": {
+            "width": 600,
+            "height": 600,
+            "fnv1a": "7c5b7bb2"
+          }
+        },
+        {
+          "guess": 7,
+          "name": "Miss.Christine",
+          "start": 5604.300000011921,
+          "firstResponseMs": 289.69999998807907,
+          "finalCompletionMs": 346.9000000357628,
+          "batches": [
+            {
+              "kind": "visible",
+              "start": 5862.300000011921,
+              "count": 1024,
+              "last": 5865.5,
+              "width": 600,
+              "height": 600
+            }
+          ],
+          "commits": [],
+          "drawnBlocks": 1024,
+          "maxFrameGapMs": 233.30000000000018,
+          "longTasks": [],
+          "busyChanges": [],
+          "heap": 47328712,
+          "cpuTaskMs": 285.8179999999999,
+          "scriptMs": 1.5150000000000163,
+          "finalPixelHash": {
+            "width": 600,
+            "height": 600,
+            "fnv1a": "6b2e0565"
+          }
+        },
+        {
+          "guess": 8,
+          "name": "Mon3tr",
+          "start": 6376,
+          "firstResponseMs": 1139.800000011921,
+          "finalCompletionMs": 1274.1000000238419,
+          "batches": [
+            {
+              "kind": "visible",
+              "start": 7502.100000023842,
+              "count": 2632,
+              "last": 7507.700000047684,
+              "width": 600,
+              "height": 600
+            }
+          ],
+          "commits": [],
+          "drawnBlocks": 2632,
+          "maxFrameGapMs": 1099.8999999999996,
+          "longTasks": [],
+          "busyChanges": [],
+          "heap": 50215624,
+          "cpuTaskMs": 1152.6040000000003,
+          "scriptMs": 1.2699999999999934,
+          "finalPixelHash": {
+            "width": 600,
+            "height": 600,
+            "fnv1a": "4f76fed"
+          }
+        },
+        {
+          "guess": 9,
+          "name": "PhonoR-0",
+          "start": 8174.700000047684,
+          "firstResponseMs": 1457.5999999642372,
+          "finalCompletionMs": 1474,
+          "batches": [
+            {
+              "kind": "visible",
+              "start": 9602.900000035763,
+              "count": 3541,
+              "last": 9609.900000035763,
+              "width": 600,
+              "height": 600
+            }
+          ],
+          "commits": [],
+          "drawnBlocks": 3541,
+          "maxFrameGapMs": 1416.7000000000007,
+          "longTasks": [],
+          "busyChanges": [],
+          "heap": 47792364,
+          "cpuTaskMs": 1458.4530000000004,
+          "scriptMs": 1.4480000000000048,
+          "finalPixelHash": {
+            "width": 600,
+            "height": 600,
+            "fnv1a": "9a2807b8"
+          }
+        },
+        {
+          "guess": 10,
+          "name": "THRM-EX",
+          "start": 10176.800000011921,
+          "firstResponseMs": 16404.69999998808,
+          "finalCompletionMs": 16540.80000001192,
+          "batches": [
+            {
+              "kind": "visible",
+              "start": 26534.5,
+              "count": 10336,
+              "last": 26568.600000023842,
+              "width": 600,
+              "height": 600
+            }
+          ],
+          "commits": [],
+          "drawnBlocks": 10336,
+          "maxFrameGapMs": 16349.400000000001,
+          "longTasks": [],
+          "busyChanges": [],
+          "heap": 52257916,
+          "cpuTaskMs": 16419.178,
+          "scriptMs": 1.7169999999999963,
+          "finalPixelHash": {
+            "width": 600,
+            "height": 600,
+            "fnv1a": "e390543a"
+          }
+        }
+      ],
+      "errors": [],
+      "environment": {
+        "cores": 80,
+        "memory": 32,
+        "dpr": 1,
+        "scripts": [
+          "http://127.0.0.1:8827/arknights-wordle/js/chunk-vendors.2d663c63.js",
+          "http://127.0.0.1:8827/arknights-wordle/js/chunk-common.bf1aaef6.js",
+          "http://127.0.0.1:8827/arknights-wordle/js/index.f984da9e.js",
+          "https://www.googletagmanager.com/gtag/js?id=G-QCYZ6ZEF46"
+        ]
+      },
+      "pristineHash": {
+        "width": 600,
+        "height": 600,
+        "fnv1a": "5c3e224d"
+      },
+      "stopped": "bounded profiling after >10s final completion"
+    }
+  ],
+  "finished": "2026-11-10T10:27:42.507Z"
+}

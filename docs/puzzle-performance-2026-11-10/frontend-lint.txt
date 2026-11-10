@@ -1,0 +1,33 @@
+
+> arknights-wordle@0.1.0 lint
+> vue-cli-service lint src tests/*.test.cjs --no-fix
+
+Browserslist: browsers data (caniuse-lite) is 19 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/MobilePuzzleApp.vue
+  274:40  warning  'gameSessionId' is defined but never used  no-unused-vars
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/components/ChallengeBoard.vue
+  281:18  warning  'emit' is defined but never used                  no-unused-vars
+  624:11  warning  'getModeTags' is assigned a value but never used  no-unused-vars
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/components/ChallengeResult.vue
+  142:18  warning  'emit' is defined but never used  no-unused-vars
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/logic/achievementChecker.js
+  91:30  warning  'guessCount' is defined but never used  no-unused-vars
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/logic/puzzleService.js
+  607:84  warning  'gameLevel' is assigned a value but never used  no-unused-vars
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/utils/dataLoader.js
+  78:37  warning  'operators' is defined but never used  no-unused-vars
+  85:44  warning  'filters' is defined but never used    no-unused-vars
+
+/home/andyblocker/arknights-wordle-fixes/frontend/src/workers/integralImageWorker.js
+  18:9  warning  'dataLength' is assigned a value but never used  no-unused-vars
+
+✖ 9 problems (0 errors, 9 warnings)
+

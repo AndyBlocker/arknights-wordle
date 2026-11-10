@@ -1,0 +1,35 @@
+连续猜错性能基线 · 2026-11-10
+目标：已部署index.f984da9e、chunk-common.bf1aaef6；固定真实能天使PNG（1024平方）、真实15人JSON子集，Math.random=0固定目标与区域选择。头像/分析请求屏蔽，排除网络、头像解码影响。无CPU节流。
+指标：浏览器捕获阶段click到第二次requestAnimationFrame，非真实用户INP；CPU为CDP TaskDuration差值；绘制块数为本次重绘fillRect调用数。所有样本同浏览器/图片/算法随机输入。
+
+main-default-6
+  第1次：28块；click→2rAF 105.5ms；CPU 41.9ms；JS heap 31.2MiB
+  第2次：49块；click→2rAF 164.7ms；CPU 30.0ms；JS heap 31.8MiB
+  第3次：91块；click→2rAF 103.1ms；CPU 52.7ms；JS heap 32.4MiB
+  第4次：157块；click→2rAF 105.7ms；CPU 55.5ms；JS heap 33.1MiB
+  第5次：274块；click→2rAF 105.0ms；CPU 83.4ms；JS heap 34.0MiB
+
+main-max-15
+  第1次：28块；click→2rAF 111.5ms；CPU 44.8ms；JS heap 32.5MiB
+  第2次：49块；click→2rAF 111.2ms；CPU 37.1ms；JS heap 33.1MiB
+  第3次：91块；click→2rAF 112.6ms；CPU 49.7ms；JS heap 33.7MiB
+  第4次：157块；click→2rAF 110.0ms；CPU 54.1ms；JS heap 34.4MiB
+  第5次：274块；click→2rAF 104.6ms；CPU 83.7ms；JS heap 35.4MiB
+  第6次：604块；click→2rAF 172.7ms；CPU 149.2ms；JS heap 37.5MiB
+  第7次：1024块；click→2rAF 293.8ms；CPU 286.8ms；JS heap 33.5MiB
+  第8次：2632块；click→2rAF 1291.4ms；CPU 1292.9ms；JS heap 32.7MiB
+  第9次：3541块；click→2rAF 1283.5ms；CPU 1300.2ms；JS heap 33.0MiB
+  第10次：10336块；click→2rAF 16630.7ms；CPU 16634.3ms；JS heap 38.3MiB
+
+bw-default-6
+  第1次：28块；click→2rAF 49.5ms；CPU 67.4ms；JS heap 32.9MiB
+  第2次：49块；click→2rAF 27.6ms；CPU 37.8ms；JS heap 31.0MiB
+  第3次：91块；click→2rAF 27.4ms；CPU 41.5ms；JS heap 31.5MiB
+  第4次：157块；click→2rAF 43.9ms；CPU 54.0ms；JS heap 32.3MiB
+  第5次：274块；click→2rAF 58.9ms；CPU 72.7ms；JS heap 33.2MiB
+
+严重卡顿已复现：max15第10次约16.6秒阻塞，故停止再细分。默认6次前5次（不会触发第6次错误细化，因为已结局）尚为几十毫秒CPU。
+额外CDP CPU采样（独立一轮，含采样开销）第10次约16.4秒；最热栈映射到Vue reactivity.set/noTracking/toRaw/get/isReadonly/isShallow，指向深响应式数组大量splice/索引处理。Canvas填色并非主导热点。
+heap增加仅表示活跃图块/对象增长，未证明跨局泄漏。该样本是单机桌面，不能推断所有手机具体耗时。
+before-browser.json用于与新版本相同夹具比较；before-profile-browser.json为额外采样，不能混入无采样基准；before-cpu-hotspots.json和evidence/before-cpu-profile.json为采样证据。
+只读基线服务localhost8827使用/tmp/arknights-puzzle-browser-before快照，便于后续比较；业务源码未修改。

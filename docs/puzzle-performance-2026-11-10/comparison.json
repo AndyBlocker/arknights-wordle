@@ -1,0 +1,172 @@
+{
+  "generatedAt": "2026-11-10T10:38:32.894193+00:00",
+  "build": {
+    "before": "index.f984da9e.js / chunk-common.bf1aaef6.js",
+    "after": "index.b773946a.js / chunk-common.5099ed5d.js"
+  },
+  "conditions": "Production build; fixed real Exusiai PNG and real operator subset, Math.random=0; avatars and analytics blocked. No CPU/network emulation. First-response 2rAF is recorded separately from final input-ready plus 2rAF. Both HTML and Offscreen fillRect are counted; visible drawImage commits tracked. Pixel hashes are computed after timing/CPU sample collection.",
+  "tenthGuess": {
+    "before": {
+      "firstResponseMs": 16404.69999998808,
+      "finalCompletionMs": 16540.80000001192,
+      "cpuTaskMs": 16419.178,
+      "maxFrameGapMs": 16349.400000000001,
+      "drawnBlocks": 10336,
+      "finalPixelHash": {
+        "width": 600,
+        "height": 600,
+        "fnv1a": "e390543a"
+      }
+    },
+    "after": {
+      "firstResponseMs": 176.19999998807907,
+      "finalCompletionMs": 293.10000002384186,
+      "cpuTaskMs": 143.90800000000016,
+      "maxFrameGapMs": 116.69999999999982,
+      "drawnBlocks": 10336,
+      "finalPixelHash": {
+        "width": 600,
+        "height": 600,
+        "fnv1a": "e390543a"
+      }
+    }
+  },
+  "fourteenthGuess": {
+    "after": {
+      "firstResponseMs": 166,
+      "finalCompletionMs": 578.8000000119209,
+      "cpuTaskMs": 469.6229999999999,
+      "maxFrameGapMs": 150.10000000000036,
+      "drawnBlocks": 167197,
+      "finalPixelHash": {
+        "width": 600,
+        "height": 600,
+        "fnv1a": "26f03ba3"
+      }
+    }
+  },
+  "sameFirstTenFinalPixelHashes": true,
+  "sameFirstTenBlockCounts": true,
+  "normalScenarios": [
+    {
+      "name": "main-default-6",
+      "wrongGuesses": 5,
+      "pageErrors": [],
+      "restoredDesktopSameHash": true,
+      "mobileGeometry": {
+        "bitmap": [
+          316,
+          316
+        ],
+        "box": [
+          314,
+          314
+        ]
+      }
+    },
+    {
+      "name": "main-max-15",
+      "wrongGuesses": 14,
+      "pageErrors": [],
+      "restoredDesktopSameHash": true,
+      "mobileGeometry": {
+        "bitmap": [
+          313,
+          313
+        ],
+        "box": [
+          311,
+          311
+        ]
+      }
+    },
+    {
+      "name": "bw-default-6",
+      "wrongGuesses": 5,
+      "pageErrors": [],
+      "restoredDesktopSameHash": true,
+      "mobileGeometry": {
+        "bitmap": [
+          350,
+          350
+        ],
+        "box": [
+          348,
+          348
+        ]
+      }
+    }
+  ],
+  "boundaryQA": {
+    "separateFile": "async-edge-browser.json",
+    "restartWhileBusyBeforeCommit": {
+      "time": 9546.100000023842,
+      "busy": "true",
+      "inputDisabled": true,
+      "commitsSinceClick": 0,
+      "batches": [],
+      "trigger": "first actual scheduler.yield while busy; synchronous DOM mode click"
+    },
+    "restartPristineHashPreserved": true,
+    "lateResizeAt": {
+      "busy": "true",
+      "inputDisabled": true,
+      "click": {
+        "start": 8936.900000035763,
+        "batchIndex": 28,
+        "commitIndex": 14,
+        "firstResponseMs": 178.19999998807907
+      },
+      "batches": [
+        {
+          "kind": "offscreen",
+          "start": 9141.100000023842,
+          "count": 5120,
+          "last": 9148.100000023842,
+          "width": 600,
+          "height": 600
+        }
+      ],
+      "commitsSinceClick": 0,
+      "time": 9152.100000023842
+    },
+    "lateResizeDebounceBeforeRelease": {
+      "busy": "true",
+      "viewport": 390,
+      "commitsSinceClick": 0,
+      "pausedAt": 9148.100000023842,
+      "releaseAt": 9388.5
+    },
+    "lateResizeGeometryAtReady": {
+      "bitmap": [
+        332,
+        332
+      ],
+      "box": [
+        330,
+        330
+      ],
+      "parent": [
+        332,
+        332
+      ]
+    },
+    "lateResizeRestoredFourteenthHashPreserved": true
+  },
+  "limits": [
+    "One controlled desktop Chromium run, not a device fleet or statistical benchmark.",
+    "First-response 2rAF is not full refinement completion. Final completion waits input enabled, busy=false, completed visible drawing, then 2rAF.",
+    "The long-task observer produced no entries even in the old 16-second stall; an empty array is inconclusive. Use measured CDP TaskDuration and rAF gaps. No stable-60fps claim.",
+    "Frame gaps still reached 150ms in the fourteenth guess.",
+    "Real PRTS PNG and real operator subset were fixed, Math.random=0. This excludes image-source latency and tests a reproducible reveal path.",
+    "Boundary QA deliberately hooks scheduler.yield and pauses staged paint. Its timing is excluded from normal performance numbers.",
+    "Canvas screenshots were visually inspected at desktop600 and mobile390 viewport; these are not full-page or physical-device certification."
+  ],
+  "artifacts": {
+    "normal": "after-browser.json",
+    "comparableBaseline": "before-completion-browser.json",
+    "boundaries": "async-edge-browser.json",
+    "desktopScreenshot": "evidence/after-desktop-14-canvas.png",
+    "mobileScreenshot": "evidence/after-mobile-390-14-canvas.png"
+  }
+}
