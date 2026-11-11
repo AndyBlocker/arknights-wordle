@@ -13,6 +13,7 @@
 - `npm run serve` (in `frontend/`) boots the local client with hot reload on `http://localhost:8080`.
 - `cd server && npm install && npm start` launches the websocket backend on port 3012; run it alongside the client for multiplayer playtests.
 - `npm run build` (frontend) emits production bundles in `dist/`; use `npm run lint` to validate formatting before every PR.
+- `npm run build:mer-dev` builds with the same-origin image endpoint. Install `deploy/wordle-media-cache.conf` in the OpenResty HTTP context and include `deploy/wordle-media-location.conf` in the canonical content server before publishing this build.
 
 ## Coding Style & Naming Conventions
 - Use 2-space indentation and single quotes in JS/TS to match existing Vue and Node files.

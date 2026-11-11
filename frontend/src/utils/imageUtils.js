@@ -1,12 +1,12 @@
 // utils/imageUtils.js
 import MD5 from "md5";
 
-export const MEDIA_ENDPOINT = "https://media.prts.wiki";
+export const MEDIA_ENDPOINT = (process.env.VUE_APP_MEDIA_ENDPOINT || 'https://media.prts.wiki').replace(/\/+$/, '');
 
 // 使用 MD5 来构造图片路径
 export function getImagePath(filename) {
   const md5 = MD5(filename);
-  return `${MEDIA_ENDPOINT}/${md5.slice(0, 1)}/${md5.slice(0, 2)}/${filename}`;
+  return `${MEDIA_ENDPOINT}/${md5.slice(0, 1)}/${md5.slice(0, 2)}/${encodeURIComponent(filename)}`;
 }
 
 /**
